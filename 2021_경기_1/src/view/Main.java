@@ -30,6 +30,7 @@ public class Main extends BaseFrame {
 			c.repaint();
 			c.revalidate();
 
+			
 			setEnable();
 		});
 		timer.start();
@@ -49,25 +50,31 @@ public class Main extends BaseFrame {
 					}
 
 					if (l.equals(lbls[0])) {
-						new Login().addWindowListener(new Before(Main.this));
+						if(l.getText().equals("로그인")) {
+							new Login().addWindowListener(new Before(Main.this));							
+						}else {
+							isLoginned = 0;
+							iMsg("로그아웃이 완료되었습니다.");
+							setEnable();
+						}
 					} else if (l.equals(lbls[1])) {
-
+						new Sign().addWindowListener(new Before(Main.this));
 					} else if (l.equals(lbls[2])) {
-
+						new LocationInfo().addWindowListener(new Before(Main.this));
 					} else if (l.equals(lbls[3])) {
-
+						new Reserve().addWindowListener(new Before(Main.this));
 					} else if (l.equals(lbls[4])) {
-
+						new MagicPass().addWindowListener(new Before(Main.this));
 					} else if (l.equals(lbls[5])) {
-
+						new MyPage().addWindowListener(new Before(Main.this));
 					} else if (l.equals(lbls[6])) {
-
+						new Chart().addWindowListener(new Before(Main.this));
 					} else if (l.equals(lbls[7])) {
-
+					 new RideEdit().addWindowListener(new Before(Main.this));
 					} else if (l.equals(lbls[8])) {
-
+						new Calendar().addWindowListener(new Before(Main.this));
 					} else {
-
+						System.exit(0);
 					}
 				}
 			});
@@ -95,6 +102,7 @@ public class Main extends BaseFrame {
 		}
 
 		if (isLoginned == 0) {
+			lbls[0].setText("로그인");
 			for (int i = 0; i < 6; i++) {
 				lbls[i + 2 < 6 ? i + 2 : i + 3].setEnabled(false);
 			}

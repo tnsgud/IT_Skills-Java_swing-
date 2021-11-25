@@ -21,10 +21,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import db.DB;
+import model.User;
 
 public class BaseFrame extends JFrame {
 	JPanel n, e, c, s, w;
 	static int isLoginned = 0;
+	static User user;
 
 	public BaseFrame(String t, int w, int h) {
 		super(t);
@@ -34,12 +36,21 @@ public class BaseFrame extends JFrame {
 		DB.execute("use adventure");
 	}
 
+	static int toInt(Object p) {
+		try {
+			var str = p.toString().replaceAll("[^0-9]", "");
+			return str.isEmpty() ? -1 : Integer.parseInt(str);
+		} catch (Exception e) {
+			return -1;
+		}
+	}
+	
 	static void iMsg(String msg) {
 		JOptionPane.showMessageDialog(null, msg, "정보", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	static void eMsg(String msg) {
-		JOptionPane.showMessageDialog(null, msg, "정보", JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(null, msg, "정보", JOptionPane.ERROR_MESSAGE);
 	}
 
 	static JLabel lbl(String c, int a) {
@@ -76,16 +87,16 @@ public class BaseFrame extends JFrame {
 	}
 
 	class Before extends WindowAdapter {
-		BaseFrame bf;
+		BaseFrame base;
 
-		public Before(BaseFrame bf) {
-			this.bf = bf;
-			bf.setVisible(false);
+		public Before(BaseFrame base) {
+			this.base = base;
+			base.setVisible(false);
 		}
 
 		@Override
-		public void windowClosing(WindowEvent e) {
-			bf.setVisible(true);
+		public void windowClosed(WindowEvent e) {
+			base.setVisible(true);
 		}
 	}
 }

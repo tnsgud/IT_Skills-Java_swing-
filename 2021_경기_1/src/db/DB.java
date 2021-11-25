@@ -46,6 +46,7 @@ public class DB {
 		try {
 			var rs = rs(sql, objs);
 			if (rs.next()) {
+				System.out.println(rs.getString(1));
 				return rs.getString(1);
 			}
 		} catch (SQLException e) {
@@ -65,6 +66,31 @@ public class DB {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+	
+	public static <T> T getModel(Class<T> cls, String sql, Object...objs) {
+		try {
+			T result = cls.getDeclaredConstructor().newInstance();
+			var rs = rs(sql, objs);
+			if(rs.next()) {
+				setValue(result, rs);
+				return result;
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+
+	private static void setValue(Object result, ResultSet rs) throws SQLException, IllegalArgumentException, IllegalAccessException {
+		var fleids = result.getClass().getFields();
+		for (var f : fleids) {
+			var data = rs.getString("u_"+f.getName());
+			
+			f.set(result, data);
 		}
 	}
 
