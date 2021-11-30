@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.Connection;
@@ -44,7 +46,7 @@ public class BaseFrame extends JFrame {
 			return -1;
 		}
 	}
-	
+
 	static void iMsg(String msg) {
 		JOptionPane.showMessageDialog(null, msg, "정보", JOptionPane.INFORMATION_MESSAGE);
 	}
@@ -81,7 +83,7 @@ public class BaseFrame extends JFrame {
 	static ImageIcon img(String path, int w, int h) {
 		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(path).getScaledInstance(w, h, Image.SCALE_SMOOTH));
 	}
-	
+
 	static ImageIcon img(String path) {
 		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(path));
 	}
@@ -97,6 +99,44 @@ public class BaseFrame extends JFrame {
 		@Override
 		public void windowClosed(WindowEvent e) {
 			base.setVisible(true);
+		}
+	}
+
+	class IconLabel extends JLabel {
+		String title;
+
+		public IconLabel(String t) {
+			super("", img("./datafiles/아이콘.png", 25, 30), 0);
+			title = t;
+		}
+
+		public IconLabel(String t, boolean isEnable) {
+			this(t);
+			setEnabled(isEnable);
+
+			addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					if (!isEnable) {
+						eMsg("회원님이 이용할 수 없는 놀이기구 입니다.");
+						return;
+					}
+
+					new Detail(t).addWindowListener(new Before(BaseFrame.this));
+				}
+			});
+		}
+
+		public IconLabel(String t, String fl) {
+			this(t);
+
+			addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					new RideEdit(RideEdit.EDIT, t, fl, (Ride) BaseFrame.this)
+							.addWindowListener(new Before(BaseFrame.this));
+				}
+			});
 		}
 	}
 }

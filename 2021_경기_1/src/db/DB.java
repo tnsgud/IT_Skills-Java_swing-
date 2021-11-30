@@ -68,12 +68,12 @@ public class DB {
 			e.printStackTrace();
 		}
 	}
-	
-	public static <T> T getModel(Class<T> cls, String sql, Object...objs) {
+
+	public static <T> T getModel(Class<T> cls, String sql, Object... objs) {
 		try {
 			T result = cls.getDeclaredConstructor().newInstance();
 			var rs = rs(sql, objs);
-			if(rs.next()) {
+			if (rs.next()) {
 				setValue(result, rs);
 				return result;
 			}
@@ -81,15 +81,16 @@ public class DB {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
 
-	private static void setValue(Object result, ResultSet rs) throws SQLException, IllegalArgumentException, IllegalAccessException {
+	private static void setValue(Object result, ResultSet rs)
+			throws SQLException, IllegalArgumentException, IllegalAccessException {
 		var fleids = result.getClass().getFields();
 		for (var f : fleids) {
-			var data = rs.getString("u_"+f.getName());
-			
+			var data = rs.getString("u_" + f.getName());
+
 			f.set(result, data);
 		}
 	}
@@ -133,6 +134,16 @@ public class DB {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}
+
+		int point[][] = { { 83, 366 }, { 215, 289 }, { 260, 479 }, { 307, 443 }, { 563, 343 }, { 579, 213 },
+				{ 662, 294 }, { 681, 240 }, { 716, 289 }, { 775, 234 }, { 685, 177 }, { 776, 312 }, { 245, 334 },
+				{ 624, 258 }, { 344, 275 }, { 608, 285 }, { 743, 307 }, { 185, 416 }, { 219, 301 }, { 266, 295 },
+				{ 290, 256 }, { 285, 389 }, { 347, 229 }, { 389, 250 }, { 381, 398 }, { 413, 445 }, { 451, 402 },
+				{ 508, 152 }, { 637, 192 }, { 722, 250 } };
+		for (int i = 0; i < point.length; i++) {
+			execute("update ride set r_explation = concat(r_explation, ?, ?) where r_no=?", "#" + point[i][0],
+					"#" + point[i][1], i + 1);
 		}
 	}
 

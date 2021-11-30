@@ -70,7 +70,7 @@ public class Main extends BaseFrame {
 					} else if (l.equals(lbls[6])) {
 						new Chart().addWindowListener(new Before(Main.this));
 					} else if (l.equals(lbls[7])) {
-					 new RideEdit().addWindowListener(new Before(Main.this));
+					 new Ride().addWindowListener(new Before(Main.this));
 					} else if (l.equals(lbls[8])) {
 						new Calendar().addWindowListener(new Before(Main.this));
 					} else {
