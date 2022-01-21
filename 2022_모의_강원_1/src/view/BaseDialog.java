@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.GridBagLayout;
 
@@ -12,11 +13,13 @@ import db.DB;
 public class BaseDialog extends JDialog {
 	JPanel root, n, w, c, e, s;
 
-	public BaseDialog(JFrame jf, String t, int w, int h) {
-		super(jf, t, true);
+	public BaseDialog(String t, int w, int h) {
+		setTitle(t);
 		setSize(w, h);
+		setModal(true);
 		setDefaultCloseOperation(2);
 		setLocationRelativeTo(null);
+		setLayout(new BorderLayout());
 		DB.execute("use busticketbooking");
 	}
 }

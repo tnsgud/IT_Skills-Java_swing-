@@ -19,8 +19,8 @@ public class Find extends BaseDialog {
 	String[] cap = "아이디,비밀번호".split(","), h = "Name,E-mail,Name,Id,E-mail".split(",");
 	JTextField[] idTxt = new JTextField[2], pwTxt = new JTextField[3];
 
-	public Find(JFrame jf) {
-		super(jf, "아이디/비밀번호 찾기", 600, 800);
+	public Find() {
+		super("아이디/비밀번호 찾기", 600, 800);
 
 		ui();
 

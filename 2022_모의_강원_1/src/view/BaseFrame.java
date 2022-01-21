@@ -9,6 +9,7 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -61,6 +62,73 @@ public class BaseFrame extends JFrame {
 		DB.execute("use busticketbooking");
 	}
 
+	public static JPopupMenu showPopupLocation2(JComponent com, int no) {
+		var menu = new JPopupMenu();
+		
+		sz(menu, 250, 250);
+		
+		menu.setLayout(new BorderLayout());
+		var p1 = new JPanel(new GridLayout(0, 1));
+		var p2 = new JPanel(new GridLayout(0, 1));
+
+		menu.add(sz(new JScrollPane(p1), 125, 300), "West");
+		menu.add(new JScrollPane(p2));
+		
+		try {
+			var rs = DB.rs("select no, name from location");
+			while (rs.next()) {
+				var btn = new JButton(rs.getString(2));
+				btn.setName(rs.getString(1));
+				btn.addActionListener(a1 -> {
+					var name = toInt(((JButton) a1.getSource()).getName());
+					try {
+						var rs2 = DB.rs("select no, name from location2 where location_no=?", name);
+						while (rs2.next()) {
+							var b = new JButton(rs2.getString(2));
+							b.setName(rs2.getString(1));
+							b.addActionListener(a2 -> {
+								if (com instanceof JTextField) {
+									((JTextField) com).setText(btn.getText() + " " + a2.getActionCommand());
+								} else {
+
+								}
+							});
+							p2.add(b);
+						}
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					p2.repaint();
+					p2.revalidate();
+				});
+				p1.add(btn);
+			}
+			
+			var rs2 = DB.rs("select no, name from location2 where location_no=?", no);
+			while (rs2.next()) {
+				var b = new JButton(rs2.getString(2));
+				b.setName(rs2.getString(1));
+				b.addActionListener(a2 -> {
+					if (com instanceof JTextField) {
+						((JTextField) com).setText(DB.getOne("select name from location where no=?", no)+ " " + a2.getActionCommand());
+					} else {
+
+					}
+				});
+				p2.add(b);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		menu.show(com, 0, 20);
+		
+		return menu;
+	}
+
 	public static void popup(JPopupMenu menu, JComponent com) {
 		menu.removeAll();
 
@@ -88,7 +156,6 @@ public class BaseFrame extends JFrame {
 							b.addActionListener(a2 -> {
 								if (com instanceof JTextField) {
 									((JTextField) com).setText(btn.getText() + " " + a2.getActionCommand());
-//									location2_no = toInt(((JButton)a2.getSource()).getName());
 								} else {
 
 								}
@@ -172,6 +239,10 @@ public class BaseFrame extends JFrame {
 
 	public static Image img(String path) {
 		return Toolkit.getDefaultToolkit().getImage("./지급파일/images/" + path);
+	}
+	
+	public static ImageIcon img(byte[] bytes, int w, int h) {
+		return new ImageIcon(Toolkit.getDefaultToolkit().createImage(bytes).getScaledInstance(w, h, Image.SCALE_SMOOTH));
 	}
 
 	public static <T extends JComponent> T sz(T c, int w, int h) {

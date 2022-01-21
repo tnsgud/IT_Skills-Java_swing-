@@ -38,13 +38,13 @@ public class Login extends BaseFrame {
 		sign.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				new Sign(Login.this);
+				new Sign();
 			}
 		});
 		find.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				new Find(Login.this);
+				new Find();
 			}
 		});
 	}

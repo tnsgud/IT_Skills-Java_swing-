@@ -15,8 +15,8 @@ public class Account extends BaseDialog {
 	String[] cap = "id,pwd,name,email,point".split(",");
 	JTextField[] txt = new JTextField[cap.length];
 
-	public Account(JFrame jf) {
-		super(jf, "계정", 300, 600);
+	public Account() {
+		super("계정", 300, 600);
 
 		ui();
 		data();
@@ -82,12 +82,5 @@ public class Account extends BaseDialog {
 
 		add(root);
 
-	}
-
-	public static void main(String[] args) {
-		BaseFrame.no = 1;
-		var jf = new JFrame();
-		jf.setSize(500, 500);
-		new Account(jf);
 	}
 }

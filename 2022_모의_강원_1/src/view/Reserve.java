@@ -34,8 +34,8 @@ public class Reserve extends BaseDialog {
 	};
 	JTable t = BaseFrame.table(m);
 
-	public Reserve(JFrame jf, HashMap<Integer, String> sno) {
-		super(jf, "버스예매", 900, 500);
+	public Reserve(HashMap<Integer, String> sno) {
+		super("버스예매", 900, 500);
 		this.sno = sno;
 
 		ui();
@@ -152,6 +152,5 @@ public class Reserve extends BaseDialog {
 	public static void main(String[] args) {
 		BaseFrame.no = 1;
 		new UserMain();
-//		new Reserve(new UserMain(), "서울 중구", "대구 중구", 4);
 	}
 }

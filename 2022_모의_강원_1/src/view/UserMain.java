@@ -97,9 +97,9 @@ public class UserMain extends BaseFrame {
 							return;
 						}
 
-						new Account(UserMain.this);
+						new Account();
 					} else if (a.getActionCommand().equals("예매")) {
-						new LookUp(UserMain.this);
+						new LookUp();
 					} else {
 						no = 0;
 						dispose();
@@ -160,7 +160,7 @@ public class UserMain extends BaseFrame {
 					e.printStackTrace();
 				}
 
-				new Reserve(UserMain.this, result);
+				new Reserve(result);
 			}), 150, 50));
 
 			n.setOpaque(false);
@@ -184,24 +184,25 @@ public class UserMain extends BaseFrame {
 					var p = new JPanel();
 					var lbl = new JLabel(new ImageIcon(
 							Toolkit.getDefaultToolkit().createImage(rs.getBlob(3).getBinaryStream().readAllBytes())
-							.getScaledInstance(130, 130, Image.SCALE_SMOOTH)));
+									.getScaledInstance(130, 130, Image.SCALE_SMOOTH)));
 					var menu = new JPopupMenu();
-
+					menu.setName(rs.getString(1));
 					for (var s : "상세설명,예매".split(",")) {
 						var item = new JMenuItem(s);
+						item.setName(rs.getString(1));
 						item.addActionListener(a -> {
 							if (a.getActionCommand().equals("상세설명")) {
-								new Detail(UserMain.this, );
+								new Detail(toInt(menu.getName()));
 							} else {
-
+								showPopupLocation2(txt[1], toInt(((JMenuItem) a.getSource()).getName()));
 							}
 						});
-						
+						menu.add(item);
 					}
-					
+
 					c_c.add(p);
 					p.add(lbl);
-					
+
 					lbl.setComponentPopupMenu(menu);
 
 					p.setBorder(new CompoundBorder(

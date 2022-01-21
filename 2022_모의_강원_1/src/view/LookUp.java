@@ -28,8 +28,8 @@ public class LookUp extends BaseDialog {
 	JPopupMenu menu = new JPopupMenu();
 	JMenuItem item;
 
-	public LookUp(JFrame jf) {
-		super(jf, "예매조회", 700, 450);
+	public LookUp() {
+		super("예매조회", 700, 450);
 
 		menu.add(item = new JMenuItem("취소"));
 
@@ -51,16 +51,17 @@ public class LookUp extends BaseDialog {
 		});
 
 		item.addActionListener(a -> {
-			var date = LocalDateTime.parse(t.getValueAt(t.getSelectedRow(), 5)+"", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+			var date = LocalDateTime.parse(t.getValueAt(t.getSelectedRow(), 5) + "",
+					DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 			var now = LocalDateTime.parse("2021-10-06 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-			if(!date.isAfter(now)) {
+			if (!date.isAfter(now)) {
 				BaseFrame.eMsg("취소 불가능한 일정입니다.");
 				return;
 			}
-			
+
 			BaseFrame.iMsg("예매 취소가 완료되었습니다.");
 			DB.execute("delete from reservation where no=?", t.getValueAt(t.getSelectedRow(), 0));
-			
+
 			data();
 		});
 	}

@@ -19,8 +19,8 @@ public class Sign extends BaseDialog {
 	String[] h = "Name,Id,Password,Password확인,E-mail".split(",");
 	JTextField txt[] = new JTextField[h.length];
 
-	public Sign(JFrame jf) {
-		super(jf, "계정 등록하기", 600, 800);
+	public Sign() {
+		super("계정 등록하기", 600, 800);
 
 		ui();
 
