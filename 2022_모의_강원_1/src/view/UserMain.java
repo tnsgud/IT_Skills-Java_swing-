@@ -57,7 +57,7 @@ public class UserMain extends BaseFrame {
 						pop2.show(source, 0, 0);
 						click = true;
 					} else {
-						popup(pop1, source);
+						pop1 = popup(source);
 						pop1.show(source, 0, 25);
 					}
 				}

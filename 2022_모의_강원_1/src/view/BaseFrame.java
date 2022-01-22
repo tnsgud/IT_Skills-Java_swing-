@@ -64,16 +64,16 @@ public class BaseFrame extends JFrame {
 
 	public static JPopupMenu showPopupLocation2(JComponent com, int no) {
 		var menu = new JPopupMenu();
-		
+
 		sz(menu, 250, 250);
-		
+
 		menu.setLayout(new BorderLayout());
 		var p1 = new JPanel(new GridLayout(0, 1));
 		var p2 = new JPanel(new GridLayout(0, 1));
 
 		menu.add(sz(new JScrollPane(p1), 125, 300), "West");
 		menu.add(new JScrollPane(p2));
-		
+
 		try {
 			var rs = DB.rs("select no, name from location");
 			while (rs.next()) {
@@ -105,14 +105,15 @@ public class BaseFrame extends JFrame {
 				});
 				p1.add(btn);
 			}
-			
+
 			var rs2 = DB.rs("select no, name from location2 where location_no=?", no);
 			while (rs2.next()) {
 				var b = new JButton(rs2.getString(2));
 				b.setName(rs2.getString(1));
 				b.addActionListener(a2 -> {
 					if (com instanceof JTextField) {
-						((JTextField) com).setText(DB.getOne("select name from location where no=?", no)+ " " + a2.getActionCommand());
+						((JTextField) com).setText(
+								DB.getOne("select name from location where no=?", no) + " " + a2.getActionCommand());
 					} else {
 
 					}
@@ -123,13 +124,14 @@ public class BaseFrame extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		menu.show(com, 0, 20);
-		
+
 		return menu;
 	}
 
-	public static void popup(JPopupMenu menu, JComponent com) {
+	public static JPopupMenu popup(JComponent com) {
+		var menu = new JPopupMenu();
 		menu.removeAll();
 
 		sz(menu, 250, 250);
@@ -156,8 +158,10 @@ public class BaseFrame extends JFrame {
 							b.addActionListener(a2 -> {
 								if (com instanceof JTextField) {
 									((JTextField) com).setText(btn.getText() + " " + a2.getActionCommand());
-								} else {
-
+								} else if (com instanceof JTable) {
+									var t = (JTable) com;
+									t.setValueAt(btn.getText() + " " + a2.getActionCommand(), t.getSelectedRow(),
+											t.getSelectedColumn());
 								}
 							});
 							p2.add(b);
@@ -179,6 +183,8 @@ public class BaseFrame extends JFrame {
 
 		menu.repaint();
 		menu.revalidate();
+
+		return menu;
 	}
 
 	public static int toInt(Object p) {
@@ -240,9 +246,10 @@ public class BaseFrame extends JFrame {
 	public static Image img(String path) {
 		return Toolkit.getDefaultToolkit().getImage("./지급파일/images/" + path);
 	}
-	
+
 	public static ImageIcon img(byte[] bytes, int w, int h) {
-		return new ImageIcon(Toolkit.getDefaultToolkit().createImage(bytes).getScaledInstance(w, h, Image.SCALE_SMOOTH));
+		return new ImageIcon(
+				Toolkit.getDefaultToolkit().createImage(bytes).getScaledInstance(w, h, Image.SCALE_SMOOTH));
 	}
 
 	public static <T extends JComponent> T sz(T c, int w, int h) {
