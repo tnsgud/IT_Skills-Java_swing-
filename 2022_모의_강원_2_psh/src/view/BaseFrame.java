@@ -43,16 +43,17 @@ public class BaseFrame extends JFrame {
 		var fore = theme ? Color.DARK_GRAY : Color.WHITE;
 
 		getUI("TextField.background", back);
+		getUI("TextField.foreground", fore);
 		getUI("PasswordField.background", back);
+		getUI("PasswordField.foreground", fore);
 		getUI("OptionPane.background", back);
 		getUI("OptionPane.foreground", fore);
-		getUI("Panel.background", back);
 		getUI("Label.background", back);
 		getUI("Label.foreground", fore);
+		
+		getUI("Panel.background", back);
 		getUI("TabbedPane.selectedForeground", fore);
 		getUI("TitledBorder.titleColor", fore);
-		getUI("PasswordField.foreground", fore);
-		getUI("TextField.foreground", fore);
 
 		UIManager.getLookAndFeelDefaults().put("Table.ascendingSortIcon", sIcon("↑"));
 		UIManager.getLookAndFeelDefaults().put("Table.descendingSortIcon", sIcon("↓"));

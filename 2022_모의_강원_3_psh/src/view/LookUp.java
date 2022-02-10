@@ -5,7 +5,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
@@ -17,49 +16,44 @@ import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import db.DB;
-import tool.Tool;
-
-public class LookUp extends BaseDialog implements Tool {
+public class LookUp extends BaseDialog {
 	DefaultTableModel m = model("sno,no,출발지,도착지,도착시간,출발날짜".split(","));
 	JTable t = table(m);
 	JPopupMenu pop = new JPopupMenu();
-	JMenuItem item;
+	JMenuItem item = new JMenuItem("취소");
 
 	public LookUp() {
-		super("", 600, 450);
+		super("예매조회", 600, 450);
 
-		pop.add(item = new JMenuItem("취소"));
+		pop.add(item);
 
 		ui();
 		data();
-		evnet();
+		event();
 
 		setVisible(true);
 	}
 
-	private void evnet() {
+	private void event() {
 		t.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				if (t.getSelectedRow() != -1 && e.getButton() == 3) {
+				if (e.getButton() == 3 && t.getSelectedRow() != -1) {
 					pop.show(t, e.getX(), e.getY());
 				}
 			}
 		});
 
 		item.addActionListener(a -> {
-			var date = LocalDateTime.parse(t.getValueAt(t.getSelectedRow(), 5) + "",
-					DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-			var now = LocalDateTime.parse(LocalDateTime.now().toString(),
-					DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-			if (!now.isAfter(date)) {
+			var date = LocalDate.parse(t.getValueAt(t.getSelectedRow(), 5)+"", DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+			
+			if(BaseFrame.now.isBefore(date)) {
 				eMsg("취소 불가능한 일정입니다.");
 				return;
 			}
-
+			
 			iMsg("예매 취소가 완료되었습니다.");
-			DB.execute("delete from reservation where no=?", t.getValueAt(t.getSelectedRow(), 0));
+			execute("delete from reservation where no=?", t.getValueAt(t.getSelectedRow(), 0));
 			
 			data();
 		});
@@ -67,10 +61,10 @@ public class LookUp extends BaseDialog implements Tool {
 
 	private void data() {
 		m.setRowCount(0);
-		var rs = DB.rs(
-				"select s.no, concat(v1.l11name, ' ', v1.l21name), concat(v1.l12name, ' ', v1.l22name), time_format(addtime(s.date, s.elapsed_time), '%H:%i:%s'), s.date from v1, schedule s, reservation r "
-				+ "where r.user_no = ? and s.no = v1.sno and s.no = r.schedule_no order by s.date asc",
-				BaseFrame.no);
+		var rs = rs(
+				"select s.no, concat(v1.l11name, ' ', v1.l12name), concat(v1.l21name, ' ', v1.l22name), time_format(addtime(s.date, s.elapsed_time), '%h:%i:%s), s.date from v1, schedule s, reservation r"
+						+ "where r.user_no=? and s.no = v1.sno and s.no = r.schedule_no order by s.date asc",
+				BaseFrame.uno);
 		try {
 			while (rs.next()) {
 				var data = new ArrayList<String>();
@@ -88,22 +82,19 @@ public class LookUp extends BaseDialog implements Tool {
 	}
 
 	private void ui() {
-		setLayout(new BorderLayout(20, 20));
+		setLayout(new BorderLayout(10, 10));
+
 		add(lbl("예매조회", 2, 35), "North");
 		add(new JScrollPane(t));
 
 		t.getColumnModel().getColumn(0).setMinWidth(0);
 		t.getColumnModel().getColumn(0).setMaxWidth(0);
 
-		for (int i = 2; i < t.getColumnCount(); i++) {
-			t.getColumnModel().getColumn(i).setWidth(100);
-		}
-
-		((JPanel) getContentPane()).setBorder(new EmptyBorder(10, 10, 10, 10));
+		((JPanel) getContentPane()).setBorder(new EmptyBorder(20, 20, 20, 20));
 	}
 
 	public static void main(String[] args) {
-//		BaseFrame.no = 1;
-//		new UserMain();
+		BaseFrame.uno = 1;
+		new UserMain();
 	}
 }

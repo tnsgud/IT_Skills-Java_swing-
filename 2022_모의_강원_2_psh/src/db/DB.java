@@ -72,7 +72,10 @@ public class DB {
 
 	public static void createV() {
 		execute("drop view if exists v1");
-		execute("create view v1 as select s.no as sno, l11.no as l11no, l11.name as l11name, l21.location_no as l21lno, l21.no as l21no, l21.name as l21name, l12.no as l12no, l12.name as l12name, l22.location_no as l22lno, l22.no as l22no, l22.name as l22name from schedule s, location l11, location l12, location2 l21, location2 l22 where s.departure_location2_no=l21.no and s.arrival_location2_no=l22.no and l11.no = l21.location_no and l12.no = l22.location_no");
+		execute("create view v1 as select s.no as sno, l11.no as l11no, l11.name as l11name, l21.location_no as l21lno, l21.no as l21no, l21.name as l21name, l12.no as l12no, l12.name as l12name, "
+				+ "l22.location_no as l22lno, l22.no as l22no, l22.name as l22name from "
+				+ "schedule s, location l11, location l12, location2 l21, location2 l22 "
+				+ "where s.departure_location2_no=l21.no and s.arrival_location2_no=l22.no and l11.no = l21.location_no and l12.no = l22.location_no");
 	}
 
 	public static ArrayList<ArrayList<String>> toArrayList(String sql, Object... obj) {
