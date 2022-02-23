@@ -1,7 +1,6 @@
 package view;
 
 import java.awt.Toolkit;
-import java.text.DecimalFormat;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -12,7 +11,6 @@ public class BaseFrame extends JFrame implements Tool{
 	static int uno = 0;
 	static boolean isLogin = false;
 	static int pno = 0;
-	static DecimalFormat df = new DecimalFormat("#,##0");
 	JPanel n, w, c, e, s;
 	
 	public BaseFrame(String t, int w, int h) {
