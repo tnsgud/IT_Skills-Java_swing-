@@ -125,7 +125,7 @@ public interface Tool {
 			e.printStackTrace();
 		}
 	}
-
+	
 	default <T extends JComponent> T sz(T c, int w, int h) {
 		c.setPreferredSize(new Dimension(w, h));
 		return c;

@@ -45,7 +45,8 @@ public class DB {
 
 		createT("Point", "no int primary key not null auto_increment, x int, y int");
 		createT("User",
-				"no int primary key not null auto_increment, name varchar(20), id varchar(15), pw varchar(15),  birth date, phone varchar(30), resident varchar(20), point int, vaccine boolean, foreign key(point) references Point(no)");
+				"no int primary key not null auto_increment, name varchar(20), id varchar(15), pw varchar(15),  birth date, phone varchar(30), resident varchar(20), point int, vaccine boolean,"
+				+ "foreign key(point) references Point(no)");
 		createT("Vaccine", "no int primary key not null auto_increment, name varchar(20), price int");
 		createT("Building",
 				"no int primary key not null auto_increment, name varchar(50), point int, foreign key(point) references point(no)");
