@@ -263,6 +263,6 @@ public class UserMain extends BaseFrame {
 
 	public static void main(String[] args) {
 		uno = 1;
-		new Login();
+		new UserMain();
 	}
 }

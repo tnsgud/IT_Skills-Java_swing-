@@ -283,7 +283,7 @@ public interface Tool {
 		t.getTableHeader().setResizingAllowed(false);
 		t.setAutoCreateRowSorter(true);
 		t.setSelectionMode(0);
-
+ 
 		dtcr.setHorizontalAlignment(0);
 
 		for (int i = 0; i < t.getColumnCount(); i++) {
