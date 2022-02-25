@@ -25,6 +25,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+
 public class LoginPage extends BasePage {
 	JTextField txt[] = { new JTextField(15), new JPasswordField(15) };
 	ChkBoxPanel chkp;
@@ -159,4 +160,9 @@ public class LoginPage extends BasePage {
 		}
 	}
 
+	
+	public static void main(String[] args) {
+		BasePage.mf.swapPage(new LoginPage());
+		BasePage.mf.setVisible(true);
+	}
 }

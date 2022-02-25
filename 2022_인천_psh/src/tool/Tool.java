@@ -5,12 +5,14 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -86,7 +88,7 @@ public interface Tool {
 	}
 
 	default JLabel lbl(String c, int a, int f, int sz, Color col, MouseAdapter mouse) {
-		var l = new JLabel("<html><u>"+c+"</u></html>", a);
+		var l = new JLabel("<html><u>" + c + "</u></html>", a);
 		l.setFont(new Font("맑은 고딕", f, sz));
 		l.setForeground(col);
 		l.addMouseListener(mouse);
@@ -97,6 +99,14 @@ public interface Tool {
 		var l = new JLabel(c, a);
 		l.setFont(new Font("맑은 고딕", f, sz));
 		return l;
+	}
+
+	default JButton btn(String c, ActionListener a) {
+		var b = new JButton(c);
+		b.addActionListener(a);
+		b.setBackground(Color.ORANGE);
+		b.setForeground(Color.white);
+		return b;
 	}
 
 	default JLabel lbl(String c, int a, int sz) {
