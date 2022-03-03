@@ -1,0 +1,109 @@
+serial	name	Artist	Category	ReleaseDate
+1	Ocean Avenue	1	3	2003-05-01
+2	Light and Sounds	1	2	2006-03-23
+3	Paperwalls	1	3	2007-09-23
+4	When you're through thinking, say yes	1	3	2011-03-20
+5	Southen Air	1	3	2012-11-28
+6	The Script	2	1	2008-05-18
+7	Science & Faith	2	1	2010-02-10
+8	#3	2	1	2012-12-25
+9	No Sound Without Silence	2	1	2014-09-18
+10	The Papercut Chronicles	3	9	2005-03-28
+11	The Papercut Chronicles II	3	9	2011-04-27
+12	Who The F#*ck Is B.O.B?	4	2	2009-01-01
+13	B.o.B Presents: The Adventures of Bobby Ray	4	9	2010-02-25
+14	Strange Clouds	4	9	2012-04-18
+15	Take This To Your Grave	5	2	2003-04-27
+16	From Under The Cork Tree	5	1	2005-10-08
+17	American Beauty / American Psycho	5	2	2015-07-23
+18	A Fever You Can't Sweat Out	6	4	2005-04-11
+19	Vices & Virtues (Deluxe Edition)	6	4	2011-01-17
+20	Pray for the Wicked	6	5	2018-03-02
+21	Boys Like Girls	7	8	2005-07-08
+22	Love Drunk	7	8	2009-10-12
+23	Native (Deluxe)	8	1	2014-03-09
+24	Ocean Eyes	9	10	2009-01-27
+25	All things Bright and Beautiful	9	10	2011-03-24
+26	The Midsummer Station	9	10	2012-01-01
+27	Songs About Jane	10	1	2002-11-10
+28	It Won't Be Soon Before Long	10	1	2007-10-29
+29	Hands All Over	10	1	2010-12-19
+30	Overexposed	10	2	2012-11-28
+31	V	10	8	2015-07-29
+32	Red Pill Blues	10	1	2018-07-12
+33	Sins by the Sea	11	12	2013-07-01
+34	Back from the Edge (Deluxe Edition)	11	12	2016-01-19
+35	Colour Vision	12	8	2020-05-01
+36	Viva la Vida	13	2	2008-01-15
+37	Ghost Stories	13	2	2014-09-14
+38	A Head Full of Dreams	13	5	2015-10-06
+39	I met you when I was 8	14	10	2018-07-16
+40	Night Visions	15	3	2012-12-08
+41	Smoke + Mirrors	15	3	2015-10-23
+42	EVOLVE	15	7	2017-01-20
+43	Origins	15	5	2018-01-18
+44	R.O.O.T.S.	16	8	2008-01-01
+45	Save Me, San Francisco (Bonus Track Version)	17	6	2010-11-03
+46	Califonia 37	17	6	2012-11-13
+47	a girl a bottle a boat	17	10	2017-03-07
+48	We Are Born	18	1	2002-03-01
+49	1000 Froms of Fear (Deluxe Version)	18	7	2020-02-19
+50	This Is Acting	18	8	2016-01-16
+51	Everyday is Christmas (Deluxe)	18	1	2018-12-01
+52	Plus	19	1	2011-06-03
+53	Multiply	19	1	2014-03-20
+54	Divide	19	1	2017-06-27
+55	Kiss (Deluxe Version)	20	7	2012-09-03
+56	Emotion (Deluxe Expanded Deition)	20	7	2015-09-28
+57	Nine Track Mind (Deluxe)	21	8	2016-07-16
+58	Attention (Acoustic + Remixes)	21	10	2018-01-02
+59	Voicenotes	21	5	2018-03-22
+60	Different World	22	5	2018-03-02
+61	On My Way - Single	22	4	2019-06-20
+62	All Falls Down - Single	22	4	2017-05-03
+63	The Spectre - Single	22	4	2017-02-03
+64	Ignite (feat. K-391) - Single	22	4	2018-04-02
+65	Run Away (Radio Edit) - Single	23	4	2015-03-02
+66	Hey Mamma - Single	23	4	2017-08-21
+67	Lip	24	1	2019-03-19
+68	Eye	24	3	2019-08-08
+69	RPG - Single	24	3	2015-12-19
+70	The Story is My Life	25	3	2003-03-16
+71	ANTITHESE	25	3	2016-08-05
+72	V	25	3	2018-03-02
+73	화양연화, Pt. 1	26	13	2015-03-02
+74	화양연화, Pt. 2	26	13	2015-07-08
+75	화양연화 Young Forever	26	13	2016-04-27
+76	YOUTH	26	13	2016-08-21
+77	Wings	26	13	2016-11-28
+78	You Never Walk Alone	26	13	2017-02-01
+79	Love Yourself 'Her'	26	13	2017-09-11
+80	Love Yourself 'Tear'	26	13	2018-01-05
+81	Love Yourself 'Answer'	26	13	2018-05-07
+82	MAP OF THE SOUL : PERSONA	26	13	2019-03-04
+83	MAP OF THE SOUL : 7	26	13	2020-09-03
+84	BE	26	13	2020-02-01
+85	Merry & Happy	27	13	2017-04-03
+86	Summer Nights	27	13	2018-05-18
+87	The Red - The 1st Album	28	13	2015-01-03
+88	The Velvet - The 2nd Mini Album	28	13	2016-05-08
+89	Russian Roulette - The 3rd Mini Album	28	13	2016-09-20
+90	Again	29	12	1997-02-01
+91	10집 Bye	29	12	2002-03-01
+92	또 다시 사랑	29	12	2015-07-03
+93	그 사람을 아나요 - EP	29	12	2017-08-09
+94	I'M	29	12	2016-04-03
+95	힘든 건 사랑이 아니다	29	12	2020-09-01
+96	RED PLANET	30	13	2016-08-01
+97	남이 될 수 있을까 - Single	30	13	2017-02-03
+98	Red Diary, Page. 1 - EP	30	13	2017-05-03
+99	#첫사랑 - Single	30	13	2018-03-01
+100	Red Diary, Page. 2 - EP	30	13	2018-08-09
+101	사춘기집! 꽃기운 - EP	30	13	2019-03-02
+102	Lizst - My Piano Hero (Deluxe Edition)	31	11	2011-03-02
+103	Lang Lang - The Chopin Album	31	11	2018-03-05
+104	The Mozart Album	31	11	2005-06-05
+105	Classic Masterworks - Frederic Chopin	32	11	2017-08-02
+106	The Genius of Pogorelich	32	11	2004-08-11
+107	Chopin: Piano Concerto No. 1 & Ballades	33	11	2006-05-12
+108	The Wanderer	33	11	2016-05-02
