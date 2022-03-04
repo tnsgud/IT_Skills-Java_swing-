@@ -201,9 +201,4 @@ public class NoticeBoard extends BaseFrame {
 
 		((JPanel) getContentPane()).setBorder(new EmptyBorder(10, 10, 10, 10));
 	}
-
-	public static void main(String[] args) {
-		uno = 1;
-		new NoticeBoard();
-	}
 }

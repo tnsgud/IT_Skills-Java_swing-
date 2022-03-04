@@ -61,7 +61,7 @@ public interface Tool {
 			for (int i = 0; i < obj.length; i++) {
 				DB.ps.setObject(i + 1, obj[i]);
 			}
-			DB.ps.execute();
+			var s = DB.ps.execute();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
