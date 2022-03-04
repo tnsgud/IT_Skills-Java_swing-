@@ -115,7 +115,7 @@ public class Main extends BaseFrame {
 				} else if (a.getActionCommand() == cap[3]) {
 					new NoticeBoard().addWindowListener(new Before(this));
 				} else if (a.getActionCommand() == cap[4]) {
-					new Game().addWindowListener(new Before(this));
+					new GameList().addWindowListener(new Before(this));
 				} else if (a.getActionCommand() == cap[5]){
 					new ReservationState().addWindowListener(new Before(this));
 				}else {

@@ -79,9 +79,4 @@ public class Registration extends BaseFrame {
 			}));
 		}
 	}
-
-	public static void main(String[] args) {
-		uno = 1;
-		new Registration();
-	}
 }
