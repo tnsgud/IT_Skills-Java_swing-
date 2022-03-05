@@ -35,6 +35,8 @@ public class GameList extends BaseFrame {
 					eMsg("미래로 예약된 게임은 실행할 수 없습니다.");
 					return;
 				}
+				
+				new RoomEscape().addWindowListener(new Before(GameList.this));
 			}
 		});
 	}
