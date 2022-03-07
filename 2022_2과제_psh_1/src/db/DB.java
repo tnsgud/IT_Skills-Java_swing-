@@ -34,7 +34,7 @@ public class DB {
 	
 	void createT(String t,String c) {
 		execute("create table "+t+"("+c+")");
-		execute("load data local infile './Datafiles/"+t+".txt' into table "+t+" ignore 1 lines");
+		execute("load data local infile './Datafiles/"+t+".txt' into table "+t+" lines terminated by '\r\n' ignore 1 lines");
 	}
 	
 	public DB() {

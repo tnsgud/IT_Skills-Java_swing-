@@ -13,7 +13,7 @@ public class BaseFrame extends JFrame implements Tool {
 	static DecimalFormat format = new DecimalFormat("#,##0");
 	static LocalDate now = LocalDate.parse("2022-04-05");
 	JPanel w, n, c, e, s;
-	static int uno, tno;
+	static int uno, tno, rno, qno;
 	static String cno;
 
 	public BaseFrame(String t, int w, int h) {

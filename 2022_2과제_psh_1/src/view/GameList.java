@@ -3,6 +3,8 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.time.LocalDate;
 import java.util.Iterator;
 
@@ -13,7 +15,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 public class GameList extends BaseFrame {
-	DefaultTableModel m = model("번호,날짜,지점명,장르,테마명".split(","));
+	DefaultTableModel m = model("번호,날짜,지점명,장르,테마명".split(","));;
 	JTable t = table(m);
 
 	public GameList() {
@@ -31,19 +33,26 @@ public class GameList extends BaseFrame {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				var date = LocalDate.parse(t.getValueAt(t.getSelectedRow(), 1) + "");
-				if (date.isAfter(now)) {
+				if (date.isAfter(LocalDate.now())) {
 					eMsg("미래로 예약된 게임은 실행할 수 없습니다.");
 					return;
 				}
-				
+
+				rno = toInt(t.getValueAt(t.getSelectedRow(), 0));
 				new RoomEscape().addWindowListener(new Before(GameList.this));
+			}
+		});
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowActivated(WindowEvent e) {
+				data();
 			}
 		});
 	}
 
-	private void data() {
+	void data() {
 		addRow(m,
-				"select r_no, r_date, c_name, g_name, t_name from reservation r, theme t, cafe c, genre g where t.t_no = r.t_no and r.c_no = c.c_no and t.g_no = g.g_no and r_attend = 0 and u_no = ?",
+				"select r_no, r_date, c_name, g_name, t_name from reservation r, theme t, cafe c, genre g where t.t_no = r.t_no and r.c_no = c.c_no and t.g_no = g.g_no and r_attend = 0 and u_no = ? order by r_no asc",
 				uno);
 	}
 
