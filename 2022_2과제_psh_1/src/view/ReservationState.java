@@ -60,7 +60,6 @@ public class ReservationState extends BaseFrame {
 						ano);
 				try {
 					while (rs.next()) {
-						System.out.println(rs.getInt(2));
 						var a = (int) Math.round((double) rs.getInt(2) / (double) sum * 360) * -1;
 						g2.setColor(cols[rs.getRow() - 1]);
 						g2.fillArc(0, 250, 300, 300, arc, a);
@@ -111,8 +110,11 @@ public class ReservationState extends BaseFrame {
 						});
 					}
 				});
+				
+				
 				w.add(maker).setBounds(rs.getInt(2), rs.getInt(3), 25, 25);
 				w.add(img).setBounds(point[rs.getRow() - 1][0], point[rs.getRow() - 1][1], img.width, img.height);
+				w.setComponentZOrder(maker, 0);
 			}
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
