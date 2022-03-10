@@ -122,9 +122,9 @@ public class BaseFrame extends JFrame {
 		return lbl;
 	}
 
-	ImageIcon getIcon(String path) {
-		return new ImageIcon(path);
-	}
+//	ImageIcon getIcon(String path) {
+//		return new ImageIcon(path);
+//	}
 
 	ImageIcon getIcon(String path, int w, int h) {
 		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(path).getScaledInstance(w, h, Image.SCALE_SMOOTH));
@@ -152,7 +152,6 @@ public class BaseFrame extends JFrame {
 			public boolean isCellEditable(int row, int column) {
 				return false;
 			}
-
 		};
 		return m;
 	}
