@@ -120,7 +120,7 @@ public class NoticeBoard extends BaseFrame {
 		e.add(en, "North");
 		e.add(area);
 		e.add(datelbl = lbl("", 4), "South");
-
+		
 		nw.add(lbl("페이지 정보: ", 2));
 		nw.add(pagelbl = lbl(cur + "/" + max, 2));
 		nw.add(prev = btn("◀", a -> {
