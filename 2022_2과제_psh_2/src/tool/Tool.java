@@ -51,10 +51,6 @@ public interface Tool {
 		return lbl(c, a, "HY헤드라인M", 1, sz);
 	}
 
-	default JLabel lblH(String c, int a) {
-		return lbl(c, a, "HY헤드라인M", 0, 12);
-	}
-
 	default JButton btn(String c, ActionListener a) {
 		var b = new JButton(c);
 		b.addActionListener(a);
