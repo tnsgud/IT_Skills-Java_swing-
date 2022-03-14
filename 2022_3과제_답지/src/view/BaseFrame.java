@@ -62,6 +62,7 @@ public class BaseFrame extends JFrame {
 					pst.setObject(i + 1, args[i]);
 				}
 			}
+			System.out.println(pst);
 			var meta = pst.getMetaData();
 			var rs = pst.executeQuery();
 
