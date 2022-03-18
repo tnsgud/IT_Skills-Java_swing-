@@ -1,6 +1,6 @@
 package view;
 
-import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.time.LocalDate;
 
@@ -10,36 +10,31 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 public class Sign extends BaseFrame {
+	LocalDate now = LocalDate.now(), date = LocalDate.now();
 	JTextField txt[] = new JTextField[4];
 	JComboBox com[] = new JComboBox[3];
-	LocalDate now = LocalDate.now(), date = LocalDate.now();
 
 	public Sign() {
-		super("회원가입", 350, 350);
+		super("회원가입", 400, 300);
 
-		setLayout(new BorderLayout(5, 5));
-
-		add(c = new JPanel(new GridLayout(0, 1, 0, 20)));
+		add(c = new JPanel(new GridLayout(0, 1)));
 		add(s = new JPanel(), "South");
 
-		var cap = "이름,아이디,비밀번호,비밀번호 확인,생년월일".split(",");
+		var cap = "이름,아이디,비밀번호,비밀번호확인,생년월일".split(",");
 		for (int i = 0; i < cap.length; i++) {
-			var p = new JPanel(new BorderLayout());
-			p.add(sz(lbl(cap[i], 2, 12), 100, 20), "West");
+			var p = new JPanel(new FlowLayout(0));
+			p.add(sz(lbl(cap[i], 2), 80, 20));
 			if (i == 4) {
-				var tmp = new JPanel();
-				var tcap = "년,월,일".split(",");
-				for (int j = 0; j < tcap.length; j++) {
-					tmp.add(com[j] = new JComboBox<>());
-					tmp.add(lbl(tcap[j], 0));
+				var c = "년,월,일".split(",");
+				for (int j = 0; j < c.length; j++) {
+					p.add(com[j] = new JComboBox<>());
+					p.add(lbl(c[j], 2));
 				}
-				p.add(tmp);
 			} else {
-				p.add(txt[i] = new JTextField(15));
+				p.add(txt[i] = new JTextField(18));
 			}
 			c.add(p);
 		}
-
 		s.add(btn("회원가입", a -> {
 			for (var t : txt) {
 				if (t.getText().isEmpty()) {
@@ -56,7 +51,7 @@ public class Sign extends BaseFrame {
 
 			for (int i = 0; i < id.length() - 4; i++) {
 				if (id.contains(pw.substring(i, i + 4))) {
-					eMsg("비밀번호는 아이디와 4글자 이상 연속으로 겹쳐질 수 없습니다.");
+					eMsg("비밀번호는 아이디와 4글자 이상 연속으로 겹칠 수 없습니다.");
 					return;
 				}
 			}
@@ -66,11 +61,8 @@ public class Sign extends BaseFrame {
 				return;
 			}
 
-			date = LocalDate.of(toInt(com[0].getSelectedItem()), toInt(com[1].getSelectedItem()),
-					toInt(com[2].getSelectedItem()));
-
 			iMsg(txt[0].getText() + "님 가입을 환영합니다.");
-			execute("insert into user values(0,?,?,?,?)", txt[1].getText(), txt[2].getText(), txt[0].getText(), date);
+			execute("insert into user values(0, ?, ?, ?, ?)", id, pw, txt[0].getText(), date);
 			dispose();
 		}));
 
@@ -89,32 +81,33 @@ public class Sign extends BaseFrame {
 		for (int i = 0; i < 2; i++) {
 			com[i].addActionListener(a -> {
 				if (a.getSource() == com[0]) {
-					date = LocalDate.of(toInt(com[0].getSelectedItem()), 1, 1);
-					for (int j = 1; j < com.length; j++) {
+					for (int j = 1; j < 3; j++) {
 						com[j].removeAllItems();
 					}
 
+					date = LocalDate.of(toInt(com[0].getSelectedItem()), 1, 1);
 					var t = date.getYear() == now.getYear();
-					for (int k = 0; k < (t ? now.getYear() : 12); k++) {
+
+					for (int k = 0; k < (t ? now.getMonthValue() : 12); k++) {
 						com[1].addItem(String.format("%02d", k + 1));
 					}
-					for (int j = 0; j < (t ? now.getDayOfMonth() : date.lengthOfMonth()); j++) {
-						com[2].addItem(String.format("%02d", j + 1));
+					for (int l = 0; l < (t ? now.getDayOfMonth() : date.lengthOfMonth()); l++) {
+						com[2].addItem(String.format("%02d", l + 1));
 					}
 				} else {
-					if (com[1].getItemCount() == 0) {
+					if (com[1].getItemCount() == 0)
 						return;
-					}
 					date = LocalDate.of(date.getYear(), toInt(com[1].getSelectedItem()), 1);
-					com[2].removeAllItems();
-					for (int j = 0; j < date.lengthOfMonth(); j++) {
+					var t = date.getYear() == now.getYear();
+
+					for (int j = 0; j < (t ? now.getDayOfMonth() : date.lengthOfMonth()); j++) {
 						com[2].addItem(String.format("%02d", j + 1));
 					}
 				}
 			});
 		}
 
-		((JPanel) getContentPane()).setBorder(new EmptyBorder(10, 10, 10, 10));
+		((JPanel) getContentPane()).setBorder(new EmptyBorder(20, 40, 20, 0));
 
 		setVisible(true);
 	}
