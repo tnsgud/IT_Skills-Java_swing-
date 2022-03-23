@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 import javax.swing.JButton;
@@ -89,27 +90,31 @@ public class Jobs extends BaseFrame {
 	}
 
 	private void search() {
-		String c1 = "", c2 = "", c3 = "";
+		String c1 = "", c2 = "", c3 = "", c4 = "";
 		if (com[0].getSelectedIndex() != 0) {
-			c1 = "and c_address like '" + com[0].getSelectedItem() + "%' ";
+			c1 = " and c_address like '" + com[0].getSelectedItem() + "%' ";
 		}
 
 		if (com[1].getSelectedIndex() != 0) {
-			c2 = "and e_graduate = " + com[1].getSelectedIndex() + " ";
+			c2 = " and e_graduate = " + com[1].getSelectedIndex() + " ";
 		}
 
 		if (com[2].getSelectedIndex() != 0) {
 			c3 = "and e_gender=" + com[2].getSelectedIndex() + " ";
 		}
 
+		if (txt[1].getText().isEmpty()) {
+			c4 = " and";
+		}
+
 		var rs = rs(
 				"select c_name, e_title, concat((select count(*) from applicant a where a.e_no=e.e_no and (a_apply=0 or a_apply=1)), '/', e.e_people), format(e_pay, '#,##0'), c_category, c_address, e_graduate, e_gender, e.e_no from employment e, company c, applicant a where e.c_no = c.c_no and a.e_no=e.e_no and e_title like ? and (select count(*) from applicant a where a.e_no=e.e_no and (a_apply=0 or a_apply=1)) < e.e_people "
-						+ c1 + c2 + c3 + "group by c.c_no",
+						+ c1 + c2 + c3 + c4 + "group by c.c_no",
 				"%" + txt[0].getText() + "%");
 		m.setRowCount(0);
 		t.setRowHeight(80);
 		for (var r : rs) {
-			r.set(0, new JLabel(img("기업/"+r.get(0)+"2.jpg", 80, 80)));
+			r.set(0, new JLabel(img("기업/" + r.get(0) + "2.jpg", 80, 80)));
 			r.set(4, String.join(",",
 					Stream.of(r.get(4).toString().split(",")).map(a -> category[toInt(a)]).toArray(String[]::new)));
 			r.set(6, graduate[toInt(r.get(6))]);
