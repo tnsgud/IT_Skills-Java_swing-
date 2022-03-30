@@ -9,8 +9,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.stream.Stream;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.Timer;
@@ -25,7 +27,7 @@ public class Quiz extends BaseFrame {
 	Timer timer;
 
 	public Quiz() {
-		super("Q" + qno, 500, 500);
+		super("Q" + qno, 500, 410);
 
 		add(n = new JPanel(new BorderLayout()), "North");
 		add(new JLabel() {
@@ -48,7 +50,9 @@ public class Quiz extends BaseFrame {
 		});
 		add(s = new JPanel(), "South");
 
-		n.add(lblH("퀴즈번호 : " + qno, 0, 0, 20));
+		var l1 = lblH("퀴즈번호 : " + qno, 0, 0, 20);
+		
+		n.add(l1);
 		n.add(ns = new JPanel(new BorderLayout()), "South");
 		ns.add(chancelbl = lbl("기회 : " + chance + "번", 2), "West");
 		ns.add(timelbl = lbl("남은 시간 : " + time.format(DateTimeFormatter.ofPattern("mm:ss")), 4), "East");
@@ -62,7 +66,6 @@ public class Quiz extends BaseFrame {
 				iMsg("Q" + qno + "번 문제를 통과하였습니다.");
 				execute("update reservation set r_attend=1 where r_no=?", rno);
 				timer.stop();
-				setVisible(false);
 				new GameList();
 			} else {
 				chance--;
@@ -75,7 +78,8 @@ public class Quiz extends BaseFrame {
 			}
 		});
 
-		s.add(lbl("답 입력 :", 0));
+		var l2 =lbl("답 입력 :", 0);
+		s.add(l2);
 		s.add(txt);
 		s.add(b);
 
@@ -100,17 +104,31 @@ public class Quiz extends BaseFrame {
 
 		addWindowListener(new WindowAdapter() {
 			@Override
-			public void windowClosing(WindowEvent e) {
-
+			public void windowClosed(WindowEvent e) {
 				timer.stop();
 			}
+			@Override
+			public void windowClosing(WindowEvent e) {
+				if(time.isAfter(LocalTime.of(0, 0, 0)) || chance > 0) {
+					var n = JOptionPane.showConfirmDialog(null, "게임 도중 나갈 시 게임은 다시 진행할 수 없습니다.\n나가시겠습니까?", "경고",
+							JOptionPane.YES_NO_OPTION);
+					if (n == JOptionPane.YES_OPTION) {
+						execute("update reservation set r_attend=1 where r_no=?", rno);
+						setDefaultCloseOperation(2);
+					} else {
+						setDefaultCloseOperation(0);
+					}
+				}
+			}
 		});
-
+		
+		Stream.of(n, ns, s).forEach(n->n.setBackground(Color.black));
+		Stream.of(l1, l2, chancelbl, timelbl).forEach(i->i.setForeground(Color.white));
+		
 		setVisible(true);
 	}
 
 	public static void main(String[] args) {
-		qno = 1;
-		new Quiz();
+		new GameList();
 	}
 }
