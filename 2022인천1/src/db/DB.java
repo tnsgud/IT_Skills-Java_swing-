@@ -1,29 +1,51 @@
 package db;
 
+import java.awt.AWTException;
+import java.awt.SystemTray;
+import java.awt.Toolkit;
+import java.awt.TrayIcon;
+import java.awt.TrayIcon.MessageType;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.stream.Stream;
 
-public class DB {
+import tool.Tool;
+
+public class DB implements Tool {
 	public static Connection con;
 	public static Statement stmt;
 	public static PreparedStatement ps;
 
-	String cascade = " on delete cascade on update cascade";
+	static SystemTray tray = SystemTray.getSystemTray();
+	static TrayIcon icon = new TrayIcon(Toolkit.getDefaultToolkit().getImage("./datafiles/covid.png"));
 
 	static {
+		icon.setImageAutoSize(true);
+		try {
+			tray.add(icon);
+		} catch (AWTException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		try {
 			con = DriverManager.getConnection(
 					"jdbc:mysql://localhost?serverTimezone=UTC&allowPublicKeyRetreival=true&allowLoadLocalInfile=true",
 					"root", "1234");
 			stmt = con.createStatement();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			eMsg();
 		}
+	}
+
+	static void eMsg() {
+		icon.displayMessage("DB 셋팅", "DB 셋팅 성공", MessageType.ERROR);
+		System.exit(0);
 	}
 
 	void execute(String sql) {
@@ -31,15 +53,12 @@ public class DB {
 			System.out.println(sql);
 			stmt.execute(sql);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			eMsg();
+			System.exit(0);
 		}
 	}
 
 	void createT(String t, String c) {
-		c = String.join(",",
-				Stream.of(c.split(",")).map(a -> a + (a.contains("foreign") ? cascade : "")).toArray(String[]::new));
-
 		execute("create table " + t + "(" + c + ")");
 		execute("load data local infile './datafiles/" + t + ".txt' into table " + t + " ignore 1 lines");
 	}
@@ -53,19 +72,28 @@ public class DB {
 		execute("set global local_infile=1");
 		execute("use covid");
 
-		createT("vaccine", "no int primary key not null auto_increment, name varchar(20), prince int");
+		createT("vaccine", "no int primary key not null auto_increment, name varchar(20), price int");
 		createT("building",
 				"no int primary key not null auto_increment, name varchar(20), open time, close time, info text, type int ,x int,y int, img longblob");
 		createT("user",
 				"no int primary key not null auto_increment, name varchar(20), id varchar(10), pw varchar(20), phone varchar(30), resident varchar(15), building int, foreign key(building) references building(no)");
 		createT("connection",
-				"node1 int, node2 int, foreign key(node1) references building(no), foreign key(node2) references building(no)");
+				"node1 int, node2 int, name varchar(10), foreign key(node1) references building(no), foreign key(node2) references building(no)");
 		createT("purchase",
-				"no int primary key not null auto_increment, user int, `when` datetime, building int, price int, vaccine int, foreign key(user) references user(no)");
-		createT("infection",
-				"no int primary key not null auto_increment, building varchar(10), date datetime, gender varchar(1), age int");
+				"no int primary key not null auto_increment, user int, date datetime, building int, vaccine int, shot int, foreign key(user) references user(no)");
 		createT("rate",
-				"no int primary key not null auto_increment, building int, rate int, user int, review text, foreign key(building) references building(no), foreign key(user) references user(no)");
+				"no int primary key not null auto_increment, rate int, building int, user int, review text, foreign key(building) references building(no), foreign key(user) references user(no)");
+
+		for (var rs : rs("select no from building where type = 0 or type = 1")) {
+			try {
+				execute("update building set img = ? where no=?",
+						new FileInputStream(new File("./datafiles/건물사진/" + rs.get(0) + ".jpg")), rs.get(0));
+			} catch (FileNotFoundException e) {
+				eMsg();
+			}
+		}
+
+		icon.displayMessage("DB 셋팅", "DB 셋팅 성공", MessageType.INFO);
 	}
 
 	public static void main(String[] args) {

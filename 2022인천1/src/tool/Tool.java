@@ -2,6 +2,7 @@ package tool;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -14,8 +15,11 @@ import java.util.HashMap;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import db.DB;
@@ -28,6 +32,7 @@ public interface Tool {
 			for (int i = 0; i < obj.length; i++) {
 				DB.ps.setObject(i + 1, obj[i]);
 			}
+			System.out.println(DB.ps);
 			var rs = DB.ps.executeQuery();
 			while (rs.next()) {
 				var row = new ArrayList<>();
@@ -71,6 +76,7 @@ public interface Tool {
 			for (int i = 0; i < obj.length; i++) {
 				DB.ps.setObject(i + 1, obj[i]);
 			}
+			System.out.println(DB.ps);
 			DB.ps.execute();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -86,6 +92,23 @@ public interface Tool {
 			}
 		};
 	}
+	
+	default JTable table(DefaultTableModel m) {
+		var t = new JTable(m);
+		var d = new DefaultTableCellRenderer();
+		
+		t.getTableHeader().setReorderingAllowed(false);
+		t.getTableHeader().setResizingAllowed(false);
+
+		t.setSelectionMode(0);
+		d.setHorizontalAlignment(0);
+		
+		for (int i = 0; i < t.getColumnCount(); i++) {
+			t.getColumnModel().getColumn(i).setCellRenderer(d);
+		}
+		
+		return t;
+	}
 
 	default void eMsg(String msg) {
 		JOptionPane.showMessageDialog(null, msg, "경고", JOptionPane.ERROR_MESSAGE);
@@ -95,13 +118,17 @@ public interface Tool {
 		JOptionPane.showMessageDialog(null, msg, "정보", JOptionPane.INFORMATION_MESSAGE);
 	}
 
+	default ImageIcon img(Object p, int w, int h) {
+		return new ImageIcon(Toolkit.getDefaultToolkit().createImage((byte[])p).getScaledInstance(w, h, Image.SCALE_SMOOTH));
+	}
+	
 	default ImageIcon img(String p, int w, int h) {
 		return new ImageIcon(
-				Toolkit.getDefaultToolkit().getImage("./datafiles/" + p).getScaledInstance(w, h, Image.SCALE_SMOOTH));
+				Toolkit.getDefaultToolkit().getImage(p).getScaledInstance(w, h, Image.SCALE_SMOOTH));
 	}
 
 	default ImageIcon img(String p) {
-		return new ImageIcon(Toolkit.getDefaultToolkit().getImage("./datafiles/" + p));
+		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(p));
 	}
 
 	default JLabel lbl(String c, int a, int st, int sz) {
@@ -118,8 +145,9 @@ public interface Tool {
 		return lbl(c, a, 0, 12);
 	}
 
-	default JLabel hyplbl(String c, int a, int st, int sz, Runnable r) {
-		var l = lbl("<html><u>" + c, a, st, sz);
+	default JLabel hyplbl(String c, int a, int st, int sz, Color col, Runnable r) {
+		var l = lbl(c, a, st, sz);
+		l.setForeground(col);
 		l.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -140,6 +168,11 @@ public interface Tool {
 			}
 		});
 		return l;
+	}
+
+	default <T extends JComponent> T sz(T c, int w, int h) {
+		c.setPreferredSize(new Dimension(w, h));
+		return c;
 	}
 
 	default String getOne(String sql, Object... obj) {
