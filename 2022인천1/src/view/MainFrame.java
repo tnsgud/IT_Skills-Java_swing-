@@ -2,7 +2,9 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Toolkit;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -18,7 +20,7 @@ public class MainFrame extends JFrame implements Tool {
 		setDefaultCloseOperation(3);
 		setLocationRelativeTo(null);
 		((JPanel) getContentPane()).setLayout(null);
-		setIconImage(img("Covid.png").getImage());
+		setIconImage(Toolkit.getDefaultToolkit().getImage("./datafiles/map.jpg"));
 		
 		var de = UIManager.getLookAndFeelDefaults();
 		for (var prop : de.keySet()) {

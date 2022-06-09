@@ -5,11 +5,13 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
@@ -33,7 +35,7 @@ public class MapEdit extends BaseDialog {
 		setTitle("맵 수정");
 		setResizable(true);
 
-		add(scr = new JScrollPane(map = new JLabel(img("./datafiles/map.jpg")) {
+		add(scr = new JScrollPane(map = new JLabel(new ImageIcon(Toolkit.getDefaultToolkit().getImage("./datafiles/map.jpg"))) {
 			@Override
 			protected void paintComponent(Graphics g) {
 				super.paintComponent(g);

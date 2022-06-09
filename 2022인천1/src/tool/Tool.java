@@ -127,10 +127,6 @@ public interface Tool {
 				Toolkit.getDefaultToolkit().getImage(p).getScaledInstance(w, h, Image.SCALE_SMOOTH));
 	}
 
-	default ImageIcon img(String p) {
-		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(p));
-	}
-
 	default JLabel lbl(String c, int a, int st, int sz) {
 		var l = new JLabel(c, a);
 		l.setFont(new Font("맑은 고딕", st, sz));
