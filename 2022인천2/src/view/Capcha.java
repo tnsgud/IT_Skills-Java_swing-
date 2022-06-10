@@ -156,12 +156,11 @@ public class Capcha extends BaseDialog {
 			var txt = new String(data, "utf-8");
 			var s = txt.indexOf("<x:xmpmeta");
 			var e = txt.indexOf("</x:xmpmeta>");
-			var xml = txt.substring(s, e + 12).toString();
-			var is = new ByteArrayInputStream(xml.getBytes());
+			var xml = txt.substring(s, e+12).toString();
+			var is = new ByteArrayInputStream(xml.getBytes("utf-8"));
 			var doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
-			var nodeList = ((Element) doc.getDocumentElement().getElementsByTagName("dc:subject").item(0))
-					.getElementsByTagName("rdf:li");
-
+			var nodeList = ((Element) doc.getDocumentElement().getElementsByTagName("dc:subject").item(0)).getElementsByTagName("rdf:li");
+			
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				var key = nodeList.item(i).getTextContent();
 
