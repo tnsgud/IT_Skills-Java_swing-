@@ -35,33 +35,34 @@ public class MapEdit extends BaseDialog {
 		setTitle("맵 수정");
 		setResizable(true);
 
-		add(scr = new JScrollPane(map = new JLabel(new ImageIcon(Toolkit.getDefaultToolkit().getImage("./datafiles/map.jpg"))) {
-			@Override
-			protected void paintComponent(Graphics g) {
-				super.paintComponent(g);
-				var g2 = (Graphics2D) g;
+		add(scr = new JScrollPane(
+				map = new JLabel(new ImageIcon(Toolkit.getDefaultToolkit().getImage("./datafiles/map.jpg"))) {
+					@Override
+					protected void paintComponent(Graphics g) {
+						super.paintComponent(g);
+						var g2 = (Graphics2D) g;
 
-				g2.setStroke(new BasicStroke(3f));
-				g2.setColor(Color.orange);
+						g2.setStroke(new BasicStroke(3f));
+						g2.setColor(Color.orange);
 
-				for (var key : connections.keySet()) {
-					var p1 = points.get(key).getLocation();
-					for (var k : connections.get(key)) {
-						var p2 = points.get(k).getLocation();
+						for (var key : connections.keySet()) {
+							var p1 = points.get(key).getLocation();
+							for (var k : connections.get(key)) {
+								var p2 = points.get(k).getLocation();
 
-						g2.drawLine(p1.x + 7, p1.y + 7, p2.x + 7, p2.y + 7);
+								g2.drawLine(p1.x + 7, p1.y + 7, p2.x + 7, p2.y + 7);
+							}
+						}
+
+						if (first != null && second != null) {
+							var p1 = first.getLocation();
+							var p2 = second.getLocation();
+
+							g2.setColor(Color.green);
+							g2.drawLine(p1.x + 7, p1.y + 7, p2.x + 7, p2.y + 7);
+						}
 					}
-				}
-
-				if (first != null && second != null) {
-					var p1 = first.getLocation();
-					var p2 = second.getLocation();
-
-					g2.setColor(Color.green);
-					g2.drawLine(p1.x + 7, p1.y + 7, p2.x + 7, p2.y + 7);
-				}
-			}
-		}));
+				}));
 
 		for (var rs : rs("select no, x, y, type from building")) {
 			var r = new JRadioButton();
@@ -190,7 +191,7 @@ public class MapEdit extends BaseDialog {
 			if (!connections.containsKey(no2)) {
 				connections.put(no2, new HashSet<>());
 			}
-			
+
 			points.get(no2).setSelected(true);
 
 			connections.get(no).add(no2);
