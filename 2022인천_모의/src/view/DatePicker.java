@@ -18,7 +18,7 @@ import tool.Tool;
 
 public class DatePicker extends JPopupMenu implements Tool {
 	JTextField txt;
-	LocalDate date, today = LocalDate.now();
+	LocalDate now = LocalDate.now(), today = LocalDate.now();
 
 	JLabel datelbl, prev, next;
 
@@ -28,9 +28,8 @@ public class DatePicker extends JPopupMenu implements Tool {
 
 	boolean isAfter;
 
-	public DatePicker(JTextField txt, LocalDate date, boolean isAfter) {
+	public DatePicker(JTextField txt, boolean isAfter) {
 		this.txt = txt;
-		this.date = date;
 		this.isAfter = isAfter;
 
 		sz(this, 300, 300);
@@ -64,7 +63,7 @@ public class DatePicker extends JPopupMenu implements Tool {
 			c.add(btn[i] = btn("", a -> {
 				txt.setText(year + "-" + String.format("%02d", month) + "-"
 						+ String.format("%02d", toInt(btn[idx].getText())));
-				
+
 				setVisible(false);
 			}));
 			btn[i].setForeground(i % 7 == 0 ? Color.red : i % 7 == 6 ? Color.red : Color.black);
@@ -100,7 +99,7 @@ public class DatePicker extends JPopupMenu implements Tool {
 
 		for (int i = 0; i < btn.length; i++) {
 			var tmp = sdate.plusDays(i - sday);
-			btn[i].setEnabled(isAfter ? date.isAfter(tmp) : date.isBefore(tmp));
+			btn[i].setEnabled(isAfter ? now.isAfter(tmp) : now.isBefore(tmp));
 			btn[i].setText(tmp.getDayOfMonth() + "");
 			btn[i].setVisible(tmp.getMonthValue() == today.getMonthValue());
 		}

@@ -30,7 +30,7 @@ public class MainPage extends BasePage {
 		var list = new ArrayList<>();
 		var max = toInt(getOne(
 				"select count(*), month(date) from purchase where month(date) >= 1 and month(date) <= month('2022-08-31') group by month(date) order by count(*) desc"));
-		for (var rs : rs(
+		for (var rs : getRows(
 				"select count(*), month(date) from purchase where month(date) >= 1 and month(date) <= month('2022-08-31') group by month(date) order by count(*)")) {
 			list.add(rs.get(0) + ", " + rs.get(1));
 		}

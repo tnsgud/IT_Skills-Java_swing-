@@ -35,7 +35,7 @@ public class InfoDialog extends BaseDialog {
 	CardLayout card;
 	JTextArea area;
 
-	int uno = toInt(BasePage.user.get("no"));
+	int uno = toInt(BasePage.user.get(0));
 
 	public InfoDialog(ArrayList<Object> building) {
 		super(400, 400);
@@ -55,7 +55,7 @@ public class InfoDialog extends BaseDialog {
 	private void infoUI() {
 		info.removeAll();
 
-		var t = rs("select * from rate where user =? and building =?", uno, building.get(0));
+		var t = getRows("select * from rate where user =? and building =?", uno, building.get(0));
 		var rate = t.isEmpty() ? new ArrayList<>() : t.get(0);
 
 		info.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -150,7 +150,7 @@ public class InfoDialog extends BaseDialog {
 		cs.add(l1);
 		cs.add(l2);
 
-		for (var rs : rs("select r.*, u.name from rate r, user u where r.user = u.no and r.building=?",
+		for (var rs : getRows("select r.*, u.name from rate r, user u where r.user = u.no and r.building=?",
 				building.get(0))) {
 			var tmep = new JPanel(new GridLayout(0, 1));
 			var tmepn = new JPanel(new FlowLayout(0));
@@ -204,7 +204,7 @@ public class InfoDialog extends BaseDialog {
 			c.add(lbl(cap[i], 2, 20));
 			c.add(txt[i] = new JTextField(15));
 			txt[i].setText(
-					getOne("select " + (i == 0 ? "name" : "phone") + " from user where no=?", BasePage.user.get("no")));
+					getOne("select " + (i == 0 ? "name" : "phone") + " from user where no=?", BasePage.user.get(0)));
 			txt[i].setEnabled(false);
 		}
 

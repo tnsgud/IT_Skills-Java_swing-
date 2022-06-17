@@ -40,7 +40,7 @@ public class SignPage extends BasePage {
 			}
 		}
 
-		c.add(hyplbl("이미 계정이 있으십니까?", 2, 15, Color.orange, () -> mf.swapPage(new LoginPage())));
+		c.add(hyplbl("이미 계정이 있으십니까?", 2, 15, Color.orange, (e) -> mf.swapPage(new LoginPage())));
 
 		c.add(btn("회원가입", a -> {
 			for (var t : txt) {
@@ -85,7 +85,7 @@ public class SignPage extends BasePage {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				if (e.getButton() == 1) {
-					new DatePicker(txt[5], LocalDate.now(), false).show(txt[5], 0, txt[5].getHeight());
+					new DatePicker(txt[5], false).show(txt[5], 0, txt[5].getHeight());
 				}
 			}
 		});

@@ -75,7 +75,7 @@ public class LoginPage extends BasePage {
 			return;
 		}
 
-		var rs = map("select * from user where id=? and pw=?", txt[0].getText(), txt[1].getText());
+		var rs = getRows("select * from user where id=? and pw=?", txt[0].getText(), txt[1].getText());
 		if (rs.isEmpty()) {
 			eMsg("존재하는 회원이 없습니다.");
 			return;

@@ -84,7 +84,7 @@ public class DB implements Tool {
 		createT("rate",
 				"no int primary key not null auto_increment, rate int, building int, user int, review text, foreign key(building) references building(no), foreign key(user) references user(no)");
 
-		for (var rs : rs("select no from building where type = 0 or type = 1")) {
+		for (var rs : getRows("select no from building where type = 0 or type = 1")) {
 			try {
 				execute("update building set img = ? where no=?",
 						new FileInputStream(new File("./datafiles/건물사진/" + rs.get(0) + ".jpg")), rs.get(0));

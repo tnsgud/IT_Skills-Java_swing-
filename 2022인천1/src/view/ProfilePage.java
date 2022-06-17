@@ -27,7 +27,7 @@ public class ProfilePage extends BasePage {
 	JComboBox<String> com;
 
 	public ProfilePage() {
-		user = map("select * from user where no=?", 1).get(0);
+		user = getRows("select * from user where no=?", 1).get(0);
 		ui();
 	}
 
@@ -41,18 +41,20 @@ public class ProfilePage extends BasePage {
 
 		{
 			w.add(lbl("Profile", 0, 30));
-			var rs = rs("select u.id,u.name,u.phone,u.resident,b.name from building b, user u where b.no = u.building and u.no=?", user.get("no")).get(0);
+			var rs = getRows(
+					"select u.id,u.name,u.phone,u.resident,b.name from building b, user u where b.no = u.building and u.no=?",
+					user.get(0)).get(0);
 			var cap = "아이디,이름,전화번호,생년월일,거주기".split(",");
 			for (int i = 0; i < cap.length; i++) {
 				w.add(lbl(cap[i], 2, 15));
 
 				if (i == 4) {
-					w.add(com = new JComboBox<String>(rs("select name from building where type=2").stream()
+					w.add(com = new JComboBox<String>(getRows("select name from building where type=2").stream()
 							.flatMap(a -> a.stream()).toArray(String[]::new)));
-					com.setSelectedItem(rs.get(i)+"");
+					com.setSelectedItem(rs.get(i) + "");
 				} else {
 					w.add(txt[i] = new JTextField());
-					txt[i].setText(rs.get(i)+"");
+					txt[i].setText(rs.get(i) + "");
 					txt[i].setEnabled(i != 3);
 				}
 			}
@@ -71,14 +73,14 @@ public class ProfilePage extends BasePage {
 							eMsg("전화번호를 확인해주세요.");
 							return;
 						}
-						
+
 						iMsg("수정이 완료되었습니다.");
 						var row = new ArrayList<>();
 						for (int i = 0; i < 3; i++) {
 							row.add(txt[i].getText());
 						}
 						row.add(com.getSelectedIndex() + 1);
-						row.add(user.get("no"));
+						row.add(user.get(0));
 						execute("update user set id=?,name=?,phone=?,building=? where no=?", row.toArray());
 					} else {
 						mf.swap(new MainPage());
@@ -95,9 +97,9 @@ public class ProfilePage extends BasePage {
 			c.add(new JScrollPane(t1));
 			c.add(new JScrollPane(t2), "South");
 
-			for (var rs : rs(
+			for (var rs : getRows(
 					"select p.no, v.name, b.name, format(v.price, '#,##0') from purchase p, vaccine v, building b where p.vaccine = v.no and p.building = b.no and user=?",
-					user.get("no"))) {
+					user.get(0))) {
 				var row = new ArrayList<>();
 				row.add(rs.get(0) + "차 접종");
 				row.add(rs.get(1));
@@ -107,9 +109,9 @@ public class ProfilePage extends BasePage {
 				m1.addRow(row.toArray());
 			}
 
-			for (var rs : rs(
+			for (var rs : getRows(
 					"select b.name, r.review, r.rate from rate r, building b where r.building = b.no and r.user=?",
-					user.get("no"))) {
+					user.get(0))) {
 				var row = new ArrayList<>();
 				row.add(rs.get(0));
 				row.add(rs.get(1).toString());

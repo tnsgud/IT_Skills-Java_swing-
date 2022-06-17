@@ -20,6 +20,10 @@ import javax.swing.table.DefaultTableModel;
 
 public class ProfilePage extends BasePage {
 
+	public static void main(String[] args) {
+		mf.swapPage(new ProfilePage());
+		mf.setVisible(true);
+	}
 	JTextField txt[] = new JTextField[4];
 	JComboBox<String> com = new JComboBox<String>(
 			getRows("select name from building where type = 2").stream().flatMap(a -> a.stream()).toArray(String[]::new));
@@ -34,7 +38,7 @@ public class ProfilePage extends BasePage {
 
 		add(w = new JPanel(new GridLayout(0, 1, 5, 5)));
 		add(c = new JPanel(new BorderLayout(5, 5)), "East");
-		add(hyplbl("메인으로", 2, 15, Color.orange, () -> mf.swapPage(new MainPage())), "South");
+		add(hyplbl("메인으로", 2, 15, Color.orange, (e) -> mf.swapPage(new MainPage())), "South");
 
 		w.add(lbl("Profile", 0, 30));
 

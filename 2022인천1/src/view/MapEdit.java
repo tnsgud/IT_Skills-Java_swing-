@@ -64,7 +64,7 @@ public class MapEdit extends BaseDialog {
 					}
 				}));
 
-		for (var rs : rs("select no, x, y, type from building")) {
+		for (var rs : getRows("select no, x, y, type from building")) {
 			var r = new JRadioButton();
 			r.setName(rs.get(0) + "");
 			r.setOpaque(false);
@@ -130,7 +130,7 @@ public class MapEdit extends BaseDialog {
 			});
 		}
 
-		for (var rs : rs(
+		for (var rs : getRows(
 				"select node1, node2 from connection c, building b1, building b2 where c.node1=b1.no and c.node2=b2.no and b1.type = 3 and b2.type = 3")) {
 			connections.get(rs.get(0).toString()).add(rs.get(1).toString());
 			connections.get(rs.get(1).toString()).add(rs.get(0).toString());
@@ -185,7 +185,7 @@ public class MapEdit extends BaseDialog {
 
 		connections.put(no, new HashSet<>());
 
-		for (var rs : rs("select * from connection where node1=? or node2=?", no, no)) {
+		for (var rs : getRows("select * from connection where node1=? or node2=?", no, no)) {
 			var no2 = (rs.get(0).toString().equals(no) ? rs.get(1) : rs.get(0)) + "";
 
 			if (!connections.containsKey(no2)) {

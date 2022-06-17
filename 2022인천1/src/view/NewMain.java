@@ -52,7 +52,8 @@ public class NewMain extends BasePage {
 			nc.add(lbl("<html><font color='white'>" + (i + 1) + "차 접종", 0, 20));
 
 			var tmp = sz(new JPanel(new BorderLayout(20, 10)), 1, 100);
-			var rs = rs("select count(*) from purchase where shot = " + (i + 1) + " and date(date) <= '2022-08-31'");
+			var rs = getRows(
+					"select count(*) from purchase where shot = " + (i + 1) + " and date(date) <= '2022-08-31'");
 
 			tmp.add(lbl(
 					"<html><font color='orange'>"
@@ -76,7 +77,7 @@ public class NewMain extends BasePage {
 		max = toInt(getOne(
 				"select count(*), month(date) from purchase where month(date) >= 1 and month(date) <= month('2022-08-31') group by month(date) order by count(*) desc"));
 
-		for (var rs : rs(
+		for (var rs : getRows(
 				"select count(*), month(date) from purchase where month(date) >= 1 and month(date) <= month('2022-08-31') group by month(date) order by month(date)")) {
 			list.add(rs.get(0)+", "+rs.get(1));
 		}

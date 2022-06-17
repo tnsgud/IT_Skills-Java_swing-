@@ -41,7 +41,7 @@ public class SignPage extends BasePage {
 
 				c.add(tmp);
 			} else {
-				c.add(com = new JComboBox<>(rs("select name from building where type=2").stream()
+				c.add(com = new JComboBox<>(getRows("select name from building where type=2").stream()
 						.flatMap(a -> a.stream()).toArray(String[]::new)));
 			}
 		}

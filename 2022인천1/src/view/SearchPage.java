@@ -87,17 +87,17 @@ public class SearchPage extends BasePage {
 
 	public SearchPage() {
 		super();
-		user = map("select * from user where no=?", 1).get(0);
+		user = getRows("select * from user where no=?", 1).get(0);
 		datainit();
 		ui();
 	}
 
 	void datainit() {
 		adjList = new ArrayList<ArrayList<Node>>();
-		for (int i = 0; i < toInt(rs("SELECT count(*) FROM building").get(0).get(0)) + 1; i++) {
+		for (int i = 0; i < toInt(getRows("SELECT count(*) FROM building").get(0).get(0)) + 1; i++) {
 			adjList.add(new ArrayList<Node>());
 		}
-		var rs = rs(
+		var rs = getRows(
 				"select c.node1, c.node2, b1.x, b1.y, b2.x, b2.y, c.name from connection c, building b1, building b2 where c.node1 = b1.no and c.node2 = b2.no");
 		for (var r : rs) {
 			int x1 = toInt(r.get(2));
@@ -110,7 +110,7 @@ public class SearchPage extends BasePage {
 			adjList.get(toInt(r.get(1))).add(new Node(toInt(r.get(0)), cost, r.get(6) + ""));
 		}
 
-		for (var r : rs(
+		for (var r : getRows(
 				"select b.*, ifnull((select round(avg(rate),0) from rate where building = b.no),0) from building b where type <> 3")) {
 
 			var x = toInt(r.get(6));
@@ -139,7 +139,7 @@ public class SearchPage extends BasePage {
 		g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
 
-		var pos = rs("select no, name, type, x, y from building where type <> 3");
+		var pos = getRows("select no, name, type, x, y from building where type <> 3");
 		var d = "진료소,병원,주거지".split(",");
 		var itr = pos.iterator();
 
@@ -164,8 +164,8 @@ public class SearchPage extends BasePage {
 					g2.setColor(Color.MAGENTA);
 				}
 
-				var n1pos = rs("select x, y from building where no = ?", n1);
-				var n2pos = rs("select x, y from building where no = ?", n2);
+				var n1pos = getRows("select x, y from building where no = ?", n1);
+				var n2pos = getRows("select x, y from building where no = ?", n2);
 				int x1 = toInt(n1pos.get(0).get(0));
 				int y1 = toInt(n1pos.get(0).get(1));
 				int x2 = toInt(n2pos.get(0).get(0));
@@ -563,8 +563,8 @@ public class SearchPage extends BasePage {
 			}), "East");
 
 			pathPanelNS.add(btn("집을 출발지로", a -> {
-				var rs = rs("select no, name from building where no = (select building from user where no = ?);",
-						user.get("no"));
+				var rs = getRows("select no, name from building where no = (select building from user where no = ?);",
+						user.get(0));
 				dep.setText(rs.get(0).get(1) + "");
 				dep.setName(rs.get(0).get(0) + "");
 				pathFind();
@@ -618,7 +618,7 @@ public class SearchPage extends BasePage {
 
 			((JToggleButton) ncPanel.getComponents()[0]).setSelected(true);
 
-			var result = rs(
+			var result = getRows(
 					"select b.*, ifnull(round(avg(r.rate),1),0) from building b left join rate r on b.no = r.building where name like '%"
 							+ searchTextField.getText().trim() + "%' or info like '%" + searchTextField.getText().trim()
 							+ "%' group by b.no");

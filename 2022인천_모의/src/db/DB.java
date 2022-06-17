@@ -83,7 +83,7 @@ public class DB implements Tool {
 		createT("purchase",
 				"no int primary key not null auto_increment, user int, date datetime, building int, vaccine int, shot int, foreign key(user) references user(no), foreign key(building) references building(no), foreign key(vaccine) references vaccine(no)");
 
-		for (var rs : getRows("select * from building where type < 2")) {
+		for (var rs : getRows("select * from building where type < 3")) {
 			try {
 				execute("update building set img=? where no=?",
 						new FileInputStream("./datafiles/건물사진/" + rs.get(0) + ".jpg"), rs.get(0));

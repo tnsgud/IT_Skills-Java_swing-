@@ -151,7 +151,7 @@ public class SearchPage extends BasePage {
 
 			int x = -1, y = -1;
 
-			var lbl = hyplbl(text + "" + tmp.get(i)[0] + " 총 " + tmp.get(i)[1] + "m", 0, 13, Color.orange, () -> {
+			var lbl = hyplbl(text + "" + tmp.get(i)[0] + " 총 " + tmp.get(i)[1] + "m", 0, 13, Color.orange, (e) -> {
 				Point2D labelCenteringAffPoint = null, mapCenterAffPoint = null;
 
 				SearchPage.zoom = 1;
@@ -165,9 +165,9 @@ public class SearchPage extends BasePage {
 							null);
 					mapCenterAffPoint = SearchPage.aff.inverseTransform(new Point(c.getWidth() / 2, c.getHeight() / 2),
 							null);
-				} catch (NoninvertibleTransformException e) {
+				} catch (NoninvertibleTransformException e1) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					e1.printStackTrace();
 				}
 
 				SearchPage.affTargetX = labelCenteringAffPoint.getX();

@@ -2,6 +2,7 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.JPanel;
@@ -10,8 +11,8 @@ import tool.Tool;
 
 public class BasePage extends JPanel implements Tool {
 	public static MainFrame mf = new MainFrame();
-	public static HashMap<String, Object> user;
-	
+	public static ArrayList<Object> user;
+
 	public JPanel n, w, c, e, s;
 	public JPanel nn, nw, nc, ne, ns;
 	public JPanel wn, ww, wc, we, ws;

@@ -40,7 +40,7 @@ public class LoginPage extends BasePage {
 		}
 
 		c.add(chk = new ChkPanel());
-		c.add(hyplbl("처음이십니까?", 2, 15, Color.orange, () -> mf.swapPage(new SignPage())));
+		c.add(hyplbl("처음이십니까?", 2, 15, Color.orange, (e) -> mf.swapPage(new SignPage())));
 		c.add(btn("로그인", a -> {
 			for (var t : txt) {
 				if (t.getText().isEmpty()) {

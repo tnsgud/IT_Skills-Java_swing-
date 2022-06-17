@@ -67,7 +67,7 @@ public interface Tool {
 
 	default JLabel lbl(String c, int a, int st, int sz) {
 		var l = new JLabel(c, a);
-		l.setFont(new Font("", st, sz));
+		l.setFont(new Font("맑은 고딕", st, sz));
 		return l;
 	}
 
@@ -79,14 +79,18 @@ public interface Tool {
 		return lbl(c, a, 0, 12);
 	}
 
-	default JLabel hyplbl(String c, int a, int sz, Color col, Runnable r) {
+	interface invoker {
+		void run(MouseEvent e);
+	}
+	
+	default JLabel hyplbl(String c, int a, int sz, Color col, invoker i) {
 		var l = lbl(c, a, 0, sz);
 		l.setForeground(col);
 		l.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				if (e.getButton() == 1) {
-					r.run();
+					i.run(e);
 				}
 			}
 
@@ -141,6 +145,11 @@ public interface Tool {
 
 	default DefaultTableModel model(String col[]) {
 		return new DefaultTableModel(null, col) {
+			@Override
+			public Class<?> getColumnClass(int columnIndex) {
+				return JComponent.class;
+			}
+			
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				return false;
