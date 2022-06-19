@@ -9,6 +9,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -96,7 +97,7 @@ public interface Tool {
 				if (e.getButton() == 1)
 					r.run();
 			}
-			
+
 			@Override
 			public void mouseExited(MouseEvent e) {
 				l.setText(c);
@@ -114,7 +115,7 @@ public interface Tool {
 		return b;
 	}
 
-	default int toInt(Object o) {
+   default int toInt(Object o) {
 		var s = o.toString().replaceAll("[^-|^0-9]", "");
 		return s.isEmpty() ? -1 : Integer.parseInt(s);
 	}

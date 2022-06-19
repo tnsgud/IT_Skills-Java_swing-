@@ -64,15 +64,15 @@ public class Capcha extends BaseDialog {
 
 		for (var cap : "확인,새로고침".split(",")) {
 			s.add(btn(cap, a -> {
-				if(cap.equals("확인")) {
-					if(!(selects.containsAll(answers) && answers.containsAll(selects))) {
+				if (cap.equals("확인")) {
+					if (!(selects.containsAll(answers) && answers.containsAll(selects))) {
 						eMsg("틀렸습니다.");
 						shuffle();
 						return;
 					}
-					
+
 					dispose();
-				}else {
+				} else {
 					shuffle();
 				}
 			}));
@@ -83,13 +83,13 @@ public class Capcha extends BaseDialog {
 				shuffle();
 			}
 		});
-		
+
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent e) {
 				chk.isFocus = false;
 				chk.isCheck = true;
-				
+
 				chk.repaint();
 			}
 		});
@@ -97,7 +97,7 @@ public class Capcha extends BaseDialog {
 		n.setBackground(Color.blue);
 		((JPanel) getContentPane())
 				.setBorder(new CompoundBorder(new LineBorder(Color.black), new EmptyBorder(5, 5, 5, 5)));
-		
+
 		shuffle();
 	}
 
@@ -156,22 +156,29 @@ public class Capcha extends BaseDialog {
 			var txt = new String(data, "utf-8");
 			var s = txt.indexOf("<x:xmpmeta");
 			var e = txt.indexOf("</x:xmpmeta>");
-			var xml = txt.substring(s, e+12).toString();
-			var is = new ByteArrayInputStream(xml.getBytes("utf-8"));
+			var is = new ByteArrayInputStream(txt.substring(s, e + 12).getBytes());
 			var doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
-			var nodeList = ((Element) doc.getDocumentElement().getElementsByTagName("dc:subject").item(0)).getElementsByTagName("rdf:li");
-			
-			for (int i = 0; i < nodeList.getLength(); i++) {
-				var key = nodeList.item(i).getTextContent();
+			var nodeList = ((Element) doc.getDocumentElement().getElementsByTagName("dc:subject").item(0))
+					.getElementsByTagName("rdf:li");
 
-				if (!keyMap.containsKey(key)) {
-					keyMap.put(key, new HashSet<>());
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				var node = nodeList.item(i).getTextContent();
+
+				if (!keyMap.containsKey(node)) {
+					keyMap.put(node, new HashSet<>());
 				}
 
-				keyMap.get(key).add(f);
+				keyMap.get(node).add(f);
 			}
 		}
+		
+		System.out.println(keyMap.keySet());
 
 		com = new JComboBox<String>(keyMap.keySet().toArray(String[]::new));
+	}
+
+	public static void main(String[] args) {
+		BasePage.mf.add(new LoginPage());
+		BasePage.mf.setVisible(true);
 	}
 }
