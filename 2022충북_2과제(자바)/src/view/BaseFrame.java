@@ -19,7 +19,9 @@ public class BaseFrame extends JFrame implements Tool {
 	JPanel sn, sw, sc, se, ss;
 
 	static ArrayList<Object> user;
-	
+	static boolean idSave = false, login = false;
+	static int t_no, sc_no, m_no;
+
 	public BaseFrame(String t, int w, int h) {
 		super(t);
 		setSize(w, h);

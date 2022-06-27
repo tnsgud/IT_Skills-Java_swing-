@@ -4,6 +4,9 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -12,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
@@ -20,10 +24,14 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 import db.DB;
 
 public interface Tool {
+	LocalDate now = LocalDate.of(2022, 8, 30);
+	
 	default int toInt(Object p) {
 		var s = p.toString().replaceAll("[^0-9|^-]", "");
 		return s.isEmpty() ? -1 : Integer.parseInt(s);
@@ -135,6 +143,58 @@ public interface Tool {
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
+		}
+	}
+
+	class HintField extends JTextField {
+		public String str;
+		int col;
+
+		public HintField(String str, int col) {
+			super(col);
+			this.str = str;
+			this.col = col;
+		}
+
+		@Override
+		protected void paintComponent(Graphics g) {
+			super.paintComponent(g);
+
+			if (!getText().isEmpty()) {
+				return;
+			}
+
+			var g2 = (Graphics2D) g;
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+			g2.setColor(Color.LIGHT_GRAY);
+			g2.drawString(str, getInsets().left + 5, g2.getFontMetrics().getMaxAscent() + getInsets().top);
+		}
+	}
+
+	class HintPassField extends JPasswordField {
+		public String str;
+		int col;
+
+		public HintPassField(String str, int col) {
+			super(col);
+			this.str = str;
+			this.col = col;
+		}
+
+		@Override
+		protected void paintComponent(Graphics g) {
+			super.paintComponent(g);
+
+			if (!getText().isEmpty()) {
+				return;
+			}
+
+			var g2 = (Graphics2D) g;
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+			g2.setColor(Color.LIGHT_GRAY);
+			g2.drawString(str, getInsets().left + 5, g2.getFontMetrics().getMaxAscent() + getInsets().top);
 		}
 	}
 

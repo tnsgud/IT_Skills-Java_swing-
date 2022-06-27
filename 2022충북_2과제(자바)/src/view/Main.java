@@ -23,7 +23,8 @@ public class Main extends BaseFrame {
 	ArrayList<JLabel> back = new ArrayList<>();
 	ArrayList<JPanel> items = new ArrayList<>();
 	Worker worker;
-	int bu = -1, left = 0, right = 4;
+	int bu = 1, left = 0, right = 4, curIdx = 0;
+	boolean run;
 
 	public Main() {
 		super("GGV", 940, 700);
@@ -52,7 +53,7 @@ public class Main extends BaseFrame {
 					var name = ((JLabel) e.getSource()).getName();
 
 					if (name.equals("로그인")) {
-						new Login().addWindowListener(new Before(Main.this));
+						new Login(login).addWindowListener(new Before(Main.this));
 					} else if (name.equals("회원가입")) {
 						new BaseFrame("회원가입", 300, 300).setVisible(true);
 					} else if (name.equals("마이페이지")) {
@@ -118,29 +119,38 @@ public class Main extends BaseFrame {
 		}
 
 		s.add(btn("<", a -> {
-			if(left == 0 ) {
-				return;
+			for (int i = 0; i < items.size(); i++) {
+				items.get((curIdx + i) % items.size()).setLocation(170 * i, 0);
 			}
-			
-			bu = 1;
-			
-			worker = null;
-			worker = new Worker();
-			
-			worker.execute();
+			items.get((curIdx + items.size() - 1) % items.size()).setLocation(-170, 0);
 
-		}), "West");
-		s.add(sc = sz(new JPanel(null), 850, 270));
-		s.add(btn(">", a -> {
-			if(right == 24) {
-				return;
-			}
-			
 			bu = -1;
-			
-			worker = null;
+			run = true;
+
+			if (worker != null && worker.isDone()) {
+				worker.cancel(true);
+				worker = null;
+			}
 			worker = new Worker();
-			
+			worker.execute();
+		}), "West");
+
+		s.add(sc = sz(new JPanel(null), 850, 270));
+
+		s.add(btn(">", a -> {
+			for (int i = 0; i < items.size(); i++) {
+				items.get((curIdx + i) % items.size()).setLocation(170 * i, 0);
+			}
+
+			bu = 1;
+			run = true;
+
+			if (worker != null) {
+				worker.cancel(true);
+				worker = null;
+			}
+
+			worker = new Worker();
 			worker.execute();
 		}), "East");
 
@@ -149,17 +159,17 @@ public class Main extends BaseFrame {
 			var tmp = new JPanel(new BorderLayout(10, 10));
 			var img = new JLabel(getIcon("./datafile/영화/" + rs.get(1) + ".jpg", 150, 250));
 
+			img.setBorder(new EmptyBorder(0, 10, 0, 10));
+
 			tmp.add(img);
 			tmp.add(lbl(rs.get(1).toString(), 0), "South");
 
 			sc.add(tmp).setBounds(items.size() * 170, 0, 150, 270);
 			items.add(tmp);
 		}
-		
+
 		setVisible(true);
-		
-		System.out.println(items.get(5).getLocation());
-		
+
 		CenterAnimation();
 	}
 
@@ -168,17 +178,19 @@ public class Main extends BaseFrame {
 			@Override
 			protected Object doInBackground() throws Exception {
 				Thread.sleep(3000);
+				int idx = 0;
 				while (true) {
-					for (int i = 0; i < 3; i++) {
+					for (int i = 0; i < back.size(); i++) {
 						int x = back.get(i).getX();
 						back.get(i).setLocation(x -= 10, 0);
+					}
 
-						if (x < -940) {
-							back.get(i).setLocation(2820, 0);
-							Thread.sleep(3000);
-						}
+					Thread.sleep(5);
 
-						Thread.sleep(5);
+					if (back.get(idx).getX() <= -940) {
+						back.get(idx).setLocation(1880, 0);
+						idx = (idx + 1) % back.size();
+						Thread.sleep(3000);
 					}
 				}
 			}
@@ -188,26 +200,34 @@ public class Main extends BaseFrame {
 	class Worker extends SwingWorker {
 		@Override
 		protected Object doInBackground() throws Exception {
-			while(true) {
+			while (true) {
 				for (int i = 0; i < items.size(); i++) {
-					int x = items.get(i).getX();
-					items.get(i).setLocation(x += 10 * bu, 0);
-					
-					if(bu == -1 && items.get(left).getX() <= -170) {
-						left++;
-						right++;
-						return null;
-					}
-					
-					if(bu == 1 && items.get(right).getX() >= 845) {
-						left--;
-						right--;
-						return null;
-					}
-					
-					Thread.sleep(1);
+					int x = items.get((curIdx + i) % items.size()).getX();
+					items.get((curIdx + i) % items.size()).setLocation(x -= 10 * bu, 0);
+				}
+
+				Thread.sleep(20);
+
+				// ">" 처리
+				if (bu == 1 && items.get(curIdx).getX() <= -170) {
+					items.get(curIdx).setLocation(170 * (items.size() - 1), 0);
+					curIdx = (curIdx + 1) % items.size();
+					return null;
+				}
+
+				// "<" 처리
+				if (bu == -1 && items.get(curIdx).getX() >= 170) {
+					curIdx = curIdx - 1 < 0 ? items.size() - 1 : curIdx - 1;
+					items.get((curIdx + items.size() - 1) % items.size()).setLocation(-170, 0);
+					return null;
 				}
 			}
+		}
+
+		@Override
+		protected void done() {
+			left += -bu;
+			right += -bu;
 		}
 	}
 
@@ -215,4 +235,3 @@ public class Main extends BaseFrame {
 		new Main();
 	}
 }
-
