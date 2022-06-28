@@ -1,0 +1,26 @@
+m_no	m_id	m_pw	m_name1	m_name2	m_birth	m_phone	m_email	m_sex
+1	sky01	sky01!	박지안	PARK JIAN	2000-01-01	010-8445-9663	rlsmd01@skills.com	0
+2	sky02	sky02!	한예준	HAN YEJUN	1998-04-06	010-1248-7444	rlsmd02@skills.com	1
+3	sky03	sky03!	강지아	KANG JIAH	1990-12-09	010-9755-8622	rlsmd03@skills.com	0
+4	sky04	sky04!	신서윤	SHIN SEOYOON	2003-05-06	010-0541-2323	rlsmd04@skills.com	0
+5	sky05	sky05!	강선우	KANG SEONWOO	2001-08-12	010-7485-1112	rlsmd05@skills.com	1
+6	sky06	sky06!	조예준	JO YEJUN	1980-12-25	010-4026-8452	rlsmd06@skills.com	0
+7	sky07	sky07!	황정현	HWANG JEONGHYUN	1999-09-12	010-4089-9631	rlsmd07@skills.com	1
+8	sky08	sky08!	김가연	KIM GAYEON	1985-12-12	010-9005-4255	rlsmd08@skills.com	0
+9	sky09	sky09!	박소랑	PARK SORANG	1990-12-12	010-9669-5201	rlsmd09@skills.com	1
+10	sky10	sky10!	장재희	JANG JAEHEE	1995-12-10	010-7788-2222	rlsmd10@skills.com	0
+11	sky11	sky11!	김정민	KIM JUNGMIN	1993-12-24	010-2080-8888	rlsmd11@skills.com	0
+12	sky12	sky12!	서유민	SEO YOOMIN	1994-06-05	010-3181-8888	rlsmd12@skills.com	1
+13	sky13	sky13!	오시우	OH SIWOO	1996-05-17	010-7747-2552	rlsmd13@skills.com	0
+14	sky14	sky14!	남아라	NAM ARA	1997-07-12	010-7747-7448	rlsmd14@skills.com	1
+15	sky15	sky15!	김신영	KIM SHINYOUNG	2000-12-12	010-8552-1120	rlsmd15@skills.com	0
+16	sky16	sky16!	박나경	PARK NAKYUNG	2000-03-09	010-6850-2255	rlsmd16@skills.com	0
+17	sky17	sky17!	최승재	CHOI SEUNGJAE	2001-04-07	010-4848-5409	rlsmd17@skills.com	1
+18	sky18	sky18!	박치언	PARK CHIEON	2003-12-30	010-7110-4848	rlsmd18@skills.com	1
+19	sky19	sky19!	송건욱	SONG GUNWOOK	1999-12-01	010-1123-4567	rlsmd19@skills.com	1
+20	sky20	sky20!	고영현	GO YOUNGHYUN	1998-08-09	010-4225-6800	rlsmd20@skills.com	0
+21	sky21	sky21!	진유진	JIN YUJIN	1997-05-06	010-2214-4155	rlsmd21@skills.com	1
+22	sky22	sky22!	전지수	JEON JISOO	1998-08-26	010-6269-5562	rlsmd22@skills.com	0
+23	sky23	sky23!	송다비	SONG DABI	1987-02-09	010-7878-7774	rlsmd23@skills.com	0
+24	sky24	sky24!	유승연	YOO SEUNGYEON	1988-09-13	010-0444-5541	rlsmd24@skills.com	1
+25	sky25	sky25!	신다솜	SIN DASOM	1987-08-07	010-4889-2153	rlsmd25@skills.com	0
