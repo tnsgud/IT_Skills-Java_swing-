@@ -3,6 +3,10 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,eclipse,java
 
 ### Eclipse ###
+*/datafiles/
+*/datafile/
+*/지급자료
+*/지급파일
 .metadata
 */bin/
 tmp/

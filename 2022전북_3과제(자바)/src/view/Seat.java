@@ -8,6 +8,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -19,6 +21,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.LineBorder;
 import javax.swing.text.html.InlineView;
+
+import model.People;
 
 public class Seat extends BaseFrame {
 	int idx = 0;
@@ -69,18 +73,18 @@ public class Seat extends BaseFrame {
 							if (me.getBackground().equals(Color.red)) {
 								me.setBackground(Color.white);
 
-								items.get(idx).setText(peo.fname + " " + peo.lname + " - ");
-								items.get(idx).p.seat = null;
+								items.get(idx).setText(peo.getFname() + " " + peo.getLname() + " - ");
+								items.get(idx).p.setSeat(null);
 							} else {
-								if (items.get(idx).p.seat != null) {
+								if (items.get(idx).p.getSeat() != null) {
 									var ans = JOptionPane.showConfirmDialog(null, "이미 좌석을 선택하셨습니다. 해당 좌석을 선택하시겠습니까?",
 											"경고", JOptionPane.YES_NO_OPTION);
 									if (ans == JOptionPane.YES_OPTION) {
-										seat.get(items.get(idx).p.seat).setBackground(Color.white);
+										seat.get(items.get(idx).p.getSeat()).setBackground(Color.white);
 									} else {
 										if (idx < items.size() - 1) {
 											idx++;
-										}else {
+										} else {
 											return;
 										}
 									}
@@ -88,7 +92,7 @@ public class Seat extends BaseFrame {
 
 								me.setBackground(Color.red);
 
-								items.get(idx).p.seat = me.getText();
+								items.get(idx).p.setSeat(me.getText());
 								items.get(idx).setSelect();
 							}
 						}
@@ -112,18 +116,14 @@ public class Seat extends BaseFrame {
 			seat.get(rs.get(0).toString().toUpperCase()).setBackground(Color.gray);
 		}
 
-		for (var cap : "dong,song,hun".split(",")) {
-			peoples.add(new People(cap.equals("dong") ? 1 : 2, "Hong", "gil" + cap));
-		}
-
 		e.add(lbl("총 " + peoples.size() + "명", 2, 15), "North");
 		e.add(ec = new JPanel());
 		e.add(btn("선택완료", a -> {
-			if(items.stream().filter(i->i.p.seat==null).count() > 0) {
+			if (items.stream().filter(i -> i.p.getSeat() == null).count() > 0) {
 				eMsg("좌석을 모두 선택해주세요.");
 				return;
 			}
-			
+
 			dispose();
 		}), "South");
 
@@ -148,7 +148,7 @@ public class Seat extends BaseFrame {
 		int i;
 
 		public Item(People p, int i) {
-			super(p.fname + " " + p.lname + " - ", 2);
+			super(p.getFname() + " " + p.getLname() + " - ", 2);
 			this.p = p;
 			this.i = i;
 
@@ -173,7 +173,7 @@ public class Seat extends BaseFrame {
 				it.setBorder(new LineBorder(Color.gray));
 			}
 
-			setText(p.fname + " " + p.lname + " - " + (p.seat == null ? "" : p.seat));
+			setText(p.getFname() + " " + p.getLname() + " - " + (p.getSeat() == null ? "" : p.getSeat()));
 
 			setBorder(new LineBorder(Color.blue));
 		}

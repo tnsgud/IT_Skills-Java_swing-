@@ -10,29 +10,27 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.border.MatteBorder;
 
-import view.Baggage.Item;
+import model.Bag;
 
 public class Baggage extends BaseFrame {
-	ArrayList<Item> items = new ArrayList<>();
-	JLabel totPrice = lbl("총 0원", 4, 20);
+	public static JLabel totPrice;
 	JButton btn[] = new JButton[3];
 
 	public Baggage() {
 		super("수화물 구매", 400, 500);
 
 		add(n = new JPanel(new GridLayout(0, 1)), "North");
-		add(c = new JPanel());
+		add(new JScrollPane(c = new JPanel()) );
 		add(s = new JPanel(), "South");
 
 		n.add(lbl("수하물 구매", 0, 25));
@@ -50,7 +48,7 @@ public class Baggage extends BaseFrame {
 		((JLabel) cn.getComponent(0)).addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				items.add(new Item());
+				bag.add(new Bag());
 				addItem();
 			}
 		});
@@ -61,8 +59,8 @@ public class Baggage extends BaseFrame {
 				if (a.getActionCommand().equals("삭제")) {
 					new Delete().setVisible(true);
 				} else if (a.getActionCommand().equals("초기화")) {
-					items.clear();
-					items.add(new Item());
+					bag.clear();
+					bag.add(new Bag());
 					addItem();
 				} else {
 					iMsg("수하물 선택이 완료되었습니다.");
@@ -71,7 +69,7 @@ public class Baggage extends BaseFrame {
 			});
 		}
 
-		items.add(new Item());
+		bag.add(new Bag());
 
 		addItem();
 
@@ -85,23 +83,23 @@ public class Baggage extends BaseFrame {
 
 		c.add(cn);
 
-		for (var i : items) {
+		for (var i : bag) {
 			c.add(i);
 		}
 
-		c.add(totPrice);
+		c.add(totPrice = lbl("총 0원", 4, 20));
 
 		for (var com : c.getComponents()) {
 			((JComponent) com).setMaximumSize(new Dimension(400, 40));
 		}
 
-		var tot = items.stream().mapToInt(it -> toInt(it.pricelbl.getText())).sum();
+		var tot = bag.stream().mapToInt(it -> toInt(it.pricelbl.getText())).sum();
 		totPrice.setText("총 " + format(tot) + "원");
 
 		s.removeAll();
-		s.setLayout(items.size() > 1 ? new GridLayout(0, 3) : new FlowLayout(1));
+		s.setLayout(bag.size() > 1 ? new GridLayout(0, 3) : new FlowLayout(1));
 
-		if (items.size() > 1) {
+		if (bag.size() > 1) {
 			for (int i = 0; i < btn.length; i++) {
 				s.add(btn[i]);
 			}
@@ -113,45 +111,12 @@ public class Baggage extends BaseFrame {
 		revalidate();
 	}
 
-	class Item extends JPanel {
-		JCheckBox chk[] = new JCheckBox[2];
-		JLabel namelbl, pricelbl = lbl(format(items.size() == 0 ? 0 : 50000) + "원", 0, 15);
-
-		public Item() {
-			super(new GridLayout(1, 0));
-
-			setBorder(new MatteBorder(0, 0, 2, 0, Color.black));
-
-			add(namelbl = lbl(
-					"bag" + (items.size() == 0 ? 1 : toInt(items.get(items.size() - 1).namelbl.getText()) + 1), 0, 15));
-			for (int i = 0; i < chk.length; i++) {
-				add(chk[i] = new JCheckBox());
-
-				chk[i].addItemListener(a -> {
-					var me = ((JCheckBox) a.getSource());
-
-					if (me == chk[0]) {
-						pricelbl.setText(format(toInt(pricelbl.getText()) + (me.isSelected() ? 30000 : -30000)) + "원");
-					} else {
-						pricelbl.setText(format(toInt(pricelbl.getText()) + (me.isSelected() ? 35000 : -35000)) + "원");
-					}
-
-					var tot = items.stream().mapToInt(it -> toInt(it.pricelbl.getText())).sum();
-
-					totPrice.setText("총 " + format(tot) + "원");
-				});
-			}
-
-			add(pricelbl);
-		}
-	}
-
 	class Delete extends JDialog {
 		JPanel c = new JPanel(new GridLayout(0, 3));
 
 		public Delete() {
 			setLayout(new GridBagLayout());
-			setSize(660, (items.size() / 3 + 1) * 220);
+			setSize(660, (bag.size() / 3 + 1) * 220);
 			setLocationRelativeTo(null);
 
 			add(c);
@@ -169,7 +134,7 @@ public class Baggage extends BaseFrame {
 		void setUI() {
 			c.removeAll();
 
-			for (var i : items) {
+			for (var i : bag) {
 				var tmp = new JPanel(new BorderLayout());
 
 				tmp.add(new JLabel(getIcon("./datafiles/수하물.jpg", 200, 200)));
@@ -179,7 +144,7 @@ public class Baggage extends BaseFrame {
 					@Override
 					public void mousePressed(MouseEvent e) {
 						if (e.getClickCount() == 2) {
-							items.remove(i);
+							bag.remove(i);
 							setUI();
 						}
 					}

@@ -2,13 +2,13 @@ package view;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import model.Bag;
+import model.People;
 import tool.Tool;
 
 public class BaseFrame extends JFrame implements Tool {
@@ -20,10 +20,12 @@ public class BaseFrame extends JFrame implements Tool {
 	JPanel en, ew, ec, ee, es;
 	JPanel sn, sw, sc, se, ss;
 
+	Boolean flag = false;
+	
 	static ArrayList<Object> user;
+	public static ArrayList<Bag> bag = new ArrayList<>();
 	static ArrayList<People> peoples = new ArrayList<>();
-	static boolean idSave = false, login = false;
-	static int t_no, sc_no, m_no;
+	static int s_no;
 
 	public BaseFrame(String t, int w, int h) {
 		super(t);
@@ -32,20 +34,6 @@ public class BaseFrame extends JFrame implements Tool {
 		setLocationRelativeTo(null);
 		setResizable(false);
 		execute("use airline");
-
-	}
-
-	class People {
-		int div;
-		String fname, lname;
-		String seat;
-		int price;
-
-		public People(int div, String fname, String lname) {
-			this.div = div;
-			this.fname = fname;
-			this.lname = lname;
-		}
 	}
 
 	class Before extends WindowAdapter {

@@ -62,7 +62,7 @@ public class DB {
 		createT("reservation",
 				"r_no int primary key not null auto_increment, m_no int, s_no int, r_date date, r_price int, foreign key(m_no) references member(m_no), foreign key(s_no) references schedule(s_no)");
 		createT("companion",
-				"c_no int primary key not null auto_increment, r_no int, c_sec int, c_name varchar(20), c_birth date, c_seat varchar(5), c_division int, foreign key(r_no) references reservation(r_no)");
+				"c_no int primary key not null auto_increment, r_no int, c_sex int, c_name varchar(20), c_birth date, c_seat varchar(5), c_division int, foreign key(r_no) references reservation(r_no)");
 		createT("mileage",
 				"mi_no int primary key not null auto_increment, m_no int, mi_income int, mi_expense int, foreign key(m_no) references member(m_no)");
 		

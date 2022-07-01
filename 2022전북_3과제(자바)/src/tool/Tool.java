@@ -1,44 +1,87 @@
 package tool;
 
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
 import db.DB;
+import view.Main;
 
 public interface Tool {
+	String[] c_div = ",성인,소아,유아".split(",");
 	LocalDate now = LocalDate.of(2022, 8, 31);
-	int s_no = 1;
-	
+	static boolean flag = false;
+
+	default double distance(double lat1, double lon1, double lat2, double lon2) {
+
+		double theta = lon1 - lon2;
+		double dist = Math.sin(Math.toRadians(lat1)) * Math.sin(Math.toRadians(lat2))
+				+ Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.cos(Math.toRadians(theta));
+
+		dist = Math.acos(dist);
+		dist = Math.toDegrees(dist);
+		dist = dist * 60 * 1.1515;
+
+		dist = dist * 1.609344;
+
+		return (int) dist;
+	}
+
 	default int toInt(Object p) {
 		var s = p.toString().replaceAll("[^0-9|^-]", "");
 		return s.isEmpty() ? -1 : Integer.parseInt(s);
 	}
 
+	default DefaultTableModel model(String col[]) {
+		return new DefaultTableModel(null, col) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+	}
+
+	default JTable table(DefaultTableModel m) {
+		var t = new JTable(m);
+		var r = new DefaultTableCellRenderer();
+
+		t.setSelectionMode(0);
+		r.setHorizontalAlignment(0);
+
+		t.getTableHeader().setReorderingAllowed(false);
+		t.getTableHeader().setResizingAllowed(false);
+
+		for (int i = 0; i < t.getColumnCount(); i++) {
+			t.getColumnModel().getColumn(i).setCellRenderer(r);
+		}
+
+		return t;
+	}
+
 	default void eMsg(String msg) {
+		JOptionPane.showMessageDialog(null, msg, "경고", 0);
+	}
+
+	default void eMsg(String msg, Boolean flag) {
+		flag = true;
+		System.out.println(Main.flag);
 		JOptionPane.showMessageDialog(null, msg, "경고", 0);
 	}
 

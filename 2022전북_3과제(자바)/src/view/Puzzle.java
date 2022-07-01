@@ -6,6 +6,8 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +25,7 @@ public class Puzzle extends BaseFrame {
 	ArrayList<JLabel> ori = new ArrayList<>(), shuf = new ArrayList<>();
 	JLabel select;
 	int x, y;
+	boolean flag = false;
 
 	public Puzzle() {
 		super("퍼즐", 900, 400);
@@ -34,6 +37,10 @@ public class Puzzle extends BaseFrame {
 			public void revalidate() {
 				super.revalidate();
 
+				for (var img : shuf) {
+					w.add(img);
+				}
+
 				if (select == null)
 					return;
 
@@ -44,6 +51,7 @@ public class Puzzle extends BaseFrame {
 				}
 
 				iMsg("퍼즐을 완성하였습니다. 축하합니다.");
+				dispose();
 			}
 		}, "West");
 		add(lbl("→", 0, 25));
@@ -79,12 +87,9 @@ public class Puzzle extends BaseFrame {
 
 						if (((selX + 1 == meX || selX - 1 == meX) && selY == meY)
 								|| ((selY + 1 == meY || selY - 1 == meY) && selX == meX)) {
-							var tmp = me.getIcon();
-
-							me.setIcon(select.getIcon());
-							shuf.get(selIdx).setIcon(tmp);
-
 							Collections.swap(shuf, meIdx, selIdx);
+
+							select = shuf.get(meIdx);
 
 							w.repaint();
 							w.revalidate();
@@ -116,6 +121,15 @@ public class Puzzle extends BaseFrame {
 		en.add(select = new JLabel(shuf.get(0).getIcon()));
 
 		setVisible(true);
+		
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				if(flag) {
+					Purchase.puzzle = true;
+				}
+			}
+		});
 	}
 
 	public static void main(String[] args) {
