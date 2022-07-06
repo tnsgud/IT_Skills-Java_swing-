@@ -15,7 +15,7 @@ public class AdminPage extends BasePage {
 
 		add(c = new JPanel(new GridLayout(1, 0, 10, 10)));
 
-		var cap = "게임관리,거내내역,차트".split(",");
+		var cap = "게임관리,거래내역,차트".split(",");
 		for (int i = 0; i < cap.length; i++) {
 			var lbl = imglbl("<html><font color='white'>" + cap[i], 0, "./datafiles/기본사진/" + (i + 5) + ".png", 50, 50);
 			lbl.addMouseListener(new MouseAdapter() {
