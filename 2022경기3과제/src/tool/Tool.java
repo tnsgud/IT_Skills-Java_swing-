@@ -17,9 +17,11 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 
 import db.DB;
 
@@ -29,6 +31,15 @@ public interface Tool {
 	String[] g_gd = "일반,브론즈,실버,골드,플레티넘,다이아".split(",");
 	Color back = new Color(51, 63, 112);
 
+	default void setJPanelOpaque(JComponent com) {
+		for (var c : com.getComponents()) {
+			if (!(c instanceof JComboBox || c instanceof JTextField || c instanceof JButton)) {
+				((JComponent) c).setOpaque(false);
+				setJPanelOpaque((JComponent) c);
+			}
+		}
+	}
+	
 	default int toInt(Object p) {
 		var s = p.toString().replaceAll("[^0-9|^-]", "");
 		return s.isEmpty() ? -1 : Integer.parseInt(s);
@@ -79,7 +90,6 @@ public interface Tool {
 			for (int i = 0; i < obj.length; i++) {
 				DB.ps.setObject(i + 1, obj[i]);
 			}
-			System.out.println(DB.ps);
 			DB.ps.execute();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -94,6 +104,7 @@ public interface Tool {
 
 	default JLabel lbl(String c, int a, int st, int sz) {
 		var l = new JLabel(c, a);
+		l.setForeground(Color.white);
 		l.setFont(new Font("맑은 고딕", st, sz));
 		return l;
 	}
@@ -180,6 +191,7 @@ public interface Tool {
 
 	default JButton btn(String c, ActionListener a) {
 		var b = new JButton(c);
+		b.setBackground(new Color(53, 167, 249));
 		b.addActionListener(a);
 		return b;
 	}

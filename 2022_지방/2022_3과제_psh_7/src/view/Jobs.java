@@ -129,6 +129,7 @@ public class Jobs extends BaseFrame {
 			Stream.of(com).forEach(c -> c.setSelectedIndex(0));
 			Stream.of(txt).forEach(t -> t.setText(""));
 			search();
+			
 			return;
 		}
 

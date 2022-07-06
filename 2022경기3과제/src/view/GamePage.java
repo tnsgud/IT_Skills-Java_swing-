@@ -5,15 +5,22 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
 
 public class GamePage extends BasePage {
 	JPanel main = new JPanel(new BorderLayout());
@@ -25,12 +32,15 @@ public class GamePage extends BasePage {
 	public GamePage() {
 		super("게임페이지");
 
-		game = getRows("select *, format(if(g_sale != 0, g_price*(g_sale*0.01), g_price), '#,##0') from game where g_no=20").get(0);
+		game = getRows(
+				"select *, format(if(g_sale <> 0, g_price*(g_sale*0.01), g_price), '#,##0') from game where g_no=?",
+				g_no).get(0);
 
-		add(new JScrollPane(sz(main, 0, 500)));
+		add(new JScrollPane(main));
 
-		main.add(n = new JPanel(new BorderLayout()), "North");
-		main.add(c = new JPanel(new GridLayout(0, 1)));
+		main.add(n = sz(new JPanel(new BorderLayout()), 800, 600), "North");
+		main.add(c = sz(new JPanel(), 800, 50 * toInt(getOne("select count(*) from review where g_no = ?", g_no))));
+		c.setLayout(new BoxLayout(c, BoxLayout.PAGE_AXIS));
 
 		n.add(nn = new JPanel(new BorderLayout()), "North");
 		n.add(lbl("<html>" + game.get(4), 2));
@@ -64,20 +74,26 @@ public class GamePage extends BasePage {
 						if (cap.equals("장바구니에 추가")) {
 							if (!getOne("select * from cart where u_no = ? and g_no = ?", user.get(0), game.get(0))
 									.isEmpty()) {
-								eMsg("자압구니에 있는 게임입니다.");
+								eMsg("장바구니에 있는 게임입니다.");
 								return;
 							}
 
 							iMsg("장바구니에 추가가 완료되었습니다.");
 							execute("insert into cart values(0, ? ,?)", user.get(0), game.get(0));
 						} else {
-							if (toInt(user.get(5)) < toInt(game.get(5))) {
+							int price = toInt(game.get(7)) <= u_gd ? toInt(game.get(6)) : toInt(game.get(5));
+
+							if (toInt(user.get(5)) < price) {
 								eMsg("금액이 부족합니다.");
 								new Charge();
 								return;
 							}
+							execute("insert into library values(0, ?, ?, ?)", user.get(0), g_no, price,
+									LocalDate.now());
+							execute("update user set u_money=u_money-? where u_no = ?", price, user.get(0));
+							user = getRows("select * from user where u_no= ?", user.get(0)).get(0);
 
-							new Info(game);
+							new Info(game.stream().filter(g -> game.indexOf(g) == 0).collect(Collectors.toList()));
 						}
 					}));
 				}
@@ -141,8 +157,40 @@ public class GamePage extends BasePage {
 			}
 		}
 
-		mf.setJPanelOpaque(this);
+		for (var rs : getRows(
+				"select u.u_no, u_img, u_name, r_score, r_content from review r, user u where r.u_no = u.u_no and g_no = ?",
+				g_no)) {
+			var tmp = new JPanel(new BorderLayout());
 
-		repaint();
+			tmp.setName(rs.get(0).toString());
+
+			tmp.add(new JLabel(getIcon(rs.get(1), 50, 50)), "West");
+			tmp.add(lbl(String.format("<html><font color='%s'>유저명 : %s<br>평점 : %s점<br>%s",
+					toInt(rs.get(0)) == toInt(user.get(0)) ? "yellow" : "white", rs.get(2).toString(),
+					rs.get(3).toString(), rs.get(4).toString()), 2));
+			tmp.add(new JLabel(
+					getIcon(toInt(rs.get(3)) < 3 ? "./datafiles/기본사진/싫어요.jpg" : "./datafiles/기본사진/좋아요.jpg", 50, 50)),
+					"East");
+
+			tmp.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent e) {
+					var me = (JPanel) e.getSource();
+
+					new ProfilePage(toInt(me.getName()));
+				}
+			});
+
+			tmp.setBorder(new LineBorder(Color.white));
+
+			c.add(sz(tmp, 300, 50));
+		}
+
+		mf.repaint();
+
+		for (var com : c.getComponents()) {
+			((JComponent) com).setOpaque(true);
+			((JComponent) com).setBackground(Color.black);
+		}
 	}
 }

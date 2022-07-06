@@ -3,7 +3,11 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
@@ -23,26 +27,58 @@ public class ProfilePage extends BasePage {
 	ArrayList<Object> user;
 	DefaultTableModel m = new DefaultTableModel();
 	JTable t = new JTable(m);
+	JPanel expBar;
 
-	public ProfilePage() {
+	public ProfilePage(int u_no) {
 		super("유저프로필");
 
-		user = BasePage.user;
+		user = getRows("select * from user where u_no=?", u_no).get(0);
+
+		var exp = toInt(getOne("select count(*) from library where u_no=?", user.get(0))) * 3
+				+ getRows("select * from v2 where u_no = ? group by g_no having count(*) > 2", user.get(0)).size() * 10;
+
+		var money = lbl("보유 잔액 : " + new DecimalFormat("#,##0").format(toInt(user.get(5))), 2, 15);
 
 		add(c = new JPanel(new BorderLayout(20, 20)));
 		add(s = new JPanel(new BorderLayout()), "South");
 
-		c.add(new JLabel(getIcon(user.get(8), 250, 250)), "West");
+		c.add(new JLabel(getIcon(user.get(8), 200, 200)), "West");
 		c.add(cc = new JPanel(new GridLayout(0, 1, 5, 5)));
 
-		cc.add(lbl("닉네임 : " + user.get(3), 2, 20));
-		cc.add(lbl("보유 잔액 : " + new DecimalFormat("#,##0").format(toInt(user.get(5))), 2, 20));
-		cc.add(lbl("경험치 : 43 [등급 : 실버]", 2, 20));
+		cc.add(lbl("닉네임 : " + user.get(3), 2, 15));
+		cc.add(money);
+		cc.add(lbl("경험치 : " + exp + " [등급 : " + g_gd[exp / 20] + "]", 2, 15));
+		cc.add(cs = new JPanel(new FlowLayout(0)));
+
+		var lbl = (JLabel) cc.getComponent(2);
+		lbl.setIcon(getIcon("./datafiles/등급사진/" + (exp / 20) + ".jpg", 80, 80));
+		lbl.setHorizontalTextPosition(2);
+
+		cs.add(expBar = new JPanel(new FlowLayout(1)) {
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+
+				var g2 = (Graphics2D) g;
+
+				var next = (exp / 20 + 1) * 20;
+
+				g2.setColor(Color.green);
+				g2.fillRect(0, 0, (int)(((double) exp / next) * 100), 30);
+			}
+		});
+
+		expBar.add(lbl(exp + "/" + ((exp / 20 + 1) * 20), 0));
+
+		sz(expBar, 100, 30);
+		expBar.setBorder(new LineBorder(Color.white));
 
 		s.add(lbl("보유한 게임", 2, 20), "North");
 		s.add(sz(new JScrollPane(sc = new JPanel(new GridLayout(0, 1, 10, 10))), 1, 200));
 
 		lib();
+
+		money.setVisible(u_no == toInt(BasePage.user.get(0)));
 
 		mf.setJPanelOpaque(this);
 	}
@@ -81,8 +117,6 @@ public class ProfilePage extends BasePage {
 				execute("update user set u_money=? where u_no=?", toInt(user.get(5)) + toInt(row.get(1)), user.get(0));
 				execute("delete from library where l_no= ?", row.get(2));
 
-				user = getRows("select * from user where u_no = ?", user.get(0)).get(0);
-
 				var lbl = (JLabel) cc.getComponent(1);
 				lbl.setText("보유 잔액 : " + new DecimalFormat("#,##0").format(toInt(user.get(5))));
 
@@ -118,18 +152,14 @@ public class ProfilePage extends BasePage {
 
 				@Override
 				public void mousePressed(MouseEvent e) {
-					g_no = toInt(r.get(0));
-					new GamePage();
+					if (e.getButton() == 1) {
+						g_no = toInt(r.get(0));
+						new GamePage();
+					}
 				}
 			});
 
 			sc.add(tmp);
 		}
-	}
-
-	public static void main(String[] args) {
-		mf = new MainFrame();
-		new ProfilePage();
-		mf.setVisible(true);
 	}
 }

@@ -21,10 +21,17 @@ public class MainFrame extends BaseFrame {
 	CardLayout card;
 	ArrayList<JLabel> history = new ArrayList<>();
 
-	public MainFrame() {
-		super("게임유통관리", 900, 700);
+	void createV() {
+		execute("drop view if exists v1");
+		execute("create view v1 as select g.g_no, g_img, g_name, g_genre, g_age, round(avg(r_score), 1) as g_review , format(g_price, '#,##0') g_price, g_sale, format(g_price-g_price*g_sale*0.01, '#,##0') g_dcprice from game g, review r where g.g_no = r.g_no group by g.g_no");
+		execute("drop view if exists v2");
+		execute("create view v2 as select s.u_no, g_no from storage s left join market m on s.s_no = m.s_no inner join item i on s.i_no = i.i_no where m.m_no is null");
+	}
 
-		BasePage.user = getRows("select * from user where u_no = 1").get(0);
+	public MainFrame() {
+		super("게임유통관리", 900, 600);
+
+		BasePage.user = getRows("select * from user where u_no=1").get(0);
 
 		add(n = new JPanel(new BorderLayout()), "North");
 		add(c = new JPanel(card = new CardLayout()));
@@ -33,7 +40,7 @@ public class MainFrame extends BaseFrame {
 		n.add(nw = new JPanel(new FlowLayout(0, 5, 5)), "West");
 		n.add(ne = new JPanel(new FlowLayout(2)), "East");
 
-		var logout = lbl("로그아웃", 0, 1, 13, e->{
+		var logout = lbl("로그아웃", 0, 1, 13, e -> {
 			this.dispose();
 		});
 		var img = new JLabel(getIcon(BasePage.user.get(8), 25, 25));
@@ -52,7 +59,7 @@ public class MainFrame extends BaseFrame {
 				var i = new JMenuItem(cap);
 				i.addActionListener(a -> {
 					if (cap.equals("프로필")) {
-						new ProfilePage();
+						new ProfilePage(toInt(BasePage.user.get(0)));
 					} else {
 						new InfoEditPage();
 					}
@@ -60,23 +67,20 @@ public class MainFrame extends BaseFrame {
 				menu.add(i);
 			}
 
-			cart.addActionListener(a->{
+			cart.addActionListener(a -> {
 				new CartPage();
 			});
-			
-			storage.addActionListener(a->{
+
+			storage.addActionListener(a -> {
 				new StoragePage();
 			});
-			
+
 			img.setComponentPopupMenu(pop);
 		}
 
-		
 		ne.add(logout);
 		ne.add(img);
 		ne.add(lbl(BasePage.user.get(3).toString(), 0));
-
-		getContentPane().setBackground(new Color(51, 63, 112));
 
 		n.setOpaque(false);
 		c.setOpaque(false);
@@ -92,7 +96,7 @@ public class MainFrame extends BaseFrame {
 		c.add(page, name);
 
 		swapPage(name);
-		
+
 		repaint();
 		revalidate();
 	}
@@ -100,7 +104,7 @@ public class MainFrame extends BaseFrame {
 	void swapPage(String name) {
 		nw.removeAll();
 		nw.setLayout(new FlowLayout(0, 5, 5));
-		
+
 		var l = lbl(name, 0, 15);
 		l.addMouseListener(new MouseAdapter() {
 			@Override
@@ -109,27 +113,18 @@ public class MainFrame extends BaseFrame {
 				swapPage(name);
 			}
 		});
-		
+
 		history.add(l);
 		history.forEach(a -> {
 			nw.add(a);
-			
+
 			if (history.indexOf(a) < history.size() - 1) {
 				nw.add(lbl(">", 0, 15));
 			}
 		});
 
 		card.show(c, name);
-		
+
 		setJPanelOpaque(c);
-	}
-	
-	void setJPanelOpaque(JComponent com) {
-		for (var c : com.getComponents()) {
-			if (c instanceof JComponent) {
-				((JComponent) c).setOpaque(false);
-				setJPanelOpaque((JComponent) c);
-			}
-		}		
 	}
 }

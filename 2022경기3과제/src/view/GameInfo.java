@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -103,24 +105,10 @@ public class GameInfo extends BasePage {
 				dcTxt.setText("0");
 				dcTxt.setEnabled(false);
 
-				priceTxt.getDocument().addDocumentListener(new DocumentListener() {
-					void setDcTxt() {
+				priceTxt.addKeyListener(new KeyAdapter() {
+					@Override
+					public void keyReleased(KeyEvent e) {
 						dcTxt.setEnabled(toInt(priceTxt.getText()) > -1);
-					}
-
-					@Override
-					public void removeUpdate(DocumentEvent e) {
-						setDcTxt();
-					}
-
-					@Override
-					public void insertUpdate(DocumentEvent e) {
-						setDcTxt();
-					}
-
-					@Override
-					public void changedUpdate(DocumentEvent e) {
-						setDcTxt();
 					}
 				});
 			} else {
