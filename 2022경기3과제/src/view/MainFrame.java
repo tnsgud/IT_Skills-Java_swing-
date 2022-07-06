@@ -6,6 +6,8 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
 import javax.swing.JComponent;
@@ -31,7 +33,7 @@ public class MainFrame extends BaseFrame {
 	public MainFrame() {
 		super("게임유통관리", 900, 600);
 
-		BasePage.user = getRows("select * from user where u_no=1").get(0);
+//		BasePage.user = getRows("select * from user where u_no=1").get(0);
 
 		add(n = new JPanel(new BorderLayout()), "North");
 		add(c = new JPanel(card = new CardLayout()));
@@ -43,7 +45,7 @@ public class MainFrame extends BaseFrame {
 		var logout = lbl("로그아웃", 0, 1, 13, e -> {
 			this.dispose();
 		});
-		var img = new JLabel(getIcon(BasePage.user.get(8), 25, 25));
+		var img = BasePage.user == null ? new JLabel() : new JLabel(getIcon(BasePage.user.get(8), 25, 25));
 
 		{
 			var pop = new JPopupMenu();
@@ -80,17 +82,28 @@ public class MainFrame extends BaseFrame {
 
 		ne.add(logout);
 		ne.add(img);
-		ne.add(lbl(BasePage.user.get(3).toString(), 0));
+		if(BasePage.user != null) {
+			ne.add(lbl(BasePage.user.get(3).toString(), 0));
+		}
 
+        getContentPane().setBackground(new Color(51, 63, 112));
+		
 		n.setOpaque(false);
 		c.setOpaque(false);
 		nw.setOpaque(false);
 		ne.setOpaque(false);
 
 		createV();
-		
+
 		((JPanel) getContentPane()).setBorder(new EmptyBorder(20, 20, 20, 20));
 		
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				BasePage.user = null;
+			}
+		});
+
 		setVisible(true);
 	}
 

@@ -24,6 +24,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -39,7 +40,7 @@ public interface Tool {
 
 	default void setJPanelOpaque(JComponent com) {
 		for (var c : com.getComponents()) {
-			if (c instanceof JLabel || c instanceof JPanel) {
+			if (!(c instanceof JComboBox || c instanceof JTextField || c instanceof JButton) && !(c instanceof CellRendererPane)) {
 				((JComponent) c).setOpaque(false);
 				setJPanelOpaque((JComponent) c);
 			}
@@ -66,7 +67,8 @@ public interface Tool {
 			@Override
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
 					boolean hasFocus, int row, int column) {
-				return value instanceof JLabel ? (JLabel) value : super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+				return value instanceof JLabel ? (JLabel) value
+						: super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 			}
 		};
 

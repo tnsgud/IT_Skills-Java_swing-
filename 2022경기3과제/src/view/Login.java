@@ -26,7 +26,11 @@ public class Login extends BaseFrame {
 			}
 
 			if (txt[0].getText().equals("admin") && txt[1].getText().equals("1234")) {
-				new Admin().addWindowListener(new Before(this));
+				BasePage.mf = new MainFrame();
+				BasePage.mf.addWindowListener(new Before(this));
+				BasePage.isAdmin = true;
+				new AdminPage();
+				return;
 			}
 
 			var rs = getRows("select * from user where u_id = ? and u_pw = ?", txt[0].getText(), txt[1].getText());
@@ -36,6 +40,7 @@ public class Login extends BaseFrame {
 				return;
 			}
 
+			BasePage.isAdmin = false;
 			BasePage.user = rs.get(0);
 
 			iMsg(BasePage.user.get(3) + "님 로그인하였습니다.");

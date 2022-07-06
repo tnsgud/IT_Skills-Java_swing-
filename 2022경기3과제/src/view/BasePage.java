@@ -19,7 +19,7 @@ public class BasePage extends JPanel implements Tool {
 	static MainFrame mf;
 	static ArrayList<Object> user;
 	static int g_no, u_gd, u_age;
-	static boolean u_ageFilter = false;
+	static boolean u_ageFilter = false, isAdmin = false;
 	
 	public BasePage(String name) {
 		super(new BorderLayout());

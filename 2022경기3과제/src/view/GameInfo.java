@@ -14,6 +14,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.swing.BoxLayout;
@@ -42,6 +44,13 @@ public class GameInfo extends BasePage {
 	JFileChooser jfc = new JFileChooser();
 	File f;
 
+	@Override
+	public JLabel lbl(String c, int a, int st, int sz) {
+		var lbl = super.lbl(c, a, st, sz);
+		lbl.setForeground(Color.black);
+		return lbl;
+	}
+
 	public GameInfo() {
 		super("게임정보");
 
@@ -63,7 +72,7 @@ public class GameInfo extends BasePage {
 		add(c = new JPanel(new FlowLayout(0)));
 		add(s = sz(new JPanel(new BorderLayout()), 0, 150), "South");
 
-		n.add(img = sz(new JLabel(), 100, 0), "West");
+		n.add(img = sz(new JLabel(), 200, 0), "West");
 		n.add(nc = new JPanel(new GridLayout(0, 1)));
 
 		img.addMouseListener(new MouseAdapter() {
@@ -212,11 +221,31 @@ public class GameInfo extends BasePage {
 		area.setBorder(new TitledBorder(new LineBorder(Color.black), "설명"));
 		cc.setBorder(new TitledBorder(new LineBorder(Color.black), "아이템"));
 		img.setBorder(new LineBorder(Color.black));
-		mf.setJPanelOpaque(this);
+
 		setBackground(Color.white);
 		setOpaque(true);
+	}
 
-		repaint();
+	public GameInfo(int g_no) {
+		this();
+
+		var game = getRows("select * from game where g_no = ? ", g_no).get(0);
+		img.setIcon(getIcon(game.get(9), 200, 200));
+		nameTxt.setText(game.get(2).toString());
+		genreLbl.setText(Stream.of(game.get(1).toString().split(",")).map(t -> g_genre[toInt(t)])
+				.collect(Collectors.joining(",")));
+		priceTxt.setText(game.get(5).toString());
+		dcTxt.setText(game.get(6).toString());
+		dcTxt.setEnabled(true);
+		ageCom.setSelectedIndex(toInt(game.get(7)));
+		area.setText(game.get(4).toString());
+
+		var rs = getRows("select * from item where g_no =?", g_no);
+		for (int i = 0; i < rs.size(); i++) {
+			var item = items.get(i);
+			item.img.setIcon(getIcon(rs.get(i).get(3), 80, 80));
+			item.txt.setText(rs.get(i).get(2).toString());
+		}
 	}
 
 	class Item extends JPanel {
@@ -272,7 +301,8 @@ public class GameInfo extends BasePage {
 	}
 
 	public static void main(String[] args) {
-		mf = new MainFrame();
-		new GameInfo();
+		var login = new Login();
+		login.txt[0].setText("admin");
+		login.txt[1].setText("1234");
 	}
 }

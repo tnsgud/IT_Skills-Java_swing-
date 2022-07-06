@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -52,6 +53,10 @@ public class SearchPage extends BasePage {
 		data();
 		ui();
 		event();
+		
+		c.setOpaque(false);
+		
+		mf.repaint();
 	}
 
 	private void data() {
@@ -177,23 +182,25 @@ public class SearchPage extends BasePage {
 		var rs = getRows(sql, "^" + keyword + ".*",
 				"(" + (com[1].getSelectedIndex() == 0 ? "" : com[1].getSelectedIndex()) + ")");
 
-		rs = rs.stream().filter(r -> {
-			if (user.get(7).equals("0")) {
-				return true;
-			}
-
-			for (var num : user.get(7).toString().split(",")) {
-				if (("," + r.get(3)).matches(".*," + num)) {
-					return false;
+		if(!isAdmin) {
+			rs = rs.stream().filter(r -> {
+				if (user.get(7).equals("0")) {
+					return true;
 				}
-			}
-
-			if (u_ageFilter) {
-				return toInt(g_age[toInt(r.get(4))]) <= u_age;
-			}
-
-			return true;
-		}).collect(Collectors.toCollection(ArrayList::new));
+				
+				for (var num : user.get(7).toString().split(",")) {
+					if (("," + r.get(3)).matches(".*," + num)) {
+						return false;
+					}
+				}
+				
+				if (u_ageFilter) {
+					return toInt(g_age[toInt(r.get(4))]) <= u_age;
+				}
+				
+				return true;
+			}).collect(Collectors.toCollection(ArrayList::new));
+		}
 
 		for (var r : rs) {
 			var tmp = new JPanel(new BorderLayout(5, 5));
@@ -203,6 +210,7 @@ public class SearchPage extends BasePage {
 			tmp.add(tmp_c);
 
 			tmp.setName(r.get(0).toString());
+			tmp.setOpaque(false);
 
 			var cap = "게임명,장르,연령,평점,가격".split(",");
 			for (int i = 0; i < cap.length; i++) {
@@ -225,12 +233,19 @@ public class SearchPage extends BasePage {
 				tmp_c.add(lbl(cap[i] + ":" + txt, 2, 20));
 			}
 
+			tmp_c.setOpaque(false);
+			
 			tmp.setBorder(new LineBorder(Color.black));
 			tmp.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mousePressed(MouseEvent e) {
-					g_no = toInt(((JPanel) e.getSource()).getName());
-					new GamePage();
+					if(isAdmin) {
+						g_no = toInt(((JPanel)e.getSource()).getName());
+						new GameInfo(g_no);
+					}else {
+						g_no = toInt(((JPanel) e.getSource()).getName());
+						new GamePage();
+					}
 				}
 			});
 

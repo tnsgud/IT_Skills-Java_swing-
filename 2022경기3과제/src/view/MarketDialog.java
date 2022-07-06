@@ -119,6 +119,7 @@ public class MarketDialog extends BaseDialog {
 		this(t, i_no);
 		this.price = toInt(price);
 		txt.setText(price);
+		txt.setEnabled(false);
 		btn.setText("구매");
 	}
 }
