@@ -6,34 +6,39 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-public class Test extends BaseFrame {
-	DefaultTableModel m = new DefaultTableModel(null, "a,b,c,d".split(",")) {
-		public java.lang.Class<?> getColumnClass(int columnIndex) {
-			return JComponent.class;
-		};
-	};
-	DefaultTableCellRenderer r = new DefaultTableCellRenderer() {
-		public java.awt.Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-				boolean hasFocus, int row, int column) {
-			return (JLabel) value;
-		};
-	};
-	JTable t = new JTable(m);
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.Arc2D;
 
-	public Test() {
-		super("", 500, 500);
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
-		for (int i = 0; i < t.getColumnCount(); i++) {
-			t.getColumnModel().getColumn(i).setCellRenderer(r);
-		}
-		
-		add(t);
-		
-		m.addRow(new Object[] {lbl("<html><u>hello", 0), lbl("<html><strike>hello", 0)});
+public class Test extends JPanel {
+
+	public void paint(Graphics g) {
+		Graphics2D g2 = (Graphics2D) g;
+		int w = getSize().width;
+		int h = getSize().height;
+
+//		Arc2D arc = new Arc2D.Double(0.0, 0.0, w, h, 0.0, 60.0, Arc2D.CHORD);
+//
+//		g2.draw(arc);
+
+		var arc = new Arc2D.Float(0.0f, 0.0f, w, h, 80.0f, 110.0f, Arc2D.PIE);
+
+		g2.fill(arc);
+
+//		arc = new Arc2D.Float(0.0f, 0.0f, w, h, 210.0f, 130.0f, Arc2D.OPEN);
+//
+//		g2.draw(arc);
 	}
 
 	public static void main(String[] args) {
-		new Test().setVisible(true);
-		;
+		JFrame frame = new JFrame();
+		frame.getContentPane().add(new Test());
+
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(200, 200);
+		frame.setVisible(true);
 	}
 }

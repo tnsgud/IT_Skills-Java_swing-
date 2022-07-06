@@ -1,26 +1,24 @@
 package view;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dialog;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
-import tool.Tool;
 
 public class GenreSelect extends BaseDialog {
 	HashMap<String, JLabel> lbl = new HashMap<>();
 	ArrayList<String> list = new ArrayList<>();
 	GameInfo gameInfo;
+	ChartPage chartPage;
 	InfoEditPage infoEditPage;
 	MouseAdapter ma = new MouseAdapter() {
 		@Override
@@ -46,7 +44,7 @@ public class GenreSelect extends BaseDialog {
 
 	public GenreSelect() {
 		super("장르 선택", 200, 250);
-		
+
 		var c = new JPanel(new GridLayout(0, 2));
 		var s = new JPanel();
 
@@ -61,7 +59,10 @@ public class GenreSelect extends BaseDialog {
 		}
 
 		s.add(btn("닫기", a -> {
-			if (gameInfo != null) {
+			if (chartPage != null) {
+				chartPage.genre = list;
+				chartPage.repaint();
+			} else if (gameInfo != null) {
 				gameInfo.genreLbl.setText(String.join(",", list.toArray(String[]::new)));
 			} else {
 				infoEditPage.setFilter();
@@ -69,6 +70,7 @@ public class GenreSelect extends BaseDialog {
 
 			dispose();
 		}));
+		
 
 		setJPanelOpaque((JComponent) getContentPane());
 	}
@@ -76,6 +78,34 @@ public class GenreSelect extends BaseDialog {
 	public GenreSelect(GameInfo gameInfo) {
 		this();
 		this.gameInfo = gameInfo;
+	}
+
+	public GenreSelect(ChartPage chartPage) {
+		this();
+		this.chartPage = chartPage;
+
+		for (var key : lbl.keySet()) {
+			var l = lbl.get(key);
+			l.setForeground(Color.gray);
+			l.removeMouseListener(ma);
+			l.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent e) {
+					var me = (JLabel) e.getSource();
+
+					if (me.getForeground() == Color.white) {
+						list.remove(key);
+						me.setForeground(Color.gray);
+					} else {
+						list.add(key);
+						me.setForeground(Color.white);
+					}
+				}
+			});
+		}
+		
+		lbl.get("1").setForeground(Color.white);
+		list.add("1");
 	}
 
 	public GenreSelect(InfoEditPage infoEditPage) {
