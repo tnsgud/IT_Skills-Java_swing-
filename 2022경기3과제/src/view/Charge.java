@@ -14,7 +14,7 @@ public class Charge extends BaseDialog {
 	JRadioButton radio[] = new JRadioButton[6];
 
 	public Charge() {
-		super(300, 500);
+		super("충전하기",300, 500);
 
 		add(lbl("충전 금액 선택", 0, 30), "North");
 		add(c = new JPanel(new GridLayout(0, 1, 10, 10)));
@@ -39,7 +39,9 @@ public class Charge extends BaseDialog {
 					BasePage.user.get(0));
 			BasePage.user = getRows("select * from user where u_no=?", BasePage.user.get(0)).get(0);
 			iMsg("충전이 완료되었습니다.\n보유 잔액:" + format(toInt(BasePage.user.get(5))) + "원");
-			InfoEditPage.pr.setText(format(toInt(BasePage.user.get(5))) + "원");
+			if(BasePage.mf.c.getComponent(0) instanceof InfoEditPage) {
+				InfoEditPage.pr.setText(format(toInt(BasePage.user.get(5))) + "원");
+			}
 			dispose();
 		}));
 

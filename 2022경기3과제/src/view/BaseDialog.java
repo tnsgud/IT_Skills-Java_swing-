@@ -16,7 +16,8 @@ public class BaseDialog extends JDialog implements Tool {
 	JPanel en, ew, ec, ee, es;
 	JPanel sn, sw, sc, se, ss;
 
-	public BaseDialog(int w, int h) {
+	public BaseDialog(String t, int w, int h) {
+		setTitle(t);
 		getContentPane().setBackground(Tool.back);
 		setModal(true);
 		setSize(w, h);

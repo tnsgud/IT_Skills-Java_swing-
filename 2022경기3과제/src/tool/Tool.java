@@ -1,6 +1,7 @@
 package tool;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -15,13 +16,18 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+import javax.swing.CellRendererPane;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
 import db.DB;
 
@@ -33,13 +39,45 @@ public interface Tool {
 
 	default void setJPanelOpaque(JComponent com) {
 		for (var c : com.getComponents()) {
-			if (!(c instanceof JComboBox || c instanceof JTextField || c instanceof JButton)) {
+			if (c instanceof JLabel || c instanceof JPanel) {
 				((JComponent) c).setOpaque(false);
 				setJPanelOpaque((JComponent) c);
 			}
 		}
 	}
-	
+
+	default DefaultTableModel model(String col[]) {
+		return new DefaultTableModel(null, col) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+
+			@Override
+			public Class<?> getColumnClass(int columnIndex) {
+				return JLabel.class;
+			}
+		};
+	}
+
+	default JTable table(DefaultTableModel m) {
+		var t = new JTable(m);
+		var d = new DefaultTableCellRenderer() {
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+					boolean hasFocus, int row, int column) {
+				return value instanceof JLabel ? (JLabel) value : super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			}
+		};
+
+		t.getTableHeader().setReorderingAllowed(false);
+		t.getTableHeader().setResizingAllowed(false);
+
+		t.setDefaultRenderer(JLabel.class, d);
+
+		return t;
+	}
+
 	default int toInt(Object p) {
 		var s = p.toString().replaceAll("[^0-9|^-]", "");
 		return s.isEmpty() ? -1 : Integer.parseInt(s);

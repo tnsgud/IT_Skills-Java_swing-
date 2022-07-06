@@ -45,7 +45,7 @@ public class GenreSelect extends BaseDialog {
 	}
 
 	public GenreSelect() {
-		super(200, 250);
+		super("장르 선택", 200, 250);
 		
 		var c = new JPanel(new GridLayout(0, 2));
 		var s = new JPanel();

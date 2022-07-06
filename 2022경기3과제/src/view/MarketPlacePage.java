@@ -21,19 +21,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 public class MarketPlacePage extends BasePage {
-	DefaultTableModel m1 = new DefaultTableModel(null, "아이템,게임명,아이템명".split(",")) {
-		public java.lang.Class<?> getColumnClass(int columnIndex) {
-			return columnIndex == 0 ? JLabel.class : JComponent.class;
-		};
-	};
-	DefaultTableCellRenderer r1 = new DefaultTableCellRenderer() {
-		public java.awt.Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-				boolean hasFocus, int row, int column) {
-			return column == 0 ? (JLabel) value
-					: super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-		};
-	};
-	JTable t = new JTable(m1);
+	DefaultTableModel m1 = model("아이템,게임명,아이템명,s_no,i_no".split(","));
+	JTable t = table(m1);
 	JTextField txt = new JTextField();
 
 	public MarketPlacePage() {
@@ -63,20 +52,29 @@ public class MarketPlacePage extends BasePage {
 	private void storage() {
 		var cws = new JPanel(new FlowLayout(2));
 		var btn = btn("등록하기", a -> {
+
+			var dia = new MarketDialog("장터등록", toInt(t.getValueAt(t.getSelectedRow(), 4)));
+			dia.s_no = toInt(t.getValueAt(t.getSelectedRow(), 3));
+			dia.setVisible(true);
 		});
 
 		cw.setBorder(new LineBorder(Color.black));
-		t.setDefaultRenderer(JComponent.class, r1);
 
 		cw.add(lbl("<html><font color='black'>보관함", 0, 25), "North");
 		cw.add(new JScrollPane(t));
 		cw.add(cws, "South");
 		cws.add(btn);
 
+		for (var col : "s_no,i_no".split(",")) {
+			t.getColumn(col).setMinWidth(0);
+			t.getColumn(col).setMaxWidth(0);
+		}
+		;
+
 		t.setRowHeight(50);
 
 		for (var rs : getRows(
-				"select i_img, g_name, i_name from storage s inner join item i on s.i_no = i.i_no inner join game g on i.g_no = g.g_no where u_no= ?",
+				"select i_img, g_name, i_name, s.s_no, i.i_no from v2, storage s, game g, item i where v2.s_no = s.s_no and g.g_no = v2.g_no and i.i_no=s.i_no and v2.u_no = ?",
 				user.get(0))) {
 			rs.set(0, new JLabel(getIcon(rs.get(0), 50, 50)));
 			m1.addRow(rs.toArray());
@@ -96,7 +94,7 @@ public class MarketPlacePage extends BasePage {
 			cec.removeAll();
 
 			for (var rs : getRows(
-					"select i_img, g_name, i_name, format(m_price, '#,##0'), m.u_no, m_no from market m, storage s, item i, game g where m.s_no = s.s_no and s.i_no = i.i_no and i.g_no = g.g_no and m.m_ox = 0 and (i_name like ? or g_name like ?)",
+					"select i_img, g_name, i_name, format(m_price, '#,##0'), m.u_no, m_no, i.i_no from market m, storage s, item i, game g where m.s_no = s.s_no and s.i_no = i.i_no and i.g_no = g.g_no and m.m_ox = 0 and (i_name like ? or g_name like ?)",
 					"%" + txt.getText() + "%", "%" + txt.getText() + "%")) {
 				var tmp = new JPanel(new BorderLayout(5, 5));
 				var tmp_c = new JPanel(new GridLayout(0, 1));
@@ -109,11 +107,13 @@ public class MarketPlacePage extends BasePage {
 
 					i.addActionListener(e -> {
 						if (c.equals("구매하기")) {
-							new Form();
+							var dia = new MarketDialog("장터구매", toInt(rs.get(6)), rs.get(3).toString());
+							dia.m_no = toInt(rs.get(5));
+							dia.setVisible(true);
 						} else {
 							iMsg("판매취소가 완료되었습니다.");
 							execute("delete from market where m_no =?", rs.get(5));
-							((JButton)a.getSource()).doClick();
+							((JButton) a.getSource()).doClick();
 						}
 					});
 
