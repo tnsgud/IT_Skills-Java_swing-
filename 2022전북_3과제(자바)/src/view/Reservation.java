@@ -25,7 +25,7 @@ import javax.swing.JTable;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
-public class Reservation extends BaseFrame {
+public class Reservation extends BasePage {
 	int curidx;
 	String cols[] = "번호,날짜,출발지,도착지,결제금액".split(",");
 	ArrayList<ArrayList<Object>> data;
@@ -55,8 +55,7 @@ public class Reservation extends BaseFrame {
 			});
 
 	public Reservation() {
-		super("예약조회", 800, 600);
-		user = getRows("select * from member").get(0);
+		BaseFrame.user = getRows("select * from member").get(0);
 
 		setLayout(new GridBagLayout());
 
@@ -89,6 +88,8 @@ public class Reservation extends BaseFrame {
 						eMsg("이미 탑승이 완료되어 티켓을 볼 수 없습니다.");
 						return;
 					}
+					
+					showTicket();
 				} else if (e.getButton() == 3) {
 					var pop = new JPopupMenu();
 					var item = new JMenuItem("예약 취소");
@@ -101,8 +102,6 @@ public class Reservation extends BaseFrame {
 					pop.add(item);
 
 					pop.show(t, e.getX(), e.getY());
-				} else {
-					showTicket();
 				}
 			}
 		});
@@ -142,15 +141,6 @@ public class Reservation extends BaseFrame {
 		addRow();
 
 		setVisible(true);
-		
-		addWindowFocusListener(new WindowAdapter() {
-			@Override
-			public void windowLostFocus(WindowEvent e) {
-				if (!flag) {
-					dispose();
-				}
-			}
-		});
 	}
 
 	private void showTicket() {
@@ -160,14 +150,16 @@ public class Reservation extends BaseFrame {
 
 		data = getRows(
 				"select a1.a_code, a2.a_code, m_name2, c_seat from reservation r, schedule s, member m, companion c, airport a1, airport a2 where r.s_no = s.s_no and c.r_no = r.r_no and s.s_depart = a1.a_no and s.s_arrival = a2.a_no and r.m_no = m.m_no and r.r_no = ? and m.m_no = ?",
-				t.getValueAt(t.getSelectedRow(), 0), user.get(0));
+				t.getValueAt(t.getSelectedRow(), 0), BaseFrame.user.get(0));
+		
+		repaint();
 	}
 
 	private void addRow() {
 		m.setRowCount(0);
 		for (var rs : getRows(
 				"select r_no, concat(r_date, ' ', s_time), a1.a_name, a2.a_name, format(r_price, '#,##0') from reservation r, schedule s, airport a1, airport a2 where r.s_no = s.s_no and s.s_depart = a1.a_no and s.s_arrival = a2.a_no and  m_no = ? order by r_date asc",
-				user.get(0))) {
+				BaseFrame.user.get(0))) {
 			m.addRow(rs.toArray());
 		}
 	}

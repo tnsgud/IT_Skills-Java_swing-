@@ -41,7 +41,7 @@ public class Main extends BaseFrame {
 				if (a.getActionCommand().equals("예약하기")) {
 					swap(new Reserve());
 				} else if (a.getActionCommand().equals("예약조회")) {
-//					swap(new Reservation());
+					swap(new Reservation());
 				} else if (a.getActionCommand().equals("마이페이지")) {
 					swap(new MyPage());
 				} else {

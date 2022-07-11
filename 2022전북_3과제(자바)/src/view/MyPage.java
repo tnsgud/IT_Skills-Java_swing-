@@ -29,6 +29,8 @@ public class MyPage extends BasePage {
 					new Mileage();
 				}
 			}));
+			
+			c.add(tmp);
 		}
 	}
 }
