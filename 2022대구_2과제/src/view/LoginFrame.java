@@ -64,7 +64,7 @@ public class LoginFrame extends BaseFrame {
 		s.add(sc = new JPanel());
 
 		sc.add(lbl("<html><font color='gray'>아직 계정이 없으신가요?", 0, 15));
-		sc.add(lbl("계정 만들기", 0, 15, e -> new SignFrame().addWindowListener(new Before(this))));
+		sc.add(lbl("계정 만들기", 0, 15, e -> new SignUpFrame().addWindowListener(new Before(this))));
 
 		n.setOpaque(false);
 		c.setOpaque(false);
