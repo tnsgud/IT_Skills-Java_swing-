@@ -46,6 +46,7 @@ public class MainFrame extends BaseFrame {
 			int idx = i;
 			nav[i] = hyplbl(cap[i], 0, 15, e -> {
 				if (e.getButton() == 1) {
+					LoginFrame.isMain = true;
 					var ca = nav[idx].getText();
 					BasePage page = null;
 
@@ -149,10 +150,6 @@ public class MainFrame extends BaseFrame {
 		c.setOpaque(false);
 		cc.setOpaque(false);
 		cc.setBounds(0, 0, 1510, 450);
-	}
-
-	static void login() {
-		nav[3].setText("Logout");
 	}
 
 	static void logout() {

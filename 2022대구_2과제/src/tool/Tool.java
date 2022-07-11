@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
@@ -85,9 +86,9 @@ public interface Tool {
 	}
 
 	default void iMsg(String msg) {
-		JOptionPane.showMessageDialog(null, msg, "정보", 0);
+		JOptionPane.showMessageDialog(null, msg, "정보", 1);
 	}
-
+	
 	default <T extends JComponent> T sz(T c, int w, int h) {
 		c.setPreferredSize(new Dimension(w, h));
 		return c;
@@ -112,22 +113,14 @@ public interface Tool {
 
 			@Override
 			protected void paintComponent(Graphics g) {
-				super.paintComponent(g);
 				var g2 = (Graphics2D) g;
 
 				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 				g2.setColor(red);
 				g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 30, 30);
-			}
-
-			@Override
-			protected void paintBorder(Graphics g) {
-				super.paintBorder(g);
-				var g2 = (Graphics2D) g;
-
-				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-				g2.setStroke(new BasicStroke(2));
-				g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 30, 30);
+				
+//				텍스트를 위해서 나중에 호출해야함
+				super.paintComponent(g);
 			}
 
 			@Override
@@ -140,6 +133,10 @@ public interface Tool {
 			}
 		};
 		btn.addActionListener(a);
+		
+		btn.setBorderPainted(false);
+		btn.setContentAreaFilled(false);
+		btn.setFocusPainted(false);
 		btn.setOpaque(false);
 		btn.setForeground(Color.white);
 		btn.setBackground(red);

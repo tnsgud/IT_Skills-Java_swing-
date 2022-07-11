@@ -41,6 +41,7 @@ public class CinemaFrame extends BaseFrame {
 			int idx = i;
 
 			nw.add(lbl[i] = lbl(cap[i], 2, 15, e -> {
+				LoginFrame.isMain = false;
 			}));
 		}
 
