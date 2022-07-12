@@ -84,7 +84,7 @@ public class MoviePage extends BasePage {
 
 		n.setBorder(new MatteBorder(0, 0, 2, 0, Color.black));
 
-		opaque(main);
+		opaque(main, false);
 		setBackground(Color.white);
 		main.setBackground(Color.white);
 	}
@@ -167,7 +167,7 @@ public class MoviePage extends BasePage {
 			cc.add(tmp);
 		}
 		
-		opaque(cc);
+		opaque(cc, false);
 		
 		cc.repaint();
 		cc.revalidate();

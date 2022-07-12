@@ -210,21 +210,6 @@ public class SignUpFrame extends BaseFrame {
 		}), 0, 30), "South");
 
 		cn.add(lblImg = lblRoundImg(icon, 80, 80));
-//		cn.add(lblImg = sz(new JLabel() {
-//			@Override
-//			protected void paintComponent(Graphics g) {
-//				super.paintComponent(g);
-//				var buf = new BufferedImage(80, 80, BufferedImage.TYPE_4BYTE_ABGR);
-//				var bufG2 = (Graphics2D) buf.getGraphics();
-//				var g2 = (Graphics2D) g;
-//
-//				bufG2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-//
-//				icon.paintIcon(null, bufG2, 0, 0);
-//				g2.setPaint(new TexturePaint(buf, new Rectangle2D.Double(0, 0, getWidth(), getHeight())));
-//				g2.fillOval(0, 0, buf.getWidth(), buf.getHeight());
-//			}
-//		}, 80, 80));
 
 		var cap = "아이디,비밀번호,비밀번호 확인,이름,전화번호,생년월일".split(",");
 		var hint = "ID,Password,Password Check,Name,Phone Number".split(",");
@@ -269,7 +254,7 @@ public class SignUpFrame extends BaseFrame {
 
 		w.setBorder(new EmptyBorder(20, 10, 300, 10));
 
-		opaque(c);
+		opaque(c, false);
 		c.setBackground(Color.white);
 		c.setBorder(new EmptyBorder(10, 50, 5, 50));
 	}

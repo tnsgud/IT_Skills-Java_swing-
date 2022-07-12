@@ -52,7 +52,7 @@ public class MovieInfoDialog extends BaseDialog {
 		audience();
 		review();
 
-		opaque(main);
+		opaque(main, false);
 	}
 
 	private void review() {

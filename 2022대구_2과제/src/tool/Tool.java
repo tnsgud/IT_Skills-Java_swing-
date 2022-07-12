@@ -117,11 +117,11 @@ public interface Tool {
 		return "";
 	}
 
-	default void opaque(JComponent c) {
+	default void opaque(JComponent c, boolean op) {
 		for (var com : c.getComponents()) {
 			if (com instanceof JComponent) {
-				((JComponent) com).setOpaque(false);
-				opaque((JComponent) com);
+				((JComponent) com).setOpaque(op);
+				opaque((JComponent) com, op);
 			}
 		}
 	}
