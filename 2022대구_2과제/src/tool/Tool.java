@@ -15,6 +15,8 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.CellRendererPane;
 import javax.swing.ImageIcon;
@@ -60,7 +62,6 @@ public interface Tool {
 			for (int i = 0; i < obj.length; i++) {
 				DB.ps.setObject(i + 1, obj[i]);
 			}
-			System.out.println(DB.ps);
 			var rs = DB.ps.executeQuery();
 			while (rs.next()) {
 				var row = new ArrayList<>();
@@ -117,6 +118,11 @@ public interface Tool {
 				opaque((JComponent) com);
 			}
 		}
+	}
+
+	default String mapToGenre(String genre) {
+		var genres = getRows("select g_name from genre").stream().map(x -> x.get(0).toString()).toArray(String[]::new);
+		return Stream.of(genre.split("\\.")).map(x -> genres[toInt(x) - 1]).collect(Collectors.joining(","));
 	}
 
 	default JButton btn(String c, ActionListener a) {

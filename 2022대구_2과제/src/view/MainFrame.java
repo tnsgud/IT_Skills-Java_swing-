@@ -77,6 +77,7 @@ public class MainFrame extends BaseFrame {
 						BasePage.cf = new CinemaFrame();
 						BasePage.cf.addWindowListener(new Before(this));
 						BasePage.cf.lbl[idx].setFont(new Font("맑은 고딕", 1, 15));
+						BasePage.cf.swapPage(page);
 					}
 				}
 			});
