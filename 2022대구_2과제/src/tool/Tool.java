@@ -1,6 +1,5 @@
 package tool;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -17,19 +16,21 @@ import java.awt.geom.RoundRectangle2D;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import javax.swing.CellRendererPane;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.MatteBorder;
-import javax.swing.plaf.basic.BasicScrollBarUI;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -88,10 +89,34 @@ public interface Tool {
 	default void iMsg(String msg) {
 		JOptionPane.showMessageDialog(null, msg, "정보", 1);
 	}
-	
+
 	default <T extends JComponent> T sz(T c, int w, int h) {
 		c.setPreferredSize(new Dimension(w, h));
 		return c;
+	}
+
+	default int toInt(Object o) {
+		var s = o.toString().replaceAll("[^0-9|^-]", "");
+		return s.isEmpty() ? -1 : Integer.parseInt(s);
+	}
+
+	default String getFilePath() {
+		var jfc = new JFileChooser("./지급자료/image/user");
+		jfc.setFileFilter(new FileNameExtensionFilter("JPG Images", "jpg"));
+		jfc.setDialogTitle("이미지 선택");
+		if (jfc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+			return jfc.getSelectedFile().getAbsolutePath();
+		}
+		return "";
+	}
+
+	default void opaque(JComponent c) {
+		for (var com : c.getComponents()) {
+			if (com instanceof JComponent) {
+				((JComponent) com).setOpaque(false);
+				opaque((JComponent) com);
+			}
+		}
 	}
 
 	default JButton btn(String c, ActionListener a) {
@@ -118,7 +143,7 @@ public interface Tool {
 				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 				g2.setColor(red);
 				g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 30, 30);
-				
+
 //				텍스트를 위해서 나중에 호출해야함
 				super.paintComponent(g);
 			}
@@ -133,7 +158,7 @@ public interface Tool {
 			}
 		};
 		btn.addActionListener(a);
-		
+
 		btn.setBorderPainted(false);
 		btn.setContentAreaFilled(false);
 		btn.setFocusPainted(false);

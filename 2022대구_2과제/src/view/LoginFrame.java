@@ -54,7 +54,7 @@ public class LoginFrame extends BaseFrame {
 			iMsg(user.get(3) + "님 환영합니다.");
 
 			if (isMain) {
-				MainFrame.nav[3].setText("Logout");
+				MainFrame.login();
 			} else {
 				CinemaFrame.lblState.setText("Logout");
 			}

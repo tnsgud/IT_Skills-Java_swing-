@@ -137,8 +137,6 @@ public class MainFrame extends BaseFrame {
 			}
 		};
 
-		logout();
-
 		cc.addMouseListener(ma);
 		cc.addMouseMotionListener(ma);
 
@@ -152,6 +150,10 @@ public class MainFrame extends BaseFrame {
 		cc.setBounds(0, 0, 1510, 450);
 	}
 
+	static void login() {
+		nav[3].setText("Logout");
+	}
+	
 	static void logout() {
 		user = null;
 		nav[3].setText("Login");
