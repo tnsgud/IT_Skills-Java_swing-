@@ -50,16 +50,24 @@ public class SignUpFrame extends BaseFrame {
 	}
 
 	private void event() {
-		lblImg.addMouseListener(new MouseAdapter() {
+		var ma = new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				if (e.getClickCount() == 2) {
 					path = getFilePath();
 					icon = path.isEmpty() ? icon : getIcon(path, 80, 80);
+					cn.remove(lblImg);
+					lblImg = lblRoundImg(icon, 80, 80);
+					lblImg.addMouseListener(this);
+					cn.add(lblImg);
+
 					lblImg.repaint();
+					lblImg.revalidate();
 				}
 			}
-		});
+		};
+
+		lblImg.addMouseListener(ma);
 
 		com[0].addActionListener(a -> {
 			date = LocalDate.of(toInt(com[0].getSelectedItem()), 1, 1);
@@ -201,21 +209,22 @@ public class SignUpFrame extends BaseFrame {
 			new MainFrame();
 		}), 0, 30), "South");
 
-		cn.add(lblImg = sz(new JLabel() {
-			@Override
-			protected void paintComponent(Graphics g) {
-				super.paintComponent(g);
-				var buf = new BufferedImage(80, 80, BufferedImage.TYPE_4BYTE_ABGR);
-				var bufG2 = (Graphics2D) buf.getGraphics();
-				var g2 = (Graphics2D) g;
-
-				bufG2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-				icon.paintIcon(null, bufG2, 0, 0);
-				g2.setPaint(new TexturePaint(buf, new Rectangle2D.Double(0, 0, getWidth(), getHeight())));
-				g2.fillOval(0, 0, buf.getWidth(), buf.getHeight());
-			}
-		}, 80, 80));
+		cn.add(lblImg = lblRoundImg(icon, 80, 80));
+//		cn.add(lblImg = sz(new JLabel() {
+//			@Override
+//			protected void paintComponent(Graphics g) {
+//				super.paintComponent(g);
+//				var buf = new BufferedImage(80, 80, BufferedImage.TYPE_4BYTE_ABGR);
+//				var bufG2 = (Graphics2D) buf.getGraphics();
+//				var g2 = (Graphics2D) g;
+//
+//				bufG2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+//
+//				icon.paintIcon(null, bufG2, 0, 0);
+//				g2.setPaint(new TexturePaint(buf, new Rectangle2D.Double(0, 0, getWidth(), getHeight())));
+//				g2.fillOval(0, 0, buf.getWidth(), buf.getHeight());
+//			}
+//		}, 80, 80));
 
 		var cap = "아이디,비밀번호,비밀번호 확인,이름,전화번호,생년월일".split(",");
 		var hint = "ID,Password,Password Check,Name,Phone Number".split(",");

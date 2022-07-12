@@ -29,7 +29,7 @@ public class CinemaFrame extends BaseFrame {
 		super("Movie", 1200, 800);
 
 		add(n = sz(new JPanel(new BorderLayout()), 0, 80), "North");
-		add(scr = new JScrollPane());
+		add(scr = scroll(null));
 
 		n.add(nw = new JPanel(new FlowLayout(0, 40, 10)), "West");
 		n.add(ne = new JPanel(new FlowLayout(2)), "East");
@@ -47,43 +47,6 @@ public class CinemaFrame extends BaseFrame {
 
 		lblState = lbl(user != null ? "Logout" : "Login", 0, 15, e -> {
 		});
-
-		var b1 = new BasicScrollBarUI() {
-			@Override
-			protected void configureScrollBarColors() {
-				this.thumbColor = Color.lightGray;
-			}
-
-			@Override
-			protected JButton createDecreaseButton(int orientation) {
-				return sz(new JButton(), 0, 0);
-			}
-
-			@Override
-			protected JButton createIncreaseButton(int orientation) {
-				return sz(new JButton(), 0, 0);
-			}
-		};
-		var b2 = new BasicScrollBarUI() {
-			@Override
-			protected void configureScrollBarColors() {
-				this.thumbColor = Color.lightGray;
-			}
-
-			@Override
-			protected JButton createDecreaseButton(int orientation) {
-				return sz(new JButton(), 0, 0);
-			}
-
-			@Override
-			protected JButton createIncreaseButton(int orientation) {
-				return sz(new JButton(), 0, 0);
-			}
-		};
-
-		scr.setBorder(null);
-		scr.getVerticalScrollBar().setUI(b1);
-		scr.getHorizontalScrollBar().setUI(b2);
 
 		n.setBorder(new EmptyBorder(10, 40, 10, 40));
 		ne.setBorder(new EmptyBorder(10, 0, 0, 0));

@@ -8,11 +8,14 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.TexturePaint;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+import java.awt.image.BufferedImage;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -28,11 +31,13 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.MatteBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -40,6 +45,7 @@ import db.DB;
 
 public interface Tool {
 	Color red = new Color(237, 85, 59), orange = new Color(246, 213, 92), navy = new Color(42, 72, 88);
+	String[] m_age = ",전체관람가,12세이상관람가,15세이상관람가".split(",");
 
 	default void execute(String sql, Object... obj) {
 		try {
@@ -123,6 +129,49 @@ public interface Tool {
 	default String mapToGenre(String genre) {
 		var genres = getRows("select g_name from genre").stream().map(x -> x.get(0).toString()).toArray(String[]::new);
 		return Stream.of(genre.split("\\.")).map(x -> genres[toInt(x) - 1]).collect(Collectors.joining(","));
+	}
+
+	default JScrollPane scroll(Component c) {
+		var scr = new JScrollPane(c);
+		scr.setBorder(null);
+
+		var b1 = new BasicScrollBarUI() {
+			@Override
+			protected void configureScrollBarColors() {
+				this.thumbColor = Color.lightGray;
+			}
+
+			@Override
+			protected JButton createDecreaseButton(int orientation) {
+				return sz(new JButton(), 0, 0);
+			}
+
+			@Override
+			protected JButton createIncreaseButton(int orientation) {
+				return sz(new JButton(), 0, 0);
+			}
+		};
+		var b2 = new BasicScrollBarUI() {
+			@Override
+			protected void configureScrollBarColors() {
+				this.thumbColor = Color.lightGray;
+			}
+
+			@Override
+			protected JButton createDecreaseButton(int orientation) {
+				return sz(new JButton(), 0, 0);
+			}
+
+			@Override
+			protected JButton createIncreaseButton(int orientation) {
+				return sz(new JButton(), 0, 0);
+			}
+		};
+
+		scr.getVerticalScrollBar().setUI(b1);
+		scr.getHorizontalScrollBar().setUI(b2);
+
+		return scr;
 	}
 
 	default JButton btn(String c, ActionListener a) {
@@ -248,12 +297,28 @@ public interface Tool {
 		}, 30, 30);
 	}
 
-	default ImageIcon getIcon(String p, int w, int h) {
-		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(p).getScaledInstance(w, h, 4));
+	default JLabel lblRoundImg(ImageIcon icon, int w, int h) {
+		return sz(new JLabel() {
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				var g2 = (Graphics2D) g;
+
+				var bufImg = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(),
+						BufferedImage.TYPE_4BYTE_ABGR);
+				var bufG2 = (Graphics2D) bufImg.getGraphics();
+
+				bufG2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+				icon.paintIcon(null, bufG2, 0, 0);
+
+				g2.setPaint(new TexturePaint(bufImg, new Rectangle2D.Double(0, 0, getWidth(), getHeight())));
+				g2.fillOval(0, 0, bufImg.getWidth(), bufImg.getHeight());
+			}
+		}, w, h);
 	}
 
-	default ImageIcon getIcon(Object p, int w, int h) {
-		return new ImageIcon(Toolkit.getDefaultToolkit().createImage((byte[]) p).getScaledInstance(w, h, 4));
+	default ImageIcon getIcon(String p, int w, int h) {
+		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(p).getScaledInstance(w, h, 4));
 	}
 
 	default JTextField hintField(String c, int col) {

@@ -152,7 +152,7 @@ public class DB extends BaseFrame {
 
 			createT("grade", "gr_no int primary key not null auto_increment, gr_name varchar(10), gr_criteria int");
 			createT("user",
-					"u_no int primary key not null, u_id varchar(20), u_pw varchar(30), u_name varchar(30), u_birth date, g_gender int, gr_no int, foreign key(gr_no) references grade(gr_no)");
+					"u_no int primary key not null, u_id varchar(20), u_pw varchar(30), u_name varchar(30), u_birth date, u_gender int, gr_no int, foreign key(gr_no) references grade(gr_no)");
 			createT("area", "a_no int primary key not null, a_name varchar(15)");
 			createT("theater",
 					"t_no int primary key not null, t_name varchar(30), a_no int, m_no varchar(200), foreign key(a_no) references area(a_no)");
