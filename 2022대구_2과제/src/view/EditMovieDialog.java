@@ -20,7 +20,7 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
-public class EditMovie extends BaseDialog {
+public class EditMovieDialog extends BaseDialog {
 	MovieManageFrame frame;
 	JLabel lblImg;
 	JTextField txt[] = new JTextField[3];
@@ -32,7 +32,7 @@ public class EditMovie extends BaseDialog {
 	String path, genre = "", m_open = "";
 	ArrayList<Object> rs;
 
-	public EditMovie(MovieManageFrame frame) {
+	public EditMovieDialog(MovieManageFrame frame) {
 		super("영화추가", 950, 600);
 
 		this.frame = frame;
@@ -41,7 +41,7 @@ public class EditMovie extends BaseDialog {
 		event();
 	}
 
-	public EditMovie(MovieManageFrame frame, ArrayList<Object> rs) {
+	public EditMovieDialog(MovieManageFrame frame, ArrayList<Object> rs) {
 		this(frame);
 
 		this.rs = rs;

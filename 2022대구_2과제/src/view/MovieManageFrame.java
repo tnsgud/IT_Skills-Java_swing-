@@ -20,7 +20,7 @@ public class MovieManageFrame extends BaseFrame {
 		c.add(cc = new JPanel(new GridLayout(0, 5, 10, 10)));
 
 		cn.add(sz(btnRound("추가 +", a -> {
-			new EditMovie(this).setVisible(true);
+			new EditMovieDialog(this).setVisible(true);
 		}), 120, 30));
 
 		ui();
@@ -43,7 +43,7 @@ public class MovieManageFrame extends BaseFrame {
 			tmp.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mousePressed(MouseEvent e) {
-					new EditMovie(MovieManageFrame.this, rs).setVisible(true);
+					new EditMovieDialog(MovieManageFrame.this, rs).setVisible(true);
 				}
 			});
 

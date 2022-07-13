@@ -21,7 +21,7 @@ public class TheaterManageFrame extends BaseFrame {
 		setVisible(true);
 	}
 
-	private void ui() {
+	void ui() {
 		tab.removeAll();
 
 		var rs = getRows("select * from area");
@@ -51,7 +51,7 @@ public class TheaterManageFrame extends BaseFrame {
 				lbl.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mousePressed(MouseEvent e) {
-						new EditTheater(TheaterManageFrame.this, r).setVisible(true);
+						new EditTheaterDialog(TheaterManageFrame.this, r).setVisible(true);
 					}
 
 					@Override
