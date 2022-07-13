@@ -22,6 +22,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
 
+import view.BaseFrame.Before;
+
 public class ReservationPage extends BasePage {
 	JLabel lblArea[] = new JLabel[9], lblTheater;
 	JPanel jpDate[] = new JPanel[15];
@@ -186,7 +188,7 @@ public class ReservationPage extends BasePage {
 							if (lblTime.getForeground().equals(Color.LIGHT_GRAY))
 								return;
 
-							new SeatFrame(lblTheater.getName(), m, d);
+							new SeatFrame(lblTheater.getName(), m, d).addWindowListener(new Before(BasePage.cf));
 						}
 					});
 				}

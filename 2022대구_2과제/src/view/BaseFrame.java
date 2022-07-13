@@ -29,7 +29,7 @@ public class BaseFrame extends JFrame implements Tool {
 		((JPanel) getContentPane()).setBackground(Color.white);
 	}
 	
-	class Before extends WindowAdapter {
+	static class Before extends WindowAdapter {
 		BaseFrame b;
 		
 		public Before(BaseFrame b) {
