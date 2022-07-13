@@ -21,7 +21,7 @@ public class AdminFrame extends BaseFrame {
 
 		setVisible(true);
 	}
-	
+
 	public static void main(String[] args) {
 		new AdminFrame();
 	}
