@@ -176,14 +176,9 @@ public interface Tool {
 
 	default JButton btn(String c, ActionListener a) {
 		var b = new JButton(c);
-		b.addActionListener(a);
-		return b;
-	}
-
-	default JButton btnBlack(String c, ActionListener a) {
-		var b = btn(c, a);
 		b.setForeground(Color.white);
-		b.setBackground(Color.black);
+		b.setBackground(red);
+		b.addActionListener(a);
 		return b;
 	}
 
