@@ -149,6 +149,9 @@ public class MainFrame extends BaseFrame {
 		c.setOpaque(false);
 		cc.setOpaque(false);
 		cc.setBounds(0, 0, 1510, 450);
+		
+		user = getRows("select * from user where u_no = ?", 1).get(0);
+		login();
 	}
 
 	static void login() {

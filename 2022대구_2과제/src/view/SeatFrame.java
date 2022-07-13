@@ -296,7 +296,7 @@ public class SeatFrame extends BaseFrame {
 			var tmpC = new JPanel(new GridLayout(1, 0));
 			var tmpS = new JPanel(new GridLayout(0, 1));
 			var l1 = lbl("<html>" + movie.get(1) + "<br>" + theater + "<br>" + range, 2);
-			var dc = 1 - toInt(getOne("select gr_criteria from grade where gr_no = ?", user.get(6))) * 0.01;
+			var dc = 1 - (toInt(getOne("select gr_criteria from grade where gr_no = ?", user.get(6)))) * 0.01 - 0.05;
 			var cost = new int[] { 14000, 10000, 5000 };
 			var seat = Stream.of(seats).map(Arrays::asList).flatMap(x -> x.stream()).filter(x -> x.getName() != null)
 					.map(JLabel::getText).collect(Collectors.joining(","));

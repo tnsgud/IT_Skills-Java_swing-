@@ -392,7 +392,14 @@ public interface Tool {
 
 	default JTable table(DefaultTableModel m) {
 		var t = new JTable(m);
-		var r = new DefaultTableCellRenderer();
+		var r = new DefaultTableCellRenderer() {
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+					boolean hasFocus, int row, int column) {
+				return value instanceof JLabel ? (JLabel) value
+						:(JComponent) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			}
+		};
 
 		t.getTableHeader().setReorderingAllowed(false);
 		t.getTableHeader().setResizingAllowed(false);
@@ -400,7 +407,9 @@ public interface Tool {
 		t.setSelectionMode(0);
 		r.setHorizontalAlignment(0);
 
-		t.setDefaultRenderer(Component.class, r);
+		for (int i = 0; i < t.getColumnCount(); i++) {
+			t.getColumnModel().getColumn(i).setCellRenderer(r);
+		}
 
 		return t;
 	}
