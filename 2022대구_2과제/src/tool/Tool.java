@@ -399,6 +399,9 @@ public interface Tool {
 		t.getTableHeader().setReorderingAllowed(false);
 		t.getTableHeader().setResizingAllowed(false);
 
+		t.getTableHeader().setBackground(red);
+		t.getTableHeader().setForeground(Color.white);
+		
 		t.setSelectionMode(0);
 		r.setHorizontalAlignment(0);
 

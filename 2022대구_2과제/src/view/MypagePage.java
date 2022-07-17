@@ -128,8 +128,6 @@ public class MypagePage extends BasePage {
 		}
 
 		t.setRowHeight(80);
-		t.getTableHeader().setBackground(red);
-		t.getTableHeader().setForeground(Color.white);
 
 		r.setHorizontalAlignment(0);
 
