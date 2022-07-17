@@ -88,15 +88,15 @@ public class EditTheaterDialog extends BaseDialog {
 			frame.ui();
 		}));
 
-		Stream.of(rs.get(3).toString().split("\\."))
-				.forEach(x -> jpMovie[toInt(x) - 1].setBorder(new LineBorder(Color.red)));
+		Stream.of(this.rs.get(3).toString().split("\\."))
+				.forEach(x -> jpMovie[toInt(x) - 1].setBorder(new LineBorder(Color.red, 4)));
 
 		movie = Stream.of(jpMovie).filter(x -> x.getBorder() != null).map(x -> x.getName())
 				.collect(Collectors.joining("."));
 
 		selMovie = (int) Stream.of(jpMovie).filter(x -> x.getBorder() != null).count();
 
-		txt.setText(rs.get(1).toString());
+		txt.setText(this.rs.get(1).toString());
 		scr.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 	}
 }
