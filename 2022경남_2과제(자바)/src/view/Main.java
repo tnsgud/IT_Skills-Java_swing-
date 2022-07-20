@@ -29,7 +29,7 @@ public class Main extends BaseFrame {
 				var cap = a.getActionCommand();
 
 				if (cap.equals("로그인")) {
-					new Login().addWindowListener(new Before(this));
+					new Login(this).addWindowListener(new Before(this));
 				} else if (cap.equals("로그아웃")) {
 					logout();
 				} else if (cap.equals("회원가입")) {
@@ -76,7 +76,8 @@ public class Main extends BaseFrame {
 	}
 
 	void logout() {
-		user = null;
+		student = null;
+		teacher = null;
 		setBtn("로그인,회원가입,종료".split(","));
 	}
 

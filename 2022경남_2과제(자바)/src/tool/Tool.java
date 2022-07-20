@@ -115,7 +115,7 @@ public interface Tool {
 				var g2 = (Graphics2D) g;
 
 				g2.setColor(Color.LIGHT_GRAY);
-				g2.drawString(s, getInsets().left + 90, g2.getFontMetrics().getMaxAscent() + getInsets().top + 10);
+				g2.drawString(s, getInsets().left + 125, g2.getFontMetrics().getMaxAscent() + getInsets().top + 10);
 			}
 		};
 		t.setBorder(new LineBorder(Color.LIGHT_GRAY));

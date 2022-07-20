@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 import tool.Tool;
 
 public class BaseFrame extends JFrame implements Tool {
-	static ArrayList<Object> user;
+	static ArrayList<Object> student, teacher;
 	String tNo;
 
 	JPanel n, w, c, e, s;
