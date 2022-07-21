@@ -11,6 +11,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.MatteBorder;
 
+import view.BaseFrame.Before;
+
 public class Login extends BaseFrame {
 	JTextField txt[] = new JTextField[2];
 	JCheckBox chk = new JCheckBox("아이디 저장");
@@ -53,7 +55,7 @@ public class Login extends BaseFrame {
 			Main.lbl[0].setText("로그아웃");
 			Main.lbl[0].setIcon(getIcon("./datafile/아이콘/UnLock.png", 15, 15));
 			Main.lbl[1].setVisible(false);
-			
+
 			if (chk.isSelected()) {
 				pref.put("id", txt[0].getText());
 			} else {
@@ -65,7 +67,7 @@ public class Login extends BaseFrame {
 
 		var p = "아이디 또는 이메일을 입력해 주세요.,비밀번호를 입력해 주세요.".split(",");
 		for (int i = 0; i < p.length; i++) {
-			txt[i] = i == 0 ? new HintField(p[i], 1) : new HintPassField(p[i], 1);
+			txt[i] = i == 0 ? hintField(p[i], 1) : hintPassField(p[i], 1);
 			cc.add(txt[i]);
 		}
 
@@ -79,11 +81,10 @@ public class Login extends BaseFrame {
 
 				if (me.getText().equals("회원가입")) {
 					new Sign().addWindowListener(new Before(this));
-				} else if (me.getText().equals("회원가입")) {
-
-					new BaseFrame("아이디 찾기", 500, 500).setVisible(true);
+				} else if (me.getText().equals("아이디 찾기")) {
+					Find.ID().addWindowListener(new Before(this));
 				} else {
-					new BaseFrame("비밀번호 찾기", 500, 500).setVisible(true);
+					Find.PW().addWindowListener(new Before(this));
 				}
 			}), 80, 15);
 

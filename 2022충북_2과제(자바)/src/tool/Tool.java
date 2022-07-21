@@ -26,6 +26,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
 
 import db.DB;
 
@@ -150,56 +151,42 @@ public interface Tool {
 		return l;
 	}
 
-	class HintField extends JTextField {
-		public String str;
-		int col;
+	default JTextField hintField(String s, int c) {
+		var t = new JTextField(c) {
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
 
-		public HintField(String str, int col) {
-			super(col);
-			this.str = str;
-			this.col = col;
-		}
+				if (!getText().isEmpty())
+					return;
 
-		@Override
-		protected void paintComponent(Graphics g) {
-			super.paintComponent(g);
+				var g2 = (Graphics2D) g;
 
-			if (!getText().isEmpty()) {
-				return;
+				g2.setColor(Color.LIGHT_GRAY);
+				g2.drawString(s, getInsets().left + 5, g2.getFontMetrics().getMaxAscent() + getInsets().top);
 			}
-
-			var g2 = (Graphics2D) g;
-			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-			g2.setColor(Color.LIGHT_GRAY);
-			g2.drawString(str, getInsets().left + 5, g2.getFontMetrics().getMaxAscent() + getInsets().top);
-		}
+		};
+		t.setBorder(new LineBorder(Color.LIGHT_GRAY));
+		return t;
 	}
 
-	class HintPassField extends JPasswordField {
-		public String str;
-		int col;
+	default JPasswordField hintPassField(String s, int c) {
+		var t = new JPasswordField(c) {
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
 
-		public HintPassField(String str, int col) {
-			super(col);
-			this.str = str;
-			this.col = col;
-		}
+				if (!getText().isEmpty())
+					return;
 
-		@Override
-		protected void paintComponent(Graphics g) {
-			super.paintComponent(g);
+				var g2 = (Graphics2D) g;
 
-			if (!getText().isEmpty()) {
-				return;
+				g2.setColor(Color.LIGHT_GRAY);
+				g2.drawString(s, getInsets().left + 5, g2.getFontMetrics().getMaxAscent() + getInsets().top);
 			}
-
-			var g2 = (Graphics2D) g;
-			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-			g2.setColor(Color.LIGHT_GRAY);
-			g2.drawString(str, getInsets().left + 5, g2.getFontMetrics().getMaxAscent() + getInsets().top);
-		}
+		};
+		t.setBorder(new LineBorder(Color.LIGHT_GRAY));
+		return t;
 	}
 
 	default ImageIcon getIcon(Object p, int w, int h) {
@@ -210,6 +197,14 @@ public interface Tool {
 		var b = new JButton(c);
 		b.setForeground(Color.white);
 		b.setBackground(Tool.red);
+		b.addActionListener(a);
+		return b;
+	}
+
+	default JButton btnBlack(String c, ActionListener a) {
+		var b = new JButton(c);
+		b.setForeground(Color.white);
+		b.setBackground(Color.black);
 		b.addActionListener(a);
 		return b;
 	}
