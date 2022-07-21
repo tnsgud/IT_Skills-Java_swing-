@@ -172,13 +172,11 @@ public class Reserve extends BaseFrame {
 							temp.addMouseListener(new MouseAdapter() {
 								@Override
 								public void mousePressed(MouseEvent e) {
-									login = true;
-									
-									if (!login) {
+									if (!isLogin) {
 										var ans = JOptionPane.showConfirmDialog(null, "로그인이 필요한 서비스 입니다.\n로그인 하시겠습니까?",
 												"로그인", JOptionPane.YES_NO_OPTION);
 										if (ans == JOptionPane.YES_OPTION) {
-											new Login(idSave).addWindowListener(new Before(Reserve.this));
+											new Login().addWindowListener(new Before(Reserve.this));
 										}
 
 										return;

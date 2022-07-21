@@ -3,6 +3,7 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.util.prefs.Preferences;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -13,11 +14,10 @@ import javax.swing.border.MatteBorder;
 public class Login extends BaseFrame {
 	JTextField txt[] = new JTextField[2];
 	JCheckBox chk = new JCheckBox("아이디 저장");
+	Preferences pref = Preferences.userNodeForPackage(BaseFrame.class);
 
-	public Login(boolean save) {
+	public Login() {
 		super("로그인", 400, 150);
-
-		chk.setSelected(save);
 
 		add(c = new JPanel(new BorderLayout(5, 5)));
 		add(s = new JPanel(new BorderLayout(5, 5)), "South");
@@ -32,7 +32,11 @@ public class Login extends BaseFrame {
 			}
 
 			if (txt[0].getText().equals("admin") && txt[1].getText().equals("1234")) {
-				new BaseFrame("관리자 메인", 500, 500).setVisible(true);
+				iMsg("관리자님 환영합니다.");
+				new Admin().addWindowListener(new Before(this));
+				txt[0].setText("");
+				txt[1].setText("");
+				return;
 			}
 
 			var rs = getRows("select * from user where u_id=? and u_pw=?", txt[0].getText(), txt[1].getText());
@@ -47,13 +51,15 @@ public class Login extends BaseFrame {
 			iMsg(user.get(3) + "님 환영합니다.");
 
 			Main.lbl[0].setText("로그아웃");
-			Main.lbl[0].setName("로그아웃");
+			Main.lbl[0].setIcon(getIcon("./datafile/아이콘/UnLock.png", 15, 15));
+			Main.lbl[1].setVisible(false);
+			
+			if (chk.isSelected()) {
+				pref.put("id", txt[0].getText());
+			} else {
+				pref.remove("id");
+			}
 
-			txt[0].setText(chk.isSelected() ? txt[0].getText() : "");
-			txt[1].setText("");
-
-			login = true;
-			idSave = chk.isSelected();
 			dispose();
 		}), "East");
 
@@ -72,8 +78,9 @@ public class Login extends BaseFrame {
 				var me = (JLabel) e.getSource();
 
 				if (me.getText().equals("회원가입")) {
-					new BaseFrame("회원가입", 500, 500).setVisible(true);
+					new Sign().addWindowListener(new Before(this));
 				} else if (me.getText().equals("회원가입")) {
+
 					new BaseFrame("아이디 찾기", 500, 500).setVisible(true);
 				} else {
 					new BaseFrame("비밀번호 찾기", 500, 500).setVisible(true);
@@ -87,7 +94,10 @@ public class Login extends BaseFrame {
 			}
 		}
 
-		txt[0].setText(chk.isSelected() ? user.get(1) + "" : "");
+		if (pref.get("id", null) != null) {
+			chk.setSelected(true);
+			txt[0].setText(pref.get("id", txt[0].getText()));
+		}
 
 		setVisible(true);
 	}

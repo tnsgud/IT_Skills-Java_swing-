@@ -1,7 +1,5 @@
 package db;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -55,7 +53,7 @@ public class DB {
 		createT("movie",
 				"m_no int primary key not null auto_increment, g_no int, m_rating varchar(10), m_show int, m_grade varchar(5), m_name varchar(50), m_content varchar(500), foreign key(g_no) references genre(g_no)");
 		createT("user",
-				"u_no int primary key not null auto_increment, u_id varchar(10), u_pw varchar(10), u_name varchar(10), u_phone varchar(50), u_email varchar(100), u_date int, u_gender int");
+				"u_no int primary key not null auto_increment, u_id varchar(10), u_pw varchar(10), u_name varchar(10), u_phone varchar(50), u_email varchar(100), u_date date, u_gender int");
 		createT("store",
 				"s_no int primary key not null auto_increment, s_name varchar(30), s_explanation varchar(130), s_price int");
 		createT("orderlist",

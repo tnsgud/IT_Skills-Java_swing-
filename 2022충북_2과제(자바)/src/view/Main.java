@@ -8,12 +8,16 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SwingWorker;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
@@ -25,9 +29,17 @@ public class Main extends BaseFrame {
 	Worker worker;
 	int bu = 1, left = 0, right = 4, curIdx = 0;
 	boolean run;
+	JLabel prev, next;
 
 	public Main() {
-		super("GGV", 940, 700);
+		super("GGV", 900, 700);
+		try {
+			Preferences.userNodeForPackage(BaseFrame.class).clear();
+		} catch (BackingStoreException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		setDefaultCloseOperation(3);
 
 		setLayout(new BorderLayout(10, 10));
 
@@ -35,9 +47,12 @@ public class Main extends BaseFrame {
 		add(c = new JPanel(null));
 		add(s = new JPanel(new BorderLayout(5, 5)), "South");
 
-		n.add(lbl("GGV MOVIE", 0, 25));
+		n.add(nc = new JPanel());
 		n.add(ne = new JPanel(new FlowLayout(2, 10, 10)), "East");
 		n.add(ns = new JPanel(new FlowLayout(1)), "South");
+
+		nc.add(lblHY("GGV", 0, 1, 25));
+		nc.add(lblSerif("MOVIE", 0, 0, 20));
 
 		var cap = "로그인,회원가입,마이페이지,통계".split(",");
 		var icon = "Lock,Join,People,Analytics".split(",");
@@ -45,26 +60,28 @@ public class Main extends BaseFrame {
 		for (int i = 0; i < cap.length; i++) {
 			lbl[i] = imglbl(cap[i], 0, "./datafile/아이콘/" + icon[i] + ".png", 15, 15);
 
-			lbl[i].setName(cap[i]);
-
 			lbl[i].addMouseListener(new MouseAdapter() {
 				@Override
 				public void mousePressed(MouseEvent e) {
-					var name = ((JLabel) e.getSource()).getName();
+					var name = ((JLabel) e.getSource()).getText();
 
 					if (name.equals("로그인")) {
-						new Login(login).addWindowListener(new Before(Main.this));
+						new Login().addWindowListener(new Before(Main.this));
+					} else if (name.equals("로그아웃")) {
+						lbl[0].setText("로그인");
+						lbl[0].setIcon(getIcon("./datafile/아이콘/Lock.png", 15, 15));
+						lbl[1].setVisible(true);
 					} else if (name.equals("회원가입")) {
-						new BaseFrame("회원가입", 300, 300).setVisible(true);
+						new Sign().addWindowListener(new Before(Main.this));
 					} else if (name.equals("마이페이지")) {
-						if (user == null) {
+						if (!isLogin) {
 							eMsg("로그인을 먼저 해주세요.");
 							return;
 						}
 
-						new BaseFrame("마이페이지", 300, 300).setVisible(true);
+						new MyPage().addWindowListener(new Before(Main.this));
 					} else {
-						new BaseFrame("차트", 300, 300).setVisible(true);
+						new Chart().addWindowListener(new Before(Main.this));
 					}
 				}
 			});
@@ -78,37 +95,41 @@ public class Main extends BaseFrame {
 				var c = ((JLabel) e.getSource()).getText();
 
 				if (c.equals("예매")) {
-					new BaseFrame("예매", 500, 500).setVisible(true);
+					new Reserve().addWindowListener(new Before(this));
 				} else if (c.equals("영화")) {
-					new BaseFrame("영화", 500, 500).setVisible(true);
+					new MovieList().addWindowListener(new Before(this));
 				} else if (c.equals("영화관")) {
-					new BaseFrame("영화관", 500, 500).setVisible(true);
+					new Cinema().addWindowListener(new Before(this));
 				} else {
-					new BaseFrame("스토어", 500, 500).setVisible(true);
+					new Store().addWindowListener(new Before(this));
 				}
 			}), 100, 25);
 
 			l.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseEntered(MouseEvent e) {
-					for (var com : ns.getComponents()) {
-						var lbl = (JComponent) com;
-						lbl.setBorder(null);
+					for (int j = 0; j < ns.getComponentCount(); j++) {
+						var l = (JLabel) ns.getComponent(j);
+						if (j > 0) {
+							l.setBorder(new MatteBorder(0, 1, 0, 0, Color.LIGHT_GRAY));
+						}
 					}
 
-					((JLabel) e.getSource()).setBorder(new MatteBorder(0, 0, 2, 0, Color.red));
+					var me = (JLabel) e.getSource();
+					me.setBorder(new CompoundBorder(me.getBorder(), new MatteBorder(0, 0, 2, 0, Color.red)));
 				}
 
 				@Override
 				public void mouseExited(MouseEvent e) {
-					((JLabel) e.getSource()).setBorder(null);
+					var me = (JLabel) e.getSource();
+					me.setBorder(((CompoundBorder) me.getBorder()).getOutsideBorder());
 				}
 			});
 
 			ns.add(l);
 
-			if (i < cap.length - 1) {
-				ns.add(sz(new JSeparator(JSeparator.VERTICAL), 2, 25));
+			if (i > 0) {
+				l.setBorder(new MatteBorder(0, 1, 0, 0, Color.LIGHT_GRAY));
 			}
 		}
 
@@ -118,7 +139,7 @@ public class Main extends BaseFrame {
 			back.add(l);
 		}
 
-		s.add(btn("<", a -> {
+		s.add(prev = lbl("〈", 0, 1, 35, e -> {
 			for (int i = 0; i < items.size(); i++) {
 				items.get((curIdx + i) % items.size()).setLocation(170 * i, 0);
 			}
@@ -137,7 +158,7 @@ public class Main extends BaseFrame {
 
 		s.add(sc = sz(new JPanel(null), 850, 270));
 
-		s.add(btn(">", a -> {
+		s.add(next = lbl("〉", 0, 0, 35, e -> {
 			for (int i = 0; i < items.size(); i++) {
 				items.get((curIdx + i) % items.size()).setLocation(170 * i, 0);
 			}
@@ -159,6 +180,22 @@ public class Main extends BaseFrame {
 			var tmp = new JPanel(new BorderLayout(10, 10));
 			var img = new JLabel(getIcon("./datafile/영화/" + rs.get(1) + ".jpg", 150, 250));
 
+			img.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent e) {
+					if (e.getClickCount() == 2) {
+						var ans = JOptionPane.showConfirmDialog(null, "예매하시겠습니까?", "정보", JOptionPane.YES_NO_OPTION,
+								JOptionPane.INFORMATION_MESSAGE);
+
+						if (ans == JOptionPane.YES_OPTION) {
+							new Reserve().addWindowListener(new Before(Main.this));
+						} else {
+							new MovieDetail(toInt(rs.get(0))).addWindowListener(new Before(Main.this));
+						}
+					}
+				}
+			});
+
 			img.setBorder(new EmptyBorder(0, 10, 0, 10));
 
 			tmp.add(img);
@@ -169,6 +206,8 @@ public class Main extends BaseFrame {
 		}
 
 		setVisible(true);
+
+		nc.setBorder(new EmptyBorder(0, 200, 0, 0));
 
 		CenterAnimation();
 	}
@@ -228,6 +267,8 @@ public class Main extends BaseFrame {
 		protected void done() {
 			left += -bu;
 			right += -bu;
+			prev.setEnabled(curIdx != 0);
+			next.setEnabled(curIdx != 20);
 		}
 	}
 

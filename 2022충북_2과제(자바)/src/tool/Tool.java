@@ -31,7 +31,8 @@ import db.DB;
 
 public interface Tool {
 	LocalDate now = LocalDate.of(2022, 8, 30);
-	
+	Color red = new Color(255, 0, 55);
+
 	default int toInt(Object p) {
 		var s = p.toString().replaceAll("[^0-9|^-]", "");
 		return s.isEmpty() ? -1 : Integer.parseInt(s);
@@ -95,10 +96,22 @@ public interface Tool {
 		return rs.isEmpty() ? "" : rs.get(0).get(0).toString();
 	}
 
-	default JLabel lbl(String c, int a, int st, int sz) {
+	default JLabel lbl(String c, int a, String f, int st, int sz) {
 		var l = new JLabel(c, a);
-		l.setFont(new Font("맑은 고딕", st, sz));
+		l.setFont(new Font(f, st, sz));
 		return l;
+	}
+
+	default JLabel lbl(String c, int a, int st, int sz) {
+		return lbl(c, a, "맑은 고딕", st, sz);
+	}
+
+	default JLabel lblSerif(String c, int a, int st, int sz) {
+		return lbl(c, a, "SanSerif", st, sz);
+	}
+
+	default JLabel lblHY(String c, int a, int st, int sz) {
+		return lbl(c, a, "MY헤드라인M", st, sz);
 	}
 
 	default JLabel lbl(String c, int a, int sz) {
@@ -130,20 +143,11 @@ public interface Tool {
 	}
 
 	default JLabel imglbl(String c, int a, String p, int w, int h) {
-		try {
-			var icon = ImageIO.read(new File(p));
-			var l = new JLabel(c, a);
-
-			l.setIcon(new ImageIcon(icon.getScaledInstance(w, h, 4)));
-
-			l.setVerticalTextPosition(3);
-			l.setHorizontalTextPosition(0);
-
-			return l;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
+		var l = lbl(c, a);
+		l.setIcon(getIcon(p, w, h));
+		l.setVerticalTextPosition(3);
+		l.setHorizontalTextPosition(0);
+		return l;
 	}
 
 	class HintField extends JTextField {
@@ -204,6 +208,8 @@ public interface Tool {
 
 	default JButton btn(String c, ActionListener a) {
 		var b = new JButton(c);
+		b.setForeground(Color.white);
+		b.setBackground(Tool.red);
 		b.addActionListener(a);
 		return b;
 	}
