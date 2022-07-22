@@ -52,9 +52,9 @@ public class Login extends BaseFrame {
 
 			iMsg(user.get(3) + "님 환영합니다.");
 
-			Main.lbl[0].setText("로그아웃");
-			Main.lbl[0].setIcon(getIcon("./datafile/아이콘/UnLock.png", 15, 15));
-			Main.lbl[1].setVisible(false);
+//			Main.lbl[0].setText("로그아웃");
+//			Main.lbl[0].setIcon(getIcon("./datafile/아이콘/UnLock.png", 15, 15));
+//			Main.lbl[1].setVisible(false);
 
 			if (chk.isSelected()) {
 				pref.put("id", txt[0].getText());

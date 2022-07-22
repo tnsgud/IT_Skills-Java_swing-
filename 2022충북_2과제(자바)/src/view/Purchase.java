@@ -14,7 +14,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
 
 public class Purchase extends BaseFrame {
-	JLabel lblPrev, lblNext, lblCnt, lblPrice;
+	JLabel lblPrev, lblNext, lblCnt, lblPrice, lblTot;
+	int price = 0;
 
 	public Purchase() {
 		super("구매", 700, 350);
@@ -27,7 +28,7 @@ public class Purchase extends BaseFrame {
 		add(c = new JPanel(new GridLayout(0, 1, 5, 5)));
 
 		c.add(lbl(data.get(1).toString(), 2, 15));
-		c.add(lbl(format(toInt(data.get(3))) + "원", 2, 15));
+		c.add(lblPrice = lbl(format(toInt(data.get(3))) + "원", 2, 15));
 		c.add(cn = new JPanel(new BorderLayout(50, 0)));
 		c.add(cc = new JPanel(new BorderLayout()));
 		c.add(cs = new JPanel(new FlowLayout(2)));
@@ -44,7 +45,7 @@ public class Purchase extends BaseFrame {
 
 			lblCnt.setText((toInt(lblCnt.getText()) - 1) + "");
 
-			lblPrice.setText(
+			lblTot.setText(
 					"<html><font color=rgb(255, 0, 55)>" + format(toInt(data.get(3)) * toInt(lblCnt.getText())) + "원");
 		}), "West");
 		cc.add(lblCnt = lbl("1", 0));
@@ -56,12 +57,12 @@ public class Purchase extends BaseFrame {
 
 			lblCnt.setText((toInt(lblCnt.getText()) + 1) + "");
 
-			lblPrice.setText(
+			lblTot.setText(
 					"<html><font color=rgb(255, 0, 55)>" + format(toInt(data.get(3)) * toInt(lblCnt.getText())) + "원");
 		}), "East");
 
 		cs.add(lbl("총 상품금액", 0, 12));
-		cs.add(lblPrice = lbl("<html><font color=rgb(255, 0, 55)>" + format(toInt(data.get(3))) + "원", 0, 15));
+		cs.add(lblTot = lbl("<html><font color=rgb(255, 0, 55)>" + format(toInt(data.get(3))) + "원", 0, 15));
 
 		((JPanel) getContentPane()).setBorder(new EmptyBorder(5, 5, 5, 5));
 		cc.setBorder(new CompoundBorder(new LineBorder(Color.black), new EmptyBorder(5, 5, 5, 5)));
@@ -75,10 +76,14 @@ public class Purchase extends BaseFrame {
 			s.add(i == 0 ? btnBlack(cap[i], a -> dispose()) : btn(cap[i], a -> {
 				if (!isLogin) {
 					eMsg("로그인 후 이용 가능합니다.");
+					new Login().addWindowListener(new Before(this));
 					return;
 				}
+				
+				System.out.println(lblPrice.getText());
 
-				new Payment(toInt(lblCnt.getText()), toInt(lblPrice.getText())).addWindowListener(new Before(this));
+				new Payment(data.get(1).toString(), toInt(lblCnt.getText()), toInt(lblPrice.getText()), toInt(lblCnt.getText()) * toInt(lblPrice.getText()))
+						.addWindowListener(new Before(this));
 			}));
 		}
 
