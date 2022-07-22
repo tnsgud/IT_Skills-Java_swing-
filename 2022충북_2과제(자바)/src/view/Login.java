@@ -61,6 +61,8 @@ public class Login extends BaseFrame {
 			} else {
 				pref.remove("id");
 			}
+			
+			isLogin = true;
 
 			dispose();
 		}), "East");

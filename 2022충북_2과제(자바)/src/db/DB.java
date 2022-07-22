@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.JOptionPane;
 
@@ -35,6 +37,8 @@ public class DB {
 	}
 
 	void createT(String t, String c) {
+		c = Stream.of(c.split(",")).map(col -> col += col.contains("fore") ? "on update cascade on delete cascade" : "")
+				.collect(Collectors.joining(","));
 		execute("create table " + t + "(" + c + ")");
 		execute("load data local infile './datafile/" + t + ".txt' into table " + t + " ignore 1 lines");
 	}
@@ -65,6 +69,9 @@ public class DB {
 				"sc_no int primary key not null auto_increment, t_no int, m_no int, p_no int, sc_theater varchar(5), sc_date date, sc_time varchar(10)");
 		createT("reservation",
 				"r_no int primary key not null auto_increment, u_no int, r_division varchar(50), sc_no int, r_people int, r_seat varchar(50), r_date date, r_time varchar(15), foreign key(u_no) references user(u_no), foreign key(sc_no) references schedule(sc_no)");
+
+		JOptionPane.showMessageDialog(null, "셋팅성공", "정보", 0);
+		System.exit(0);
 	}
 
 	public static void main(String[] args) {

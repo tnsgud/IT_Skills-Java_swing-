@@ -25,14 +25,18 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
 import db.DB;
 
 public interface Tool {
 	LocalDate now = LocalDate.of(2022, 8, 30);
 	Color red = new Color(255, 0, 55);
+	String division[] = ",성인,청소년,시니어,장애닝".split(",");
 
 	default int toInt(Object p) {
 		var s = p.toString().replaceAll("[^0-9|^-]", "");
@@ -207,5 +211,31 @@ public interface Tool {
 		b.setBackground(Color.black);
 		b.addActionListener(a);
 		return b;
+	}
+
+	default DefaultTableModel model(String[] col) {
+		return new DefaultTableModel(null, col) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+	}
+
+	default JTable table(DefaultTableModel m) {
+		var t = new JTable(m);
+		var r = new DefaultTableCellRenderer();
+
+		t.getTableHeader().setReorderingAllowed(false);
+		t.getTableHeader().setResizingAllowed(false);
+
+		t.setSelectionMode(0);
+		r.setHorizontalAlignment(0);
+
+		for (int i = 0; i < t.getColumnCount(); i++) {
+			t.getColumnModel().getColumn(i).setCellRenderer(r);
+		}
+
+		return t;
 	}
 }
