@@ -10,7 +10,7 @@ public class Admin extends BaseFrame {
 
 		add(c = new JPanel(new GridLayout(0, 1)));
 
-		for (var cap : "구매내역,영화등록,영화수정,영화 예매률 TOP5".split(",")) {
+		for (var cap : "구매내역,영화등록,영화수정,영화 예매율 TOP5".split(",")) {
 			c.add(btn(cap, a -> {
 				if (cap.equals("구매내역")) {
 					new PurchaseList().addWindowListener(new Before(this));
