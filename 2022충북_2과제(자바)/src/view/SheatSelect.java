@@ -20,7 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
 
-public class SheetSelect extends BaseFrame {
+public class SheatSelect extends BaseFrame {
 	HashMap<String, JLabel> seat = new HashMap<>();
 	ArrayList<Object> movie = getRows("select * from movie where m_no = ?", m_no).get(0);
 	ArrayList<Item> items = new ArrayList<>();
@@ -28,7 +28,7 @@ public class SheetSelect extends BaseFrame {
 	int price = 0;
 	JLabel priceLbl = lbl("총 합계 : 0원", 2);
 
-	public SheetSelect() {
+	public SheatSelect() {
 		super("좌석", 1000, 600);
 
 		add(n = new JPanel(new BorderLayout()), "North");

@@ -122,6 +122,8 @@ public class Reserve extends BaseFrame {
 			cc.add(tmp);
 		}
 
+		ec.removeAll();
+		
 		cc.repaint();
 		cc.revalidate();
 	}
@@ -183,7 +185,7 @@ public class Reserve extends BaseFrame {
 									}
 
 									sc_no = toInt(((JPanel) e.getSource()).getName());
-									new SheetSelect().addWindowListener(new Before(Reserve.this));
+									new SheatSelect().addWindowListener(new Before(Reserve.this));
 								};
 							});
 
@@ -227,6 +229,8 @@ public class Reserve extends BaseFrame {
 
 			p.add(l);
 		}
+		
+		resetMovie();
 
 		repaint();
 		revalidate();

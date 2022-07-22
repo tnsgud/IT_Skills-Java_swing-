@@ -84,7 +84,7 @@ public class Schedule extends BaseFrame {
 					@Override
 					public void mousePressed(MouseEvent e) {
 						sc_no = toInt(((JPanel) e.getSource()).getName());
-						new SheetSelect().addWindowListener(new Before(Schedule.this));
+						new SheatSelect().addWindowListener(new Before(Schedule.this));
 					}
 				});
 
@@ -102,6 +102,6 @@ public class Schedule extends BaseFrame {
 	}
 
 	public static void main(String[] args) {
-		new Schedule();
+		new Main();
 	}
 }
