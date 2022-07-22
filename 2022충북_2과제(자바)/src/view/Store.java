@@ -20,15 +20,15 @@ public class Store extends BaseFrame {
 
 		for (var rs : getRows("select s_no, s_name, s_explanation, format(s_price, '#,##0') from store")) {
 			var tmp = new JPanel(new BorderLayout(5, 5));
-			var tmp_c = new JPanel(new GridLayout(0, 1));
+			var tmp_c = new JPanel(new BorderLayout());
 
-			tmp.add(new JLabel(getIcon("./datafile/스토어/" + rs.get(1) + ".jpg", 100, 100)), "North");
+			tmp.add(new JLabel(getIcon("./datafile/스토어/" + rs.get(1) + ".jpg", 150, 150)), "North");
 			tmp.add(tmp_c);
 			tmp.add(lbl(rs.get(3) + "원", 0, 15), "South");
-			
-			tmp_c.add(lbl(rs.get(1).toString(), 0, 15));
-			tmp_c.add(lbl("<html><font color='gray'>"+rs.get(2), 0));
-			
+
+			tmp_c.add(lbl("<html>" + rs.get(1).toString(), 0, 15), "North");
+			tmp_c.add(lbl("<html><font color='gray'>" + rs.get(2), 0));
+
 			tmp.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mousePressed(MouseEvent e) {
@@ -36,9 +36,13 @@ public class Store extends BaseFrame {
 				}
 			});
 
-			c.add(sz(tmp, 150, 200));
+			c.add(sz(tmp, 150, 220));
 		}
 
 		setVisible(true);
+	}
+
+	public static void main(String[] args) {
+		new Store();
 	}
 }

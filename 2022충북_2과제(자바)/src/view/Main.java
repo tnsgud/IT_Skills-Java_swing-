@@ -188,6 +188,7 @@ public class Main extends BaseFrame {
 								JOptionPane.INFORMATION_MESSAGE);
 
 						if (ans == JOptionPane.YES_OPTION) {
+							m_no = toInt(rs.get(0));
 							new Reserve().addWindowListener(new Before(Main.this));
 						} else {
 							new MovieDetail(toInt(rs.get(0))).addWindowListener(new Before(Main.this));
