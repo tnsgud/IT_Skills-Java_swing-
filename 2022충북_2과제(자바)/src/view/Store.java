@@ -32,7 +32,8 @@ public class Store extends BaseFrame {
 			tmp.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mousePressed(MouseEvent e) {
-					new BaseFrame("구매", 500, 500).setVisible(true);
+					s_no = toInt(rs.get(0));
+					new Purchase().addWindowListener(new Before(Store.this));
 				}
 			});
 

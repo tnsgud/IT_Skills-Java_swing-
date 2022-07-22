@@ -20,7 +20,7 @@ public class BaseFrame extends JFrame implements Tool {
 
 	static ArrayList<Object> user;
 	static boolean isLogin = false;
-	static int t_no, sc_no, m_no;
+	static int t_no, sc_no, m_no, s_no;
 
 	public BaseFrame(String t, int w, int h) {
 		super(t);
