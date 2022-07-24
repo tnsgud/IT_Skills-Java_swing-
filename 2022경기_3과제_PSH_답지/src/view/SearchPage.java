@@ -182,7 +182,7 @@ public class SearchPage extends BasePage {
 		var rs = getRows(sql, "^" + keyword + ".*",
 				"(" + (com[1].getSelectedIndex() == 0 ? "" : com[1].getSelectedIndex()) + ")");
 
-		if(!isAdmin) {
+		if(user == null) {
 			rs = rs.stream().filter(r -> {
 				if (user.get(7).equals("0")) {
 					return true;
@@ -239,7 +239,7 @@ public class SearchPage extends BasePage {
 			tmp.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mousePressed(MouseEvent e) {
-					if(isAdmin) {
+					if(user == null) {
 						g_no = toInt(((JPanel)e.getSource()).getName());
 						new GameInfo(g_no);
 					}else {

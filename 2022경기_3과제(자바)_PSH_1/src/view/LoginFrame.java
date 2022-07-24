@@ -2,17 +2,15 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
-import java.time.LocalDate;
-import java.util.Arrays;
 
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-public class Login extends BaseFrame {
+public class LoginFrame extends BaseFrame {
 	JTextField txt[] = new JTextField[2];
 
-	public Login() {
+	public LoginFrame() {
 		super("로그인", 250, 200);
 
 		add(lbl("게임유통관리", 0, 25), "North");
@@ -26,35 +24,19 @@ public class Login extends BaseFrame {
 			}
 
 			if (txt[0].getText().equals("admin") && txt[1].getText().equals("1234")) {
-				BasePage.mf = new MainFrame();
-				BasePage.mf.addWindowListener(new Before(this));
-				new AdminPage();
+				iMsg("관리자로 로그인하였습니다.");
+
 				return;
 			}
 
-			var rs = getRows("select * from user where u_id = ? and u_pw = ?", txt[0].getText(), txt[1].getText());
+			var rs = getRows("seelct * from user where u_id = ? and u_pw = ?", txt[0].getText(), txt[1].getText());
 
 			if (rs.isEmpty()) {
 				eMsg("회원 정보가 일치하지 않습니다.");
 				return;
 			}
 
-			BasePage.user = rs.get(0);
-
-			iMsg(BasePage.user.get(3) + "님 로그인하였습니다.");
-			
-			var birth = LocalDate.parse(rs.get(0).get(4).toString());
-			BasePage.u_age = LocalDate.now().getYear() - birth.getYear();
-			BasePage.u_age -= birth.getMonthValue() > LocalDate.now().getMonthValue() ? 1 : 0;
-			
-			BasePage.u_ageFilter = Arrays.asList(rs.get(0).get(7).toString().split(",")).contains("12");
-			
-			BasePage.mf = new MainFrame();
-			BasePage.mf.addWindowListener(new Before(this)); 
-
-			new UserMainPage();
-
-			BasePage.mf.setVisible(true);
+			iMsg("님이 로그인하였습니다.");
 		}), "South");
 
 		var cap = "ID,PW".split(",");
@@ -67,13 +49,12 @@ public class Login extends BaseFrame {
 			c.add(tmp);
 		}
 
-		txt[0].setText("abc1");
-		txt[1].setText("Qq1!");
+		((JPasswordField) txt[1]).setEchoChar('●');
 
 		setVisible(true);
 	}
 
 	public static void main(String[] args) {
-		new Login();
+		new LoginFrame();
 	}
 }
