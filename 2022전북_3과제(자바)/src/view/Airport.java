@@ -2,6 +2,8 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.stream.Stream;
 
 import javax.swing.JPanel;
@@ -9,7 +11,7 @@ import javax.swing.JTextField;
 
 public class Airport extends BaseFrame {
 	JTextField txt[] = new JTextField[4];
-	
+
 	public Airport() {
 		super("공항등록", 500, 500);
 
@@ -22,7 +24,7 @@ public class Airport extends BaseFrame {
 				}
 			}
 
-			if (txt[0].getText().replaceAll("[^A-Z]", "").length() != 3) {
+			if (!txt[0].getText().matches("^[A-Z]{3}$")) {
 				eMsg("코드는 영어대문자 3자리로 입력하세요.");
 				return;
 			}
@@ -38,13 +40,13 @@ public class Airport extends BaseFrame {
 				return;
 			}
 
-			if (!txt[3].getText().matches("\\d{3}.\\d{8}") || !(-181 < la && la < 181)) {
+			if (!txt[3].getText().matches("\\d{3}.\\d{8}") || !(-181 < lo && lo < 181)) {
 				eMsg("경도를 알맞게 입력해주세요.");
 				return;
 			}
 
 			iMsg("등록이 완료되었습니다.");
-			execute("insert into airport values(0, ?, ?, ?, ?)",  Stream.of(txt).map(JTextField::getText).toArray());
+			execute("insert into airport values(0, ?, ?, ?, ?)", Stream.of(txt).map(JTextField::getText).toArray());
 			dispose();
 		}), "South");
 
@@ -57,6 +59,13 @@ public class Airport extends BaseFrame {
 
 			c.add(tmp);
 		}
+
+		txt[0].addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				txt[0].setText(txt[0].getText().toUpperCase());
+			}
+		});
 
 		setVisible(true);
 	}

@@ -71,6 +71,7 @@ public class Reserve extends BasePage {
 				});
 
 				tmp.add(txt[i - 2] = new JTextField(10));
+				txt[i-2].setEditable(false);
 				tmp.add(icon);
 			}
 
@@ -92,9 +93,5 @@ public class Reserve extends BasePage {
 		}));
 
 		setVisible(true);
-	}
-
-	public static void main(String[] args) {
-		new Login();
 	}
 }

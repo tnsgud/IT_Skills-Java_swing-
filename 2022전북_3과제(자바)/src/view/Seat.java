@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -15,12 +14,12 @@ import java.util.HashMap;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.LineBorder;
-import javax.swing.text.html.InlineView;
 
 import model.People;
 
@@ -31,8 +30,10 @@ public class Seat extends BaseFrame {
 
 	public Seat() {
 		super("좌석배정", 1000, 600);
-
-		this.setResizable(true);
+		
+		for (var peo:peoples) {
+			peo.setSeat(null);
+		}
 
 		add(new JScrollPane(c = new JPanel(new BorderLayout(25, 25))));
 		add(e = sz(new JPanel(new BorderLayout()), 200, 600), "East");
@@ -140,6 +141,17 @@ public class Seat extends BaseFrame {
 
 		items.get(idx).setBackground(Color.blue);
 
+		addWindowFocusListener(new WindowAdapter() {
+			@Override
+			public void windowLostFocus(WindowEvent e) {
+				if(e.getOppositeWindow() instanceof JDialog) {
+					return;
+				}
+				
+				dispose();
+			};
+		});
+
 		setVisible(true);
 	}
 
@@ -177,9 +189,5 @@ public class Seat extends BaseFrame {
 
 			setBorder(new LineBorder(Color.blue));
 		}
-	}
-
-	public static void main(String[] args) {
-		new Seat();
 	}
 }

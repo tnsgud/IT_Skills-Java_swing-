@@ -2,6 +2,8 @@ package view;
 
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.time.LocalDate;
@@ -59,6 +61,13 @@ public class Sign extends BaseFrame {
 
 			c.add(tmp);
 		}
+		
+		txt[0].addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				idChk = false;
+			}
+		});
 
 		for (var ca : "회원가입,취소".split(",")) {
 			s.add(btn(ca, a -> {
@@ -96,8 +105,7 @@ public class Sign extends BaseFrame {
 						return;
 					}
 
-					if (txt[5].getText().matches(".*[^0-9].*")
-							|| txt[5].getText().replaceAll("[^0-9]", "").length() != 11) {
+					if(!txt[5].getText().matches("^\\d{3}-\\d{4}-\\d{2}$")) {
 						eMsg("전화번호를 확인해주세요.");
 						return;
 					}
@@ -142,18 +150,5 @@ public class Sign extends BaseFrame {
 		}
 
 		setVisible(true);
-
-		addWindowFocusListener(new WindowAdapter() {
-			@Override
-			public void windowLostFocus(WindowEvent e) {
-				if (!flag) {
-					dispose();
-				}
-			}
-		});
-	}
-
-	public static void main(String[] args) {
-		new Sign();
 	}
 }

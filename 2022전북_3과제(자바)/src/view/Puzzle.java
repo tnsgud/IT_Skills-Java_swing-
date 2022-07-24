@@ -16,6 +16,7 @@ import java.util.Collections;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
@@ -27,7 +28,7 @@ public class Puzzle extends BaseFrame {
 	int x, y;
 	boolean flag = false;
 
-	public Puzzle() {
+	public Puzzle(Purchase purchase) {
 		super("퍼즐", 900, 400);
 
 		setResizable(true);
@@ -51,6 +52,9 @@ public class Puzzle extends BaseFrame {
 				}
 
 				iMsg("퍼즐을 완성하였습니다. 축하합니다.");
+				purchase.lblDC.setVisible(true);
+				purchase.puz.setEnabled(false);
+				purchase.setPrice();
 				dispose();
 			}
 		}, "West");
@@ -121,18 +125,20 @@ public class Puzzle extends BaseFrame {
 		en.add(select = new JLabel(shuf.get(0).getIcon()));
 
 		setVisible(true);
-		
-		addWindowListener(new WindowAdapter() {
+
+		addWindowFocusListener(new WindowAdapter() {
 			@Override
-			public void windowClosed(WindowEvent e) {
-				if(flag) {
-					Purchase.puzzle = true;
+			public void windowLostFocus(WindowEvent e) {
+				if(e.getOppositeWindow() instanceof JDialog) {
+					return;
 				}
+				
+				dispose();
 			}
 		});
 	}
 
 	public static void main(String[] args) {
-		new Puzzle();
+		new Login();
 	}
 }

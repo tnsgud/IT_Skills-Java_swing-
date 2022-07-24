@@ -29,8 +29,10 @@ public class Baggage extends BaseFrame {
 	public Baggage() {
 		super("수화물 구매", 400, 500);
 
+		bag.clear();
+
 		add(n = new JPanel(new GridLayout(0, 1)), "North");
-		add(new JScrollPane(c = new JPanel()) );
+		add(new JScrollPane(c = new JPanel()));
 		add(s = new JPanel(), "South");
 
 		n.add(lbl("수하물 구매", 0, 25));
@@ -48,6 +50,10 @@ public class Baggage extends BaseFrame {
 		((JLabel) cn.getComponent(0)).addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
+				if (bag.size() == 5) {
+					eMsg("수하물은 최대 5개까지 구매할 수 있습니다.");
+					return;
+				}
 				bag.add(new Bag());
 				addItem();
 			}
@@ -74,6 +80,17 @@ public class Baggage extends BaseFrame {
 		addItem();
 
 		cn.setBorder(new MatteBorder(2, 0, 2, 0, Color.black));
+
+		addWindowFocusListener(new WindowAdapter() {
+			@Override
+			public void windowLostFocus(WindowEvent e) {
+				if (e.getOppositeWindow() instanceof JDialog) {
+					return;
+				}
+
+				dispose();
+			}
+		});
 
 		setVisible(true);
 	}
@@ -156,9 +173,5 @@ public class Baggage extends BaseFrame {
 			c.repaint();
 			c.revalidate();
 		}
-	}
-
-	public static void main(String[] args) {
-		new Baggage();
 	}
 }

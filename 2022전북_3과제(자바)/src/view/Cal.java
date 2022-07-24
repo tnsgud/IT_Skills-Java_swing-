@@ -7,7 +7,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.time.LocalDate;
+import java.time.format.TextStyle;
 
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -49,18 +51,32 @@ public class Cal extends BaseFrame {
 				@Override
 				public void mousePressed(MouseEvent e) {
 					var tmp = LocalDate.of(year, month, toInt(((JLabel) e.getSource()).getText()));
-
+					var me = (JLabel)e.getSource();
+					
+					if(!me.isEnabled()) return;
+					
 					if (now.isAfter(tmp)) {
 						eMsg("이전 날짜는 선택이 불가능합니다.");
 						return;
 					}
 
-					if (txt == null) {
-						airlineTicket.date = tmp;
-					} else {
-						txt.setText(tmp.toString());
+					if(e.getClickCount() == 1) {
+						for (var d: days) {
+							d.setBorder(new LineBorder(Color.black));
+						}
+						
+						me.setBorder(new LineBorder(Color.blue));
+					}else {
+						if (txt == null) {
+							airlineTicket.date = tmp;
+							airlineTicket.lblDate.setText(String.format("%02d.%02d (%s)", airlineTicket.date.getMonthValue(), airlineTicket.date.getDayOfMonth(),
+									airlineTicket.date.getDayOfWeek().getDisplayName(TextStyle.SHORT, getLocale())));
+						} else {
+							txt.setText(tmp.toString());
+						}
+						
+						dispose();
 					}
-					dispose();
 				}
 			});
 		}
@@ -95,9 +111,11 @@ public class Cal extends BaseFrame {
 		addWindowFocusListener(new WindowAdapter() {
 			@Override
 			public void windowLostFocus(WindowEvent e) {
-				if (!flag) {
-					dispose();
+				if(e.getOppositeWindow() instanceof JDialog) {
+					return;
 				}
+				
+				dispose();
 			}
 		});
 

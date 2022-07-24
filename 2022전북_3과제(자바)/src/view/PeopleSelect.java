@@ -7,6 +7,7 @@ import java.awt.event.WindowEvent;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -76,15 +77,11 @@ public class PeopleSelect extends BaseFrame {
 		addWindowFocusListener(new WindowAdapter() {
 			@Override
 			public void windowLostFocus(WindowEvent e) {
-				if (!flag) {
-					dispose();
+				if(e.getOppositeWindow() instanceof JDialog) {
+					return;
 				}
-			}
-		});
-
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosed(WindowEvent e) {
+				
+				dispose();
 			}
 		});
 	}

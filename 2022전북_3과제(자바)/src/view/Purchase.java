@@ -11,7 +11,11 @@ import java.awt.event.KeyEvent;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -21,20 +25,17 @@ import javax.swing.JTextField;
 import model.People;
 
 public class Purchase extends BasePage {
-	static boolean puzzle = false;
 	JTextField num[] = new JTextField[4], date[] = new JTextField[2], pass = new JTextField(13),
 			mil = new JTextField(13);
 	JComboBox<String> com = new JComboBox<>("신한카드,현대카드,삼성카드,KB국민카드,롯데카드,하나카드,BC카드".split(","));
 	ArrayList<Object> data;
-	JLabel totPrice;
+	JLabel totPrice, lblDC;
+	JButton puz;
 	int idx = 0;
-
-	public static void main(String[] args) {
-		new Login();
-	}
 
 	public Purchase() {
 		BaseFrame.user = getRows("select * from member where m_no = ?", 1).get(0);
+		BaseFrame.s_no = 9;
 
 		data();
 		ui();
@@ -42,7 +43,6 @@ public class Purchase extends BasePage {
 	}
 
 	private void data() {
-		BaseFrame.s_no = 9;
 		r_date = LocalDate.of(2022, 9, 1);
 
 		data = getRows(
@@ -54,6 +54,9 @@ public class Purchase extends BasePage {
 		mil.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
+				if (mil.getText().isEmpty())
+					return;
+
 				if (toInt(mil.getText()) < 1) {
 					eMsg("마일리지 금액을 확인해주세요.");
 					mil.setText("");
@@ -80,6 +83,11 @@ public class Purchase extends BasePage {
 				@Override
 				public void keyReleased(KeyEvent e) {
 					if (t.getText().length() == 4) {
+						idx = toInt(t.getName());
+
+						if (idx == 3)
+							return;
+
 						num[++idx].requestFocus();
 					}
 				}
@@ -93,7 +101,7 @@ public class Purchase extends BasePage {
 		add(s = new JPanel(new FlowLayout(2)), "South");
 
 		n.add(lbl("결제하기", 2, 15), "West");
-		n.add(btn("퍼즐맞추기", a -> new Puzzle()), "East");
+		n.add(puz = btn("퍼즐맞추기", a -> new Puzzle(this)), "East");
 
 		c.add(cw = new JPanel(new GridLayout(0, 1, 5, 5)));
 		c.add(new JScrollPane(cc = new JPanel(new BorderLayout(10, 10))));
@@ -114,6 +122,7 @@ public class Purchase extends BasePage {
 			} else if (i == 1) {
 				for (int j = 0; j < num.length; j++) {
 					tmp.add(num[j] = new JTextField(6));
+					num[j].setName(j + "");
 				}
 			} else if (i == 2) {
 				for (int j = 0; j < date.length; j++) {
@@ -157,16 +166,20 @@ public class Purchase extends BasePage {
 
 			for (var b : BaseFrame.bag) {
 				var temp = new JPanel(new BorderLayout());
+				var cap1 = Stream.of(b.chk).filter(JCheckBox::isSelected)
+						.map(x -> "사이즈초과,무게초과".split(",")[Arrays.asList(b.chk).indexOf(x)])
+						.collect(Collectors.joining(","));
 
-				temp.add(lbl(String.format("%s", b.namelbl.getText()), 2), "West");
-				temp.add(lbl(String.format("%s", b.pricelbl.getText()), 2), "East");
-
+				temp.add(lbl(String.format("%s%s", b.namelbl.getText(), cap1.isEmpty() ? "" : "(" + cap1 + ")"), 2, 15),
+						"West");
+				temp.add(lbl(String.format("%s", b.pricelbl.getText()), 4, 15), "East");
 				tmp_c.add(temp);
 			}
 
 			cc.add(tmp, "South");
 		}
 
+		s.add(lblDC = lbl("(10%할인)", 0));
 		s.add(totPrice = lbl("", 4, 25));
 		s.add(btn("결제하기", a -> {
 			for (var t : num) {
@@ -198,7 +211,7 @@ public class Purchase extends BasePage {
 				return;
 			}
 
-			if (pass.getText().length() != 4) {
+			if (pass.getText().length() != 4 || !pass.getText().matches("^\\d{4}$")) {
 				eMsg("비밀번호를 확인해주세요.");
 				return;
 			}
@@ -225,14 +238,16 @@ public class Purchase extends BasePage {
 			main.swap(new Reserve());
 		}));
 
+		lblDC.setVisible(false);
+
 		setPrice();
 	}
 
-	private void setPrice() {
+	void setPrice() {
 		var peoP = BaseFrame.peoples.stream().mapToInt(People::getPrice).sum();
 		var bagP = BaseFrame.bag.stream().mapToInt(b -> toInt(b.pricelbl.getText())).sum();
 		var pr = peoP + bagP - (toInt(mil.getText()) == 0 ? 0 : toInt(mil.getText()));
-		var tot = pr * (puzzle ? 0.9 : 1.0);
+		var tot = pr * (lblDC.isVisible() ? 0.9 : 1.0);
 
 		totPrice.setText("총 " + format((int) tot) + "원");
 	}

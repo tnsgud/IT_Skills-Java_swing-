@@ -38,7 +38,7 @@ public class Chart extends BaseFrame {
 
 		percents = getRows(
 				"select count(*)/(select count(*) from companion) from companion c, reservation r where r.r_no = c.r_no group by c.c_division")
-						.stream().flatMap(a -> a.stream()).mapToDouble(a -> Double.parseDouble(a.toString())).toArray();
+				.stream().flatMap(a -> a.stream()).mapToDouble(a -> Double.parseDouble(a.toString())).toArray();
 
 		setLayout(new GridLayout(1, 0));
 
@@ -53,9 +53,9 @@ public class Chart extends BaseFrame {
 
 				g2.setColor(Color.gray);
 				g2.drawLine(20, 430, 550, 430);
-				
+
 				g2.setColor(Color.black);
-				g2.setFont(new Font("맑은 고딕", 1, 25)); 
+				g2.setFont(new Font("맑은 고딕", 1, 25));
 				g2.drawString("남", 135, 460);
 				g2.drawString("여", 430, 460);
 			}
@@ -80,13 +80,13 @@ public class Chart extends BaseFrame {
 					g2.setColor(Color.gray);
 					g2.fillOval(baseX, baseY - 15, w, 30);
 
-					g2.setColor(new Color(0,0,200));
+					g2.setColor(new Color(0, 0, 200));
 					g2.fillRect(baseX, baseY + totH - h, w, h);
 
-					g2.setColor(new Color(0,0,200));
+					g2.setColor(new Color(0, 0, 200));
 					g2.fillOval(baseX, baseY + totH - 15, w, 30);
 
-					g2.setColor(new Color(0,0,150));
+					g2.setColor(new Color(0, 0, 150));
 					g2.fillOval(baseX, baseY + totH - h - 15, w, 30);
 
 					g2.setColor(Color.white);
@@ -102,49 +102,33 @@ public class Chart extends BaseFrame {
 		cw.add(menBack = new JLabel(getIcon("./datafiles/남자1.png", men.getWidth(), men.getHeight())));
 		cw.add(womenBack = new JLabel(getIcon("./datafiles/여자1.png", women.getWidth(), women.getHeight())));
 
+		System.out.println("m:" + men.getWidth());
+		System.out.println("w:" + women.getWidth());
 		for (var rs : getRows(
-				"select m_sex, round((count(*)/(select count(*) from companion)), 3)  from companion c, reservation r, member m where c.r_no = r.r_no and r.m_no = m.m_no group by m_sex")) {
+				"select c_sex, round(count(*)/(select count(*) from companion), 3) from companion group by c_sex")) {
 			var percent = Double.parseDouble(rs.get(1).toString());
+			var flag = toInt(rs.get(0)) == 0;
 
-			if (toInt(rs.get(0)) == 0) {
-				var h = (int) (men.getHeight() * percent);
-				var l = new JLabel(new ImageIcon(men.getSubimage(0, 0, men.getWidth(), h))) {
-					@Override
-					protected void paintComponent(Graphics g) {
-						super.paintComponent(g);
+			System.out.println(rs.get(0));
+			System.out.println(flag);
+			
+			var h = (int) ((flag ? men : women).getHeight() * (1 - percent));
+			var l = new JLabel(new ImageIcon((flag ? men:women).getSubimage(0, 0, (flag ? men : women).getWidth(), h))) {
+				@Override
+				protected void paintComponent(Graphics g) {
+					super.paintComponent(g);
 
-						var g2 = (Graphics2D) g;
+					var g2 = (Graphics2D) g;
 
-						g2.setFont(new Font("맑은 고딕", 1, 30));
+					g2.setFont(new Font("맑은 고딕", 1, 30));
 
-						g2.drawString(String.format("%.1f", percent * 100) + "%", 55, 90);
-					}
-				};
+					g2.drawString(String.format("%.1f", percent * 100) + "%", 55, 90);
+				}
+			};
 
-				menBack.add(l).setBounds(62, 129, men.getWidth(), h);
-			} else {
-				var h = (int) (women.getHeight() * percent);
-				var l = new JLabel(new ImageIcon(women.getSubimage(0, 0, women.getWidth(), h))) {
-					@Override
-					protected void paintComponent(Graphics g) {
-						super.paintComponent(g);
-
-						var g2 = (Graphics2D) g;
-
-						g2.setFont(new Font("맑은 고딕", 1, 30));
-
-						g2.drawString(String.format("%.1f", percent * 100) + "%", 55, 90);
-					}
-				};
-
-				womenBack.add(l).setBounds(61, 129, women.getWidth(), h);
-			}
+			(flag ? menBack:womenBack).add(l).setBounds(61, 129, (flag ? men:women).getWidth(), h);
 		}
 
 		setVisible(true);
-	}
-
-	public static void main(String[] args) {
-		new Chart();
 	}
 }

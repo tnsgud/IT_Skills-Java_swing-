@@ -49,19 +49,14 @@ public class Schedule extends BaseFrame {
 			}
 
 			for (var rs : getRows(
-					"select time_format(s_time, '%h:%m'), from schedule s, airport a1, airport a2 where s.s_depart =a1.a_no and s.s_arrival = a2.a_no and s_depart=? and s_arrival=?",
+					"select time_format(s_time, '%h:%m') from schedule s, airport a1, airport a2 where s.s_depart =a1.a_no and s.s_arrival = a2.a_no and s_depart=? and s_arrival=?",
 					dep, arv)) {
 				var rs_stime = LocalTime.parse(rs.get(0).toString());
-				var rs_etime = rs_stime.plusMinutes(
-						(int) distance((Double) rs.get(1), (Double) rs.get(2), (Double) rs.get(3), (Double) rs.get(4))
-								/ 10);
+				var rs_etime = rs_stime.plusMinutes(time);
 
-				if (etime.isAfter(rs_stime)) {
-					eMsg("해당 출발시간에 동일한 항공일정이 존재합니다.");
-					return;
-				}
-
-				if (stime.isBefore(rs_etime)) {
+				if ((stime.isBefore(rs_stime) && etime.isBefore(rs_etime))
+						|| (stime.isAfter(rs_stime) && etime.isAfter(rs_etime))
+						|| (stime.equals(rs_stime) && etime.equals(rs_etime))) {
 					eMsg("해당 출발시간에 동일한 항공일정이 존재합니다.");
 					return;
 				}
@@ -69,7 +64,7 @@ public class Schedule extends BaseFrame {
 
 			iMsg("항공일정등록이 완료되었습니다.");
 			execute("insert into schedule values(0, ?, ?, ?, ?)", dep, arv, stime, txt[2].getText());
-			
+
 			dispose();
 		}), "South");
 
@@ -134,9 +129,5 @@ public class Schedule extends BaseFrame {
 		});
 
 		setVisible(true);
-	}
-
-	public static void main(String[] args) {
-		new Schedule();
 	}
 }

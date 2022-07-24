@@ -55,11 +55,9 @@ public class Reservation extends BasePage {
 			});
 
 	public Reservation() {
-		BaseFrame.user = getRows("select * from member").get(0);
-
 		setLayout(new GridBagLayout());
 
-		add(c = new JPanel(new BorderLayout()));
+		add(c = sz(new JPanel(new BorderLayout()), 450, 500));
 
 		ticket.setBorder(new LineBorder(Color.black));
 
@@ -88,7 +86,7 @@ public class Reservation extends BasePage {
 						eMsg("이미 탑승이 완료되어 티켓을 볼 수 없습니다.");
 						return;
 					}
-					
+
 					showTicket();
 				} else if (e.getButton() == 3) {
 					var pop = new JPopupMenu();
@@ -151,7 +149,7 @@ public class Reservation extends BasePage {
 		data = getRows(
 				"select a1.a_code, a2.a_code, m_name2, c_seat from reservation r, schedule s, member m, companion c, airport a1, airport a2 where r.s_no = s.s_no and c.r_no = r.r_no and s.s_depart = a1.a_no and s.s_arrival = a2.a_no and r.m_no = m.m_no and r.r_no = ? and m.m_no = ?",
 				t.getValueAt(t.getSelectedRow(), 0), BaseFrame.user.get(0));
-		
+
 		repaint();
 	}
 
@@ -162,9 +160,5 @@ public class Reservation extends BasePage {
 				BaseFrame.user.get(0))) {
 			m.addRow(rs.toArray());
 		}
-	}
-
-	public static void main(String[] args) {
-		new Reservation();
 	}
 }

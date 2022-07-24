@@ -29,14 +29,14 @@ public class Option extends BasePage {
 				if (peo.getSeat() == null) {
 					eMsg("좌석을 배정해주세요.");
 					return;
-				} 
+				}
 			}
 
 			if (BaseFrame.bag.isEmpty()) {
 				eMsg("수하물을 구매해주세요.");
 				return;
 			}
-			
+
 			main.swap(new Purchase());
 		}));
 	}
@@ -62,10 +62,5 @@ public class Option extends BasePage {
 
 			setBorder(new MatteBorder(0, 0, 3, 0, Color.black));
 		}
-	}
-
-	public static void main(String[] args) {
-		main = new Main();
-		main.swap(new Option());
 	}
 }

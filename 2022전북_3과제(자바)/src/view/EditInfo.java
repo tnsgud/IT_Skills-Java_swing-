@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -17,17 +18,21 @@ public class EditInfo extends BaseFrame {
 	JTextField txt[] = new JTextField[7];
 	JComboBox<String> com = new JComboBox<>("남,여".split(","));
 
-	public static void main(String[] args) {
-		new EditInfo();
-	}
-
 	public EditInfo() {
-		super("회원가비", 400, 600);
-
-		user = getRows("select * from member where m_no = 1").get(0);
+		super("정보수정", 400, 600);
 
 		ui();
 		data();
+
+		addWindowFocusListener(new WindowAdapter() {
+			@Override
+			public void windowLostFocus(WindowEvent e) {
+				if (e.getOppositeWindow() instanceof JDialog)
+					return;
+
+				dispose();
+			}
+		});
 
 		setVisible(true);
 	}
@@ -49,7 +54,7 @@ public class EditInfo extends BaseFrame {
 	}
 
 	private void ui() {
-		add(lbl("회원가입", 0, 30), "North");
+		add(lbl("정보수정", 0, 30), "North");
 		add(c = new JPanel(new GridLayout(0, 1, 5, 5)));
 		add(s = new JPanel(new FlowLayout(1)), "South");
 
@@ -100,8 +105,7 @@ public class EditInfo extends BaseFrame {
 						return;
 					}
 
-					if (txt[5].getText().matches(".*[^0-9].*")
-							|| txt[5].getText().replaceAll("[^0-9]", "").length() != 11) {
+					if (txt[5].getText().matches("^\\d{3}-\\d{4}-\\d{2}$")) {
 						eMsg("전화번호를 확인해주세요.");
 						return;
 					}

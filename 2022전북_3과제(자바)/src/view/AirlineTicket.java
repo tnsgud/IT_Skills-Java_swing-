@@ -50,6 +50,7 @@ public class AirlineTicket extends BasePage {
 	JTable t = table(m);
 	Object[] s_nos;
 	LocalDate date;
+	JLabel lblDate;
 
 	public AirlineTicket(LocalDate date, Object[] s_nos) {
 		s_nos = getRows(
@@ -77,7 +78,7 @@ public class AirlineTicket extends BasePage {
 			}
 		});
 
-		n.add(lbl(String.format("%02d.%02d (%s)", date.getMonthValue(), date.getDayOfMonth(),
+		n.add(lblDate = lbl(String.format("%02d.%02d (%s)", date.getMonthValue(), date.getDayOfMonth(),
 				date.getDayOfWeek().getDisplayName(TextStyle.SHORT, getLocale())), 2, 20), "West");
 		n.add(lbl, "East");
 
@@ -86,6 +87,8 @@ public class AirlineTicket extends BasePage {
 				eMsg("항공권을 선택해주세요.");
 				return;
 			}
+			
+			
 
 			if (toInt(t.getValueAt(t.getSelectedRow(), 6)) < BaseFrame.peoples.size()) {
 				eMsg("좌석이 부족합니다.");
@@ -122,10 +125,5 @@ public class AirlineTicket extends BasePage {
 					(int) distance((Double) r.get(4), (Double) r.get(5), (Double) r.get(6), (Double) r	.get(7)) / 10);
 			m.addRow(new Object[] { r.get(0), r.get(1), r.get(2), r.get(3), etime, r.get(8), r.get(9) });
 		}
-	}
-
-	public static void main(String[] args) {
-		main = new Main();
-		main.swap(new AirlineTicket(LocalDate.now().plusDays(1), null));
 	}
 }

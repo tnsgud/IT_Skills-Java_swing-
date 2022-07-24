@@ -12,7 +12,6 @@ import javax.swing.JToggleButton;
 
 public class Main extends BaseFrame {
 	JToggleButton btn[] = new JToggleButton[4];
-	public static Boolean flag = false;
 
 	void swap(BasePage p) {
 		c.removeAll();

@@ -10,10 +10,14 @@ import java.awt.TrayIcon;
 import java.awt.TrayIcon.MessageType;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JPopupMenu;
@@ -26,8 +30,6 @@ public class Login extends BaseFrame {
 	JPanel bag = new JPanel(new GridBagLayout()), m = new JPanel(new BorderLayout());
 	static SystemTray tray = SystemTray.getSystemTray();
 	static TrayIcon icon = new TrayIcon(Toolkit.getDefaultToolkit().getImage("./datafiles/비행기.jpg"));
-	Main air;
-
 	{
 		var pop = new JPopupMenu();
 		for (var cap : "일정보기,닫기".split(",")) {
@@ -35,7 +37,7 @@ public class Login extends BaseFrame {
 
 			i.addActionListener(a -> {
 				if (cap.equals("일정보기")) {
-					air.btn[1].doClick();
+					BasePage.main.btn[1].doClick();
 				} else {
 					tray.remove(icon);
 				}
@@ -54,6 +56,12 @@ public class Login extends BaseFrame {
 				}
 			}
 		});
+	}
+	
+	public static void main(String[] args) {
+		var login = new Login();
+		login.txt[0].setText("sky01");
+		login.txt[1].setText("sky01!");
 	}
 
 	public Login() {
@@ -163,8 +171,9 @@ public class Login extends BaseFrame {
 				while (true) {
 					for (int i = 0; i < list.size(); i++) {
 						int x = list.get(i).getX();
+						int y = (int) (Math.sin(list.get(i).getX() / 10) * 8);
 
-						list.get(i).setLocation(x -= 1, flag ? 0 : 5);
+						list.get(i).setLocation(x -= 1, y);
 
 						if (x < -500) {
 							list.get(i).setLocation(2000, 0);
@@ -179,9 +188,5 @@ public class Login extends BaseFrame {
 				}
 			}
 		}.execute();
-	}
-
-	public static void main(String[] args) {
-		new Login();
 	}
 }

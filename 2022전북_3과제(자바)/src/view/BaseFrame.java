@@ -4,7 +4,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import model.Bag;
@@ -20,8 +22,6 @@ public class BaseFrame extends JFrame implements Tool {
 	JPanel en, ew, ec, ee, es;
 	JPanel sn, sw, sc, se, ss;
 
-	Boolean flag = false;
-	
 	static ArrayList<Object> user;
 	public static ArrayList<Bag> bag = new ArrayList<>();
 	static ArrayList<People> peoples = new ArrayList<>();
@@ -49,4 +49,5 @@ public class BaseFrame extends JFrame implements Tool {
 			b.setVisible(true);
 		}
 	}
+
 }

@@ -55,6 +55,13 @@ public class PeopleInfo extends BasePage {
 			c.add(tmp);
 		}
 
+		{
+			var idx = new int[] { 7, 6, 2, 5 };
+			for (int i = 0; i < idx.length; i++) {
+				txt[i].setText(BaseFrame.user.get(idx[i]).toString());
+			}
+		}
+
 		s.add(btn("확인", a -> {
 			for (var i : items) {
 				for (var t : i.txt) {
@@ -107,9 +114,10 @@ public class PeopleInfo extends BasePage {
 				peo.setPrice(
 						peo.getDiv() == 1 ? price : peo.getDiv() == 2 ? (int) (price * 0.85) : (int) (price * 0.7));
 
-				iMsg("입력이 완료되었습니다.");
-				main.swap(new Option());
 			}
+
+			iMsg("입력이 완료되었습니다.");
+			main.swap(new Option());
 		}));
 	}
 
