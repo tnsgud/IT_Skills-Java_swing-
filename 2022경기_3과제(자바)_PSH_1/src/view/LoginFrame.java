@@ -25,7 +25,9 @@ public class LoginFrame extends BaseFrame {
 
 			if (txt[0].getText().equals("admin") && txt[1].getText().equals("1234")) {
 				iMsg("관리자로 로그인하였습니다.");
-
+				BasePage.mf = new MainFrame();
+				BasePage.mf.addWindowListener(new Before(this));
+				new AdminPage();
 				return;
 			}
 
