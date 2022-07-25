@@ -25,10 +25,8 @@ import javax.swing.table.DefaultTableModel;
 
 public class ProfilePage extends BasePage {
 	ArrayList<Object> user;
-	DefaultTableModel m = new DefaultTableModel();
-	JTable t = new JTable(m);
 	JPanel expBar;
-
+	
 	public ProfilePage(int u_no) {
 		super("유저프로필");
 

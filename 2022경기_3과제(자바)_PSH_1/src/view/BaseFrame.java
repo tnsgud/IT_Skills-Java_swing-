@@ -28,8 +28,14 @@ public class BaseFrame extends JFrame implements Tool {
 	}
 	
 	@Override
+	public void repaint() {
+		opaque((JPanel)getContentPane(), false);
+		super.repaint();
+	}
+	
+	@Override
 	public void setVisible(boolean b) {
-		opaque((JPanel)getContentPane());
+		opaque((JPanel)getContentPane(), false);
 		super.setVisible(b);
 	}
 
@@ -42,7 +48,7 @@ public class BaseFrame extends JFrame implements Tool {
 		}
 
 		@Override
-		public void windowClosing(WindowEvent e) {
+		public void windowClosed(WindowEvent e) {
 			b.setVisible(true);
 		}
 	}

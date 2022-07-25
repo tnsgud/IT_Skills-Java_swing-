@@ -2,6 +2,6 @@ package view;
 
 public class StoragePage extends BasePage {
 	public StoragePage() {
-		super("");
+		super("보관함");
 	}
 }

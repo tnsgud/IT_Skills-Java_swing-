@@ -21,7 +21,7 @@ public class MainFrame extends BaseFrame {
 	ArrayList<String> history = new ArrayList<>();
 
 	public MainFrame() {
-		super("게임유통관리", 900, 600);
+		super("게임유통관리", 900, 650);
 
 		add(n = new JPanel(new BorderLayout()), "North");
 		add(c = new JPanel(card = new CardLayout()));
@@ -47,8 +47,10 @@ public class MainFrame extends BaseFrame {
 		for (var cap : "프로필,정보수정".split(",")) {
 			var i = new JMenuItem(cap);
 			i.addActionListener(a -> {
+				history = new ArrayList<>(history.subList(0, 1));
+
 				if (cap.equals("프로필")) {
-					new ProfilePage();
+					new ProfilePage(toInt(BasePage.user.get(0)));
 				} else {
 					new InfoEditPage();
 				}
@@ -56,8 +58,14 @@ public class MainFrame extends BaseFrame {
 			menu.add(i);
 		}
 
-		cart.addActionListener(a -> new CartPage());
-		storage.addActionListener(a -> new StoragePage());
+		cart.addActionListener(a -> {
+			history = new ArrayList<>(history.subList(0, 1));
+			new CartPage();
+		});
+		storage.addActionListener(a -> {
+			history = new ArrayList<>(history.subList(0, 1));
+			new StoragePage();
+		});
 
 		img.setComponentPopupMenu(pop);
 

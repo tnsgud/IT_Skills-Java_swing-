@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.stream.Stream;
 
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -14,6 +15,8 @@ public class LoginFrame extends BaseFrame {
 
 	public LoginFrame() {
 		super("로그인", 250, 200);
+
+		setDefaultCloseOperation(3);
 
 		add(lbl("게임유통관리", 0, 25), "North");
 		add(c = new JPanel(new GridLayout(0, 1, 10, 10)));
@@ -30,10 +33,11 @@ public class LoginFrame extends BaseFrame {
 				BasePage.mf = new MainFrame();
 				BasePage.mf.addWindowListener(new Before(this));
 				new AdminMainPage();
+				Stream.of(txt).forEach(t -> t.setText(""));
 				return;
 			}
 
-			var rs = getRows("seelct * from user where u_id = ? and u_pw = ?", txt[0].getText(), txt[1].getText());
+			var rs = getRows("select * from user where u_id = ? and u_pw = ?", txt[0].getText(), txt[1].getText());
 
 			if (rs.isEmpty()) {
 				eMsg("회원 정보가 일치하지 않습니다.");
@@ -41,19 +45,20 @@ public class LoginFrame extends BaseFrame {
 			}
 
 			BasePage.user = rs.get(0);
+			iMsg(BasePage.user.get(3) + "님이 로그인하였습니다.");
 
 			var birth = LocalDate.parse(BasePage.user.get(4).toString());
 			BasePage.u_age = LocalDate.now().getYear() - birth.getYear();
 			BasePage.u_age -= birth.isAfter(LocalDate.now()) ? 1 : 0;
 
 			BasePage.uAgeFilter = Arrays.asList(rs.get(0).get(7).toString().split(",")).contains("12");
-			
+
 			BasePage.mf = new MainFrame();
 			BasePage.mf.addWindowListener(new Before(this));
-			
-			new UserMainPage();
 
-			iMsg(BasePage.user.get(3) + "님이 로그인하였습니다.");
+			Stream.of(txt).forEach(t -> t.setText(""));
+
+			new UserMainPage();
 		}), "South");
 
 		var cap = "ID,PW".split(",");
@@ -67,6 +72,9 @@ public class LoginFrame extends BaseFrame {
 		}
 
 		((JPasswordField) txt[1]).setEchoChar('●');
+		
+		txt[0].setText("abc1");
+		txt[1].setText("Qq1!");
 
 		setVisible(true);
 	}

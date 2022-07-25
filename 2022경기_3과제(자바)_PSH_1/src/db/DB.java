@@ -72,7 +72,7 @@ public class DB implements Tool {
 		createT("deal",
 				"g_no int primary key not null auto_increment, u_no int, m_no int, d_date date, foreign key(u_no) references user(u_no), foreign key(m_no) references market(m_no)");
 		createT("library",
-				"l_no int primary key not null auto_increment, u_no int, g_no int, l_price int, l_date int, foreign key(u_no) references user(u_no), foreign key(g_no) references game(g_no)");
+				"l_no int primary key not null auto_increment, u_no int, g_no int, l_price int, l_date date, foreign key(u_no) references user(u_no), foreign key(g_no) references game(g_no)");
 		createT("review",
 				"r_no int primary key not null auto_increment, u_no int, g_no int, r_score int, r_content varchar(150), foreign key(u_no) references user(u_no), foreign key(g_no) references game(g_no)");
 
@@ -109,6 +109,8 @@ public class DB implements Tool {
 		execute("create view v2 as select s.s_no, s.u_no, g_no from storage s left join market m on s.s_no = m.s_no inner join item i on s.i_no = i.i_no where m.m_no is null");
 		
 		iMsg("셋팅 성공");
+		
+		System.exit(0);
 	}
 
 	public static void main(String[] args) {

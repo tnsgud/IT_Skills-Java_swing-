@@ -24,6 +24,10 @@ public class UserMainPage extends BasePage {
 	JLabel[] lbl = new JLabel[5];
 	JPanel ccc;
 	SwingWorker<String, Object> worker;
+	
+	public static void main(String[] args) {
+		new Login();
+	}
 
 	public UserMainPage() {
 		super("사용자메인");

@@ -17,13 +17,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.imageio.ImageIO;
+import javax.swing.CellRendererPane;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -31,7 +35,7 @@ import db.DB;
 
 public interface Tool {
 	String[] g_genre = ",공포,RPG,레이싱,스포츠,시뮬레이션,액션,어드벤쳐,전략,슈팅".split(","),
-			g_age = "전체이용가,12세 이상,15세 이상,18세 이상".split(","), g_gd = "일반,브론즈,실버,플레티넘,다이아".split(",");
+			g_age = "전체이용가,12세 이상,15세 이상,18세 이상".split(","), g_gd = "일반,브론즈,실버,골드,플레티넘,다이아".split(",");
 	Color back = new Color(51, 63, 112);
 
 	default void execute(String sql, Object... obj) {
@@ -96,12 +100,13 @@ public interface Tool {
 		return c;
 	}
 
-	default void opaque(JComponent c) {
+	default void opaque(JComponent c, boolean op) {
 		for (var com : c.getComponents()) {
-			if (com instanceof JPanel) {
-				((JPanel) com).setOpaque(false);
-				opaque((JPanel) com);
-			}
+			if (com instanceof JComboBox || com instanceof JTextField || com instanceof JButton
+					|| com instanceof CellRendererPane)
+				continue;
+			((JComponent) com).setOpaque(op);
+			opaque((JComponent) com, op);
 		}
 	}
 
@@ -137,16 +142,18 @@ public interface Tool {
 		l.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				i.run(e);
+				if (e.getButton() == 1) {
+					i.run(e);
+				}
 			}
 		});
 		return l;
 	}
 
-	default JLabel lblImg(String c, int a, String p, int w, int h) {
+	default JLabel lblImg(String c, int a, String p, int w, int h, Invoker i) {
 		try {
 			var icon = ImageIO.read(new File(p));
-			var l = new JLabel(c, a) {
+			var l = new JLabel("<html>" + c, a) {
 				void setColor(int r, int g, int b) {
 					for (int i = 0; i < icon.getWidth(); i++) {
 						for (int j = 0; j < icon.getHeight(); j++) {
@@ -160,17 +167,19 @@ public interface Tool {
 				}
 			};
 
+			l.setForeground(Color.white);
+			l.setFont(new Font("맑은 고딕", 1, 25));
 			l.setColor(255, 255, 255);
-
 			l.setIcon(new ImageIcon(icon.getScaledInstance(w, h, 4)));
 
-			l.setVerticalTextPosition(3);
-			l.setHorizontalTextPosition(0);
+			l.setVerticalTextPosition(JLabel.BOTTOM);
+			l.setHorizontalTextPosition(JLabel.CENTER);
 
 			l.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseEntered(MouseEvent e) {
 					l.setColor(Color.yellow.getRed(), Color.yellow.getGreen(), Color.yellow.getBlue());
+					l.setIcon(new ImageIcon(icon.getScaledInstance(w, h, 4)));
 					l.setCursor(new Cursor(12));
 					l.repaint();
 				}
@@ -178,7 +187,15 @@ public interface Tool {
 				@Override
 				public void mouseExited(MouseEvent e) {
 					l.setColor(255, 255, 255);
+					l.setIcon(new ImageIcon(icon.getScaledInstance(w, h, 4)));
 					l.repaint();
+				}
+
+				@Override
+				public void mousePressed(MouseEvent e) {
+					if (e.getButton() == 1) {
+						i.run(e);
+					}
 				}
 			});
 

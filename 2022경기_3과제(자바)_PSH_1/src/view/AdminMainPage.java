@@ -1,5 +1,7 @@
 package view;
 
+import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -13,25 +15,31 @@ public class AdminMainPage extends BasePage {
 
 		((JLabel) mf.n.getComponent(0)).setText("관리자 메뉴");
 
-		add(c = new JPanel(new GridLayout(1, 0, 10, 10)));
+		add(c = new JPanel(new FlowLayout(1, 50, 150)));
 
 		var cap = "게임관리,거래내역,차트".split(",");
 		for (int i = 0; i < cap.length; i++) {
-			var l = lblImg("<html><font color='white'>" + cap[i], 0, "./datafiles/기본사진/" + (i + 5) + ".png", 50, 50);
-			l.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mousePressed(MouseEvent e) {
-					var me = (JLabel)e.getSource();
-					
-					if(me.getText().contains("게임관리")) {
-						new SearchPage();
-					}else if(me.getText().equals("거래내역")) {
-						new DealPage();
-					}else {
-						new ChartPage();
-					}
+			var l = lblImg(cap[i], 0, "./datafiles/기본사진/" + (i + 5) + ".png", 150, 150, e -> {
+				var me = (JLabel) e.getSource();
+
+				if (me.getText().contains("게임관리")) {
+					new SearchPage();
+				} else if (me.getText().contains("거래내역")) {
+					new DealPage();
+				} else {
+					new ChartPage();
 				}
 			});
+			c.add(l);
 		}
+
+		setBackground(Color.black);
+
+		mf.repaint();
+	}
+
+	public static void main(String[] args) {
+		BasePage.mf = new MainFrame();
+		new AdminMainPage();
 	}
 }
