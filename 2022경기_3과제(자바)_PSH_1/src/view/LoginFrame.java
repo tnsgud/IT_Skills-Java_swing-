@@ -2,6 +2,8 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.time.LocalDate;
+import java.util.Arrays;
 
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -27,7 +29,7 @@ public class LoginFrame extends BaseFrame {
 				iMsg("관리자로 로그인하였습니다.");
 				BasePage.mf = new MainFrame();
 				BasePage.mf.addWindowListener(new Before(this));
-				new AdminPage();
+				new AdminMainPage();
 				return;
 			}
 
@@ -38,7 +40,20 @@ public class LoginFrame extends BaseFrame {
 				return;
 			}
 
-			iMsg("님이 로그인하였습니다.");
+			BasePage.user = rs.get(0);
+
+			var birth = LocalDate.parse(BasePage.user.get(4).toString());
+			BasePage.u_age = LocalDate.now().getYear() - birth.getYear();
+			BasePage.u_age -= birth.isAfter(LocalDate.now()) ? 1 : 0;
+
+			BasePage.uAgeFilter = Arrays.asList(rs.get(0).get(7).toString().split(",")).contains("12");
+			
+			BasePage.mf = new MainFrame();
+			BasePage.mf.addWindowListener(new Before(this));
+			
+			new UserMainPage();
+
+			iMsg(BasePage.user.get(3) + "님이 로그인하였습니다.");
 		}), "South");
 
 		var cap = "ID,PW".split(",");

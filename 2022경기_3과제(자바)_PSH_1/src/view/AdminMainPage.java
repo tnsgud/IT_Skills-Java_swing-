@@ -7,8 +7,8 @@ import java.awt.event.MouseEvent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class AdminPage extends BasePage {
-	public AdminPage() {
+public class AdminMainPage extends BasePage {
+	public AdminMainPage() {
 		super("관리자 메인");
 
 		((JLabel) mf.n.getComponent(0)).setText("관리자 메뉴");
