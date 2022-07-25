@@ -40,6 +40,7 @@ public class ProfilePage extends BasePage {
 		isMe = toInt(user.get(0)) == toInt(BasePage.user.get(0));
 		var exp = toInt(getOne("select count(*) from library where u_no = ?", uNo)) * 3
 				+ getRows("select * from v2 where u_no = ? group by g_no having count(*) > 2", uNo).size() * 10;
+		var level = lbl("경험치 : " + exp + " [등급 : " + g_gd[exp / 20] + "]", 2, 15);
 
 		add(c = new JPanel(new BorderLayout(20, 20)));
 		add(s = new JPanel(new BorderLayout()), "South");
@@ -51,12 +52,11 @@ public class ProfilePage extends BasePage {
 		if (isMe) {
 			cc.add(lbl("보유 잔액 : " + format(toInt(user.get(5))), 2, 15));
 		}
-		cc.add(lbl("경험치 : " + exp + " [등급 : " + g_gd[exp / 20] + "]", 2, 15));
+		cc.add(level);
 		cc.add(cs = new JPanel(new FlowLayout(0)));
 
-		var l = (JLabel) cc.getComponent(2);
-		l.setIcon(getIcon("./datafiles/등급사진/" + (exp / 20) + ".jpg", 80, 80));
-		l.setHorizontalTextPosition(2);
+		level.setIcon(getIcon("./datafiles/등급사진/" + (exp / 20) + ".jpg", 80, 80));
+		level.setHorizontalTextPosition(2);
 
 		cs.add(expBar = sz(new JPanel() {
 			@Override

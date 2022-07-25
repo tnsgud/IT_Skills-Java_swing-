@@ -44,6 +44,7 @@ public interface Tool {
 			for (int i = 0; i < obj.length; i++) {
 				DB.ps.setObject(i + 1, obj[i]);
 			}
+			System.out.println(DB.ps);
 			DB.ps.execute();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -58,6 +59,7 @@ public interface Tool {
 			for (int i = 0; i < obj.length; i++) {
 				DB.ps.setObject(i + 1, obj[i]);
 			}
+			System.out.println(DB.ps);
 			var rs = DB.ps.executeQuery();
 			while (rs.next()) {
 				var row = new ArrayList<>();

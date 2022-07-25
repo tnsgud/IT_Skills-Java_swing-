@@ -107,6 +107,7 @@ public class DB implements Tool {
 		execute("create view v1 as select g.g_no, g_img, g_name, g_genre, g_age, round(avg(r_score), 1) as g_review , format(g_price, '#,##0') g_price, g_sale, format(g_price-g_price*g_sale*0.01, '#,##0') g_dcprice from game g, review r where g.g_no = r.g_no group by g.g_no");
 		execute("drop view if exists v2");
 		execute("create view v2 as select s.s_no, s.u_no, g_no from storage s left join market m on s.s_no = m.s_no inner join item i on s.i_no = i.i_no where m.m_no is null");
+		execute("update user set u_money = 11111111");
 		
 		iMsg("셋팅 성공");
 		
