@@ -32,6 +32,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import db.DB;
+import view.GenreSelect;
 
 public interface Tool {
 	String[] g_genre = ",공포,RPG,레이싱,스포츠,시뮬레이션,액션,어드벤쳐,전략,슈팅".split(","),
@@ -205,6 +206,18 @@ public interface Tool {
 		} catch (IOException e) {
 			return null;
 		}
+	}
+
+	default JLabel lblAdd(ArrayList<String> genre) {
+		var l = new JLabel(getIcon("./datafiles/기본사진/10.png", 30, 30));
+		l.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				new GenreSelect(genre).setVisible(true);
+			}
+		});
+
+		return l;
 	}
 
 	default JButton btn(String c, ActionListener a) {
