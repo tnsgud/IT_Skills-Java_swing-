@@ -98,7 +98,7 @@ public class InfoEditPage extends BasePage {
 			var me = (JLabel) e.getSource();
 
 			if (me.isEnabled())
-				filters.add(0, "0");
+				filters.remove("12");
 			else
 				filters.add(0, "12");
 
@@ -124,7 +124,8 @@ public class InfoEditPage extends BasePage {
 
 			iMsg("수정이 완료되었습니다.");
 			execute("update user set u_name=?,u_pw=?,u_ox=?,u_filter=?", txt[0].getText(), txt[1].getText(),
-					rad[0].isSelected() ? 0 : 1, filters.stream().collect(Collectors.joining(",")));
+					rad[0].isSelected() ? 0 : 1,
+					filters.size() == 0 ? "0" : filters.stream().collect(Collectors.joining(",")));
 		}));
 
 		mf.repaint();
