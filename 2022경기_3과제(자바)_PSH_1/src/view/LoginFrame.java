@@ -52,10 +52,10 @@ public class LoginFrame extends BaseFrame {
 			BasePage.u_age -= birth.isAfter(LocalDate.now()) ? 1 : 0;
 
 			BasePage.uAgeFilter = Arrays.asList(rs.get(0).get(7).toString().split(",")).contains("12");
-			BasePage.u_gd = (toInt(getOne("select count(*) from library where u_no = ?", BasePage.user.get(0))) * 3
+			BasePage.u_exp = toInt(getOne("select count(*) from library where u_no = ?", BasePage.user.get(0))) * 3
 					+ getRows("select * from v2 where u_no = ? group by g_no having count(*) > 2", BasePage.user.get(0))
-							.size() * 10)
-					/ 20;
+							.size() * 10;
+			BasePage.u_gd = BasePage.u_exp / 20;
 
 			BasePage.mf = new MainFrame();
 			BasePage.mf.addWindowListener(new Before(this));

@@ -17,7 +17,7 @@ public class BasePage extends JPanel implements Tool {
 	
 	static MainFrame mf;
 	static ArrayList<Object> user;
-	static int g_no, u_gd, u_age;
+	static int g_no, u_gd, u_age, u_exp;
 	static boolean uAgeFilter = false;
 	
 	public BasePage(String name) {
