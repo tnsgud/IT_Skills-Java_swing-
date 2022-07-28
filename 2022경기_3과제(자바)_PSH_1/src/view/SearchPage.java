@@ -3,6 +3,7 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -33,13 +35,20 @@ public class SearchPage extends BasePage {
 			"select v1.* from v1, library l where v1.g_no = l.g_no %s group by v1.g_no order by count(*) desc, v1.g_no limit 5",
 			"select * from v1 where g_sale <> 0 %s", "select * from v1 where g_price = 0 %s" };
 
+	@Override
+	public JButton btn(String c, ActionListener a) {
+		var b = super.btn(c, a);
+		b.setBackground(null);
+		return b;
+	}
+
 	public static void main(String[] args) {
 		new LoginFrame();
 	}
-	
+
 	public SearchPage() {
 		super("검색");
-		
+
 		data();
 		ui();
 		event();
@@ -82,6 +91,10 @@ public class SearchPage extends BasePage {
 
 		n.add(icon);
 
+		if (user == null) {
+			n.add(btn("등록하기", a->new GameInfoPage()));
+		}
+
 		search();
 	}
 
@@ -89,8 +102,7 @@ public class SearchPage extends BasePage {
 		result.removeAll();
 
 		var word = Stream.of(txt.getText().split(""))
-				.map(t -> list.indexOf(t) < 0 ? t : "[" + map.get(list.indexOf(t)) + "]")
-				.collect(Collectors.joining());
+				.map(t -> list.indexOf(t) < 0 ? t : "[" + map.get(list.indexOf(t)) + "]").collect(Collectors.joining());
 		var sql = String.format(sqls[com[0].getSelectedIndex()], "and g_name regexp ? and g_genre regexp ?");
 		var rs = getRows(sql, "^" + word + ".*",
 				"(" + (com[1].getSelectedIndex() == 0 ? "" : com[1].getSelectedIndex()) + ")");
@@ -98,7 +110,7 @@ public class SearchPage extends BasePage {
 		if (user != null) {
 			rs = rs.stream().filter(r -> {
 				for (var num : user.get(7).toString().split(",")) {
-					if (("," + r.get(3)+",").matches(".*," + num+",.*")) {
+					if (("," + r.get(3) + ",").matches(".*," + num + ",.*")) {
 						return false;
 					}
 				}
@@ -149,7 +161,7 @@ public class SearchPage extends BasePage {
 		if (user != null) {
 			rs = rs.stream().filter(r -> {
 				for (var num : user.get(7).toString().split(",")) {
-					if (("," + r.get(3)+",").matches(".*," + num+",.*")) {
+					if (("," + r.get(3) + ",").matches(".*," + num + ",.*")) {
 						return false;
 					}
 				}

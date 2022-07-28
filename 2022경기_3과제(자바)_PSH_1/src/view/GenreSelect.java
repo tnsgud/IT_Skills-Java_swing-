@@ -52,7 +52,7 @@ public class GenreSelect extends BaseDialog {
 			} else if (curPage instanceof ChartPage) {
 				curPage.repaint();
 			} else if (curPage instanceof GameInfoPage) {
-				((GameInfoPage) curPage).lblGenre.setText(genre.stream().collect(Collectors.joining(",")));
+				((GameInfoPage) curPage).lblGenre.setText(genre.stream().map(c->g_genre[toInt(c)]).collect(Collectors.joining(",")));
 			}
 
 			dispose();
