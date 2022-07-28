@@ -224,7 +224,7 @@ public interface Tool {
 		var b = new JButton(c);
 		b.addActionListener(a);
 		b.setBackground(new Color(53, 167, 249));
-		b.setForeground(Color.white);
+		b.setForeground(Color.black);
 		return b;
 	}
 
