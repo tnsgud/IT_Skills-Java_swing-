@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 public class MarketDialog extends BaseDialog {
@@ -31,8 +32,15 @@ public class MarketDialog extends BaseDialog {
 		return lbl;
 	}
 
+	public static void main(String[] args) {
+		new LoginFrame();
+
+	}
+
 	public MarketDialog(String tit, int i_no) {
 		super(tit, 300, 400);
+
+		setLayout(new BorderLayout(0, 20));
 
 		add(c = new JPanel(new BorderLayout()));
 		add(s = new JPanel(new FlowLayout(2)), "South");
@@ -89,12 +97,19 @@ public class MarketDialog extends BaseDialog {
 					eMsg("1보다 큰 숫자로 입력하세요.");
 					return;
 				}
-				var storage = (StoragePage) BasePage.mf.c.getComponent(0);
+				var com = BasePage.mf.c.getComponent(BasePage.mf.c.getComponentCount() - 1);
 
 				iMsg("등록이 완료되었습니다.");
-				execute("isnert into market values(0,?,?,?,?)", BasePage.user.get(0), s_no, txt.getText(), 0);
+				execute("insert into market values(0,?,?,?,?)", BasePage.user.get(0), s_no, txt.getText(), 0);
+				createV();
 
-				storage.addRow();
+				if (com instanceof StoragePage) {
+					((StoragePage) com).addRow();
+				} else {
+					((MarketPage) com).storage();
+					((MarketPage) com).search();
+				}
+
 				dispose();
 			} else {
 				if (toInt(BasePage.user.get(5)) < price) {
@@ -103,16 +118,23 @@ public class MarketDialog extends BaseDialog {
 					return;
 				}
 
-				execute("update market set m_ox = 1 where m_no = ?", m_no);
-				execute("insert into deal values(0, ?, ?, ?)", BasePage.user.get(0), m_no, LocalDate.now());
 				execute("update user set u_money=u_money-? where u_no = ?", price, BasePage.user.get(0));
 				BasePage.user = getRows("select * from user where u_no = ?", BasePage.user.get(0)).get(0);
-				
+				execute("update user set u_money=u_money+? where u_no = ?", price,
+						getOne("select u_no from storage where s_no = ?", s_no));
+				execute("update market set m_ox = 1 where m_no = ?", m_no);
+				execute("insert storage value(0, ?, ?)", BasePage.user.get(0), i_no);
+				execute("insert into deal values(0, ?, ?, ?)", BasePage.user.get(0), m_no, LocalDate.now());
+
 				new InfoDialog(Arrays.asList());
-			
+
 				dispose();
 			}
 		}));
+
+		((JPanel) getContentPane()).setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		s.setOpaque(false);
 	}
 
 	public MarketDialog(String t, int i_no, String price) {

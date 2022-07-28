@@ -18,6 +18,7 @@ import javax.swing.table.DefaultTableModel;
 public class StoragePage extends BasePage {
 	DefaultTableModel m = model("s_no,아이템,게임명,아이템명,i_no".split(","));
 	JTable t = table(m);
+	JLabel lblExp;
 
 	@Override
 	public JLabel lbl(String c, int a, int st, int sz) {
@@ -29,10 +30,11 @@ public class StoragePage extends BasePage {
 	public StoragePage() {
 		super("보관함");
 
-		setBackground(Color.white);
-		setLayout(new GridLayout(1, 0, 100, 0));
 		setOpaque(true);
-
+		setBackground(Color.white);
+		setLayout(new BorderLayout(50, 0));
+		
+		add(lblExp = lbl("", 4, 20), "North");
 		add(w = new JPanel(new BorderLayout()), "West");
 		add(c = new JPanel(new BorderLayout()));
 
@@ -62,6 +64,23 @@ public class StoragePage extends BasePage {
 		c.add(lbl("아이템 세트", 0, 20), "North");
 		c.add(new JScrollPane(cc = new JPanel(new GridLayout(0, 1))));
 
+		addRow();
+
+		w.setBorder(new LineBorder(Color.black));
+		c.setBorder(new LineBorder(Color.black));
+	}
+
+	void addRow() {
+		cc.removeAll();
+		m.setRowCount(0);
+		
+		for (var rs : getRows(
+				"select s.s_no, i_img, g_name, i_name, i.i_no from v2, storage s, game g, item i where v2.s_no = s.s_no and g.g_no = v2.g_no and i.i_no=s.i_no and v2.u_no = ?",
+				user.get(0))) {
+			rs.set(1, new JLabel(getIcon(rs.get(1), 80, 80)));
+			m.addRow(rs.toArray());
+		}
+		
 		for (var rs : getRows("select g_no from item group by g_no")) {
 			var g_no = toInt(rs.get(0));
 			var cnt = 0;
@@ -71,12 +90,12 @@ public class StoragePage extends BasePage {
 			tmp.setBorder(new TitledBorder(getOne("select g_name from game where g_no = ?", g_no)));
 			for (var r : getRows("select i_no, i_img from item where g_no = ?", g_no)) {
 				var img = getIcon(r.get(1), 80, 80).getImage();
-				
-				if(getOne("select * from storage s, v2 where s.s_no = v2.s_no and v2.u_no = ? and s.i_no = ?", user.get(0),
-						r.get(0)).isEmpty()) {
+
+				if (getOne("select * from storage s, v2 where s.s_no = v2.s_no and v2.u_no = ? and s.i_no = ?",
+						user.get(0), r.get(0)).isEmpty()) {
 					img = GrayFilter.createDisabledImage(img);
 				}
-				
+
 				tmp.add(new JLabel(new ImageIcon(img)));
 
 				cnt = getOne("select * from v2, storage s where v2.s_no = s.s_no and v2.u_no = ? and i_no= ?",
@@ -87,21 +106,16 @@ public class StoragePage extends BasePage {
 
 			cc.add(tmp);
 		}
-
-		addRow();
-
-		w.setBorder(new LineBorder(Color.black));
-		c.setBorder(new LineBorder(Color.black));
-	}
-
-	void addRow() {
-		m.setRowCount(0);
-		for (var rs : getRows(
-				"select s.s_no, i_img, g_name, i_name, i.i_no from v2, storage s, game g, item i where v2.s_no = s.s_no and g.g_no = v2.g_no and i.i_no=s.i_no and v2.u_no = ?",
-				user.get(0))) {
-			rs.set(1, new JLabel(getIcon(rs.get(1), 80, 80)));
-			m.addRow(rs.toArray());
-		}
+		
+		BasePage.u_exp = toInt(getOne("select count(*) from library where u_no = ?", BasePage.user.get(0))) * 3
+				+ getRows("select * from v2 where u_no = ? group by g_no having count(*) > 2", BasePage.user.get(0))
+						.size() * 10;
+		BasePage.u_gd = BasePage.u_exp / 20;
+		
+		lblExp.setText("<html><font color='black'>경험치 : "+u_exp+"[등급 : "+g_gd[u_gd]+"]");
+		
+		cc.repaint();
+		cc.revalidate();
 	}
 
 	public static void main(String[] args) {

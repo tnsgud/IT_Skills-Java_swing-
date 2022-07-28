@@ -39,6 +39,13 @@ public interface Tool {
 			g_age = "전체이용가,12세 이상,15세 이상,18세 이상".split(","), g_gd = "일반,브론즈,실버,골드,플레티넘,다이아".split(",");
 	Color back = new Color(51, 63, 112);
 
+	default void createV() {
+		execute("drop view if exists v1");
+		execute("create view v1 as select g.g_no, g_img, g_name, g_genre, g_age, round(avg(r_score), 1) as g_review , format(g_price, '#,##0') g_price, g_sale, format(g_price-g_price*g_sale*0.01, '#,##0') g_dcprice from game g, review r where g.g_no = r.g_no group by g.g_no");
+		execute("drop view if exists v2");
+		execute("create view v2 as select s.s_no, s.u_no, g_no from storage s left join market m on s.s_no = m.s_no inner join item i on s.i_no = i.i_no where m.m_no is null");
+	}
+
 	default void execute(String sql, Object... obj) {
 		try {
 			DB.ps = DB.con.prepareStatement(sql);
@@ -252,6 +259,8 @@ public interface Tool {
 						: super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 			}
 		};
+
+		t.setSelectionMode(0);
 
 		t.getTableHeader().setReorderingAllowed(false);
 		t.getTableHeader().setResizingAllowed(false);
