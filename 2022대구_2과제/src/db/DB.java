@@ -14,30 +14,35 @@ import java.sql.Statement;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 
+import com.mysql.cj.x.protobuf.MysqlxPrepare.Execute;
+
 import tool.Tool;
 import view.BaseFrame;
 
-public class DB extends BaseFrame {
+public class DB extends JFrame implements Tool {
 	public static Connection con;
 	public static PreparedStatement ps;
 	static Statement stmt;
 
 	JLabel lblLog;
-
+	JPanel c;
+	
 	int arc;
 	boolean isFail;
 
 	static {
 		try {
 			con = DriverManager.getConnection(
-					"jdbc:mysql://localhost?serverTimezone=UTC&allowPublicKeyRetreival=true&allowLoadLocalInfile=true",
+					"jdbc:mysql://localhost?serverTimezone=Asia/Seoul&allowPublicKeyRetreival=true&allowLoadLocalInfile=true",
 					"root", "1234");
 			stmt = con.createStatement();
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -90,7 +95,10 @@ public class DB extends BaseFrame {
 	}
 
 	public DB() {
-		super("Database Setting", 400, 450);
+		super("Database Setting");
+		setSize(400, 450);
+		setLocationRelativeTo(null);
+		setDefaultCloseOperation(3);
 
 		setVisible(true);
 
@@ -152,17 +160,17 @@ public class DB extends BaseFrame {
 
 			createT("grade", "gr_no int primary key not null auto_increment, gr_name varchar(10), gr_criteria int");
 			createT("user",
-					"u_no int primary key not null, u_id varchar(20), u_pw varchar(30), u_name varchar(30), u_birth date, u_gender int, gr_no int, foreign key(gr_no) references grade(gr_no)");
+					"u_no int primary key not null auto_increment, u_id varchar(20), u_pw varchar(30), u_name varchar(30), u_birth date, u_gender int, gr_no int, foreign key(gr_no) references grade(gr_no)");
 			createT("area", "a_no int primary key not null, a_name varchar(15)");
 			createT("theater",
-					"t_no int primary key not null, t_name varchar(30), a_no int, m_no varchar(200), foreign key(a_no) references area(a_no)");
-			createT("genre", "g_no int primary key not null, g_name varchar(10)");
+					"t_no int primary key not null auto_increment, t_name varchar(30), a_no int, m_no varchar(200), foreign key(a_no) references area(a_no)");
+			createT("genre", "g_no int primary key not null auto_increment, g_name varchar(10)");
 			createT("movie",
-					"m_no int primary key not null, m_title varchar(50), m_synopsis text, g_no varchar(100), m_time int, m_open int, m_director varchar(20)");
+					"m_no int primary key not null auto_increment, m_title varchar(50), m_synopsis text, g_no varchar(100), m_time int, m_open int, m_director varchar(20)");
 			createT("comment",
-					"c_no int primary key not null, u_no int, m_no int, c_text text, c_rate int, foreign key(u_no) references user(u_no), foreign key(m_no) references movie(m_no)");
+					"c_no int primary key not null auto_increment, u_no int, m_no int, c_text text, c_rate int, foreign key(u_no) references user(u_no), foreign key(m_no) references movie(m_no)");
 			createT("reservation",
-					"r_no int primary key not null, u_no int, m_no int, t_no int, r_date date, r_time varchar(10), r_seat varchar(200), r_price int, foreign key(u_no) references user(u_no), foreign key(m_no) references movie(m_no), foreign key(t_no) references theater(t_no)");
+					"r_no int primary key not null auto_increment, u_no int, m_no int, t_no int, r_date date, r_time varchar(10), r_seat varchar(200), r_price int, foreign key(u_no) references user(u_no), foreign key(m_no) references movie(m_no), foreign key(t_no) references theater(t_no)");
 
 			for (var t : "grade,user,area,theater,genre,movie,comment,reservation".split(",")) {
 				loadData(t);
