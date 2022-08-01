@@ -105,9 +105,9 @@ public class MoviePage extends BasePage {
 		if (chkScreen[0].isSelected() && chkScreen[1].isSelected()) {
 			screening = "";
 		} else if (chkScreen[0].isSelected()) {
-			screening = "and m.m_no in (select scr.m_no from screeing scr)";
+			screening = "and m.m_no in (select scr.m_no from screening scr)";
 		} else if (chkScreen[1].isSelected()) {
-			screening = "and m.m_no not in (select scr.m_no from screeing scr)";
+			screening = "and m.m_no not in (select scr.m_no from screening scr)";
 		}
 
 		var sub1 = "(select sum(char_length(r_seat) - char_length(replace(r_seat, '.',''))) from reservation r where r.m_no = m.m_no) sub1";
@@ -119,8 +119,15 @@ public class MoviePage extends BasePage {
 
 		var sql = String.format("select m.*, %s, %s from movie m where m.m_title like ? %s %s %s", sub1, sub2,
 				screening, genre, order);
-		System.out.println(sql);
 		var rs = getRows(sql, "%" + txt.getText() + "%");
+		
+		if(rs.isEmpty()) {
+			eMsg("검색결과가 없습니다.");
+			txt.setText("");
+			search();
+			return;
+		}
+		
 		for (var r : rs) {
 			var tmp = new JPanel(new BorderLayout(10, 10));
 			var tmpS = new JPanel(new BorderLayout(5, 5));

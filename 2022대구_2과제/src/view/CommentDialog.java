@@ -48,7 +48,7 @@ public class CommentDialog extends BaseDialog {
 			execute("insert comment values(0,?,?,?,?)", BaseFrame.user.get(0), m_no, txt.getText(), c_rate);
 			mypage.data();
 			dispose();
-		}), "South");
+		}), "East");
 
 		btn.setForeground(Color.white);
 		btn.setBackground(Color.LIGHT_GRAY);

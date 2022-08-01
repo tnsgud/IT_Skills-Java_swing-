@@ -25,9 +25,6 @@ public class MovieManageFrame extends BaseFrame {
 
 		ui();
 
-		opaque(c, false);
-		c.setBackground(Color.white);
-
 		setVisible(true);
 	}
 
@@ -50,7 +47,10 @@ public class MovieManageFrame extends BaseFrame {
 			cc.add(sz(tmp, 70, 200));
 		}
 
-		cc.repaint();
-		cc.revalidate();
+		opaque(c, false);
+		c.setBackground(Color.white);
+		
+		c.repaint();
+		c.revalidate();
 	}
 }

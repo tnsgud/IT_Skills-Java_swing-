@@ -62,7 +62,10 @@ public class MypagePage extends BasePage {
 						.setVisible(true));
 				i2.addActionListener(a -> {
 					var date = LocalDateTime.parse(t.getValueAt(t.getSelectedRow(), 2).toString(),
-							DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH월 mm분"));
+							DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분"));
+					
+					System.out.println(LocalDateTime.now());
+					System.out.println(date);
 
 					if (date.isBefore(LocalDateTime.now())) {
 						eMsg("이미 상영된 영화입니다.");
@@ -72,8 +75,10 @@ public class MypagePage extends BasePage {
 					var c_no = getOne("select c_no from comment where m_no=? and u_no=?",
 							t.getValueAt(t.getSelectedRow(), 7), BaseFrame.user.get(0));
 
+					iMsg("삭제가 완료되었습니다.");
+					
 					execute("delete from reservation where r_no = ?", t.getValueAt(t.getSelectedRow(), 6));
-					execute("delte from comment where c_no = ?", c_no);
+					execute("delete from comment where c_no = ?", c_no);
 
 					data();
 				});
@@ -92,8 +97,9 @@ public class MypagePage extends BasePage {
 	}
 
 	void data() {
+		m.setRowCount(0);
 		var rs = getRows(
-				"select m.m_no, m_title, concat(date_format(r_date, '%Y년 %m월 %d일'), ' ', time_format(r_time, '%h시 %i분')) as r_datetime, r_seat, r_price, ifnull(c_text, '-'), r.r_no, m.m_no from movie m, reservation r left outer join comment c on r.u_no = c.u_no and c.m_no = r.m_no where r.m_no = m.m_no and r.u_no = ? order by r_date asc, r_time asc",
+				"select m.m_no, m_title, concat(date_format(r_date, '%Y년 %m월 %d일'), ' ', time_format(r_time, '%H시 %i분')) as r_datetime, r_seat, r_price, ifnull(c_text, '-'), r.r_no, m.m_no from movie m, reservation r left outer join comment c on r.u_no = c.u_no and c.m_no = r.m_no where r.m_no = m.m_no and r.u_no = ? order by r_date asc, r_time asc",
 				BaseFrame.user.get(0));
 		for (var r : rs) {
 			r.set(0, new JLabel(getIcon("./지급자료/image/movie/" + r.get(0) + ".jpg", 60, 80)));
@@ -117,7 +123,7 @@ public class MypagePage extends BasePage {
 		nc.add(lbl(getOne("select gr_name from grade where gr_no = ?", BaseFrame.user.get(6)), 2));
 
 		var wid = new int[] { 80, 220, 220, 120, 120 };
-		for (int i = 0; i < cols.length - 2; i++) {
+		for (int i = 0; i < cols.length - 3; i++) {
 			t.getColumn(cols[i]).setMinWidth(wid[i]);
 			t.getColumn(cols[i]).setMaxWidth(wid[i]);
 		}

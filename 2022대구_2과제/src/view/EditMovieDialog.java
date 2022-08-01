@@ -4,6 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -28,8 +32,8 @@ public class EditMovieDialog extends BaseDialog {
 	JCheckBox chk[] = getRows("select g_name from genre").stream().map(x -> new JCheckBox(x.get(0).toString()))
 			.toArray(JCheckBox[]::new);
 	JTextArea area;
-	JButton btn;
-	String path, genre = "", m_open = "";
+	JButton btn1, btn2;
+	String path = "", oldPath = "", genre = "", m_open = "";
 	ArrayList<Object> rs;
 
 	public EditMovieDialog(MovieManageFrame frame) {
@@ -48,8 +52,10 @@ public class EditMovieDialog extends BaseDialog {
 
 		setTitle("영화수정");
 
-		path = "./지급자료/image/movie/" + rs.get(0) + ".jpg";
-		lblImg.setIcon(getIcon(path, 250, 300));
+		m_open = rs.get(5).toString();
+		
+		oldPath = "./지급자료/image/movie/" + rs.get(0) + ".jpg";
+		lblImg.setIcon(getIcon(oldPath, 250, 300));
 
 		txt[0].setText(rs.get(1).toString());
 		txt[1].setText(rs.get(4).toString());
@@ -59,9 +65,10 @@ public class EditMovieDialog extends BaseDialog {
 
 		radio[toInt(rs.get(5)) - 1].setSelected(true);
 
-		Stream.of(rs.get(3).toString().split("\\.")).forEach(g -> chk[toInt(g) - 1].setSelected(true));
+		Stream.of(rs.get(3).toString().split("\\.")).forEach(g -> chk[toInt(g) - 1].doClick());
 
-		btn.setText("수정");
+		btn1.setText("이미지 수정");
+		btn2.setText("수정");
 	}
 
 	private void event() {
@@ -90,7 +97,7 @@ public class EditMovieDialog extends BaseDialog {
 		w.add(ws = sz(new JPanel(new GridLayout(0, 1, 5, 5)), 200, 150), "South");
 
 		wc.add(lblImg = new JLabel());
-		wc.add(btn("이미지 등록", a -> {
+		wc.add(btn1 = btn("이미지 등록", a -> {
 			path = getFilePath();
 			lblImg.setIcon(getIcon(path, lblImg.getWidth(), lblImg.getHeight()));
 		}), "South");
@@ -139,7 +146,7 @@ public class EditMovieDialog extends BaseDialog {
 			cn.add(tmp2);
 		}
 
-		s.add(btn = btn("등록", a -> {
+		s.add(btn2 = btn("등록", a -> {
 			for (var t : txt) {
 				if (t.getText().isEmpty() || area.getText().isEmpty()) {
 					eMsg("빈칸이 존재합니다.");
@@ -175,10 +182,27 @@ public class EditMovieDialog extends BaseDialog {
 
 				execute("insert movie values(0, ?,?,?,?,?,?)", txt[0].getText(), area.getText(), genre,
 						txt[1].getText(), m_open, txt[0].getText());
+				try {
+					Files.copy(
+							new File(path).toPath(), new File("./지급자료/image/movie/"
+									+ getOne("select m_no from movie order by m_no desc") + ".jpg").toPath(),
+							StandardCopyOption.REPLACE_EXISTING);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			} else {
 				iMsg("수정이 완료되었습니다.");
-				execute("upate movie set m_title = ?, m_synopsis=?, g_no = ?, m_time=?, m_open=?, m_director=?, where m_no =?",
+				execute("update movie set m_title = ?, m_synopsis=?, g_no = ?, m_time=?, m_open=?, m_director=? where m_no =?",
 						txt[0].getText(), area.getText(), genre, txt[1].getText(), m_open, txt[2].getText(), rs.get(0));
+				
+				try {
+					Files.copy(new File(path).toPath(), new File(oldPath).toPath(),
+							StandardCopyOption.REPLACE_EXISTING);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 
 			frame.ui();

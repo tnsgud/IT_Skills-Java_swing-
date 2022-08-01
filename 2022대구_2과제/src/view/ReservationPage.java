@@ -16,6 +16,7 @@ import java.util.Arrays;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -34,6 +35,8 @@ public class ReservationPage extends BasePage {
 
 	public ReservationPage() {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		
+		System.out.println(LocalDate.now());
 
 		ui();
 	}
@@ -138,6 +141,8 @@ public class ReservationPage extends BasePage {
 				"select m.* from theater t, movie m where find_in_set(m.m_no, replace(t.m_no, '.',',')) > 0 and t_no = ?",
 				lblTheater.getName());
 
+		System.out.println("cur:"+date);
+		
 		for (var m : movies) {
 			var jpTitle = new JPanel(new FlowLayout(0));
 			var tmp = new JPanel(new BorderLayout());
@@ -162,7 +167,7 @@ public class ReservationPage extends BasePage {
 				if (sdate.isAfter(LocalDateTime.now())) {
 					var jpScreen = new JPanel(new BorderLayout());
 					var left = 100 - getRows("select * from reservation where r_time = ? and r_date = ? and m_no = ?",
-							sdate.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm")), sdate.toLocalDate(),
+							sdate.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm")), date,
 							m.get(0)).stream().flatMap(a -> Arrays.asList(a.get(6).toString().split("\\.")).stream())
 									.distinct().count();
 					var lblTime = lbl(sdate.toLocalTime().toString(), 0, 20);
@@ -188,6 +193,17 @@ public class ReservationPage extends BasePage {
 							if (lblTime.getForeground().equals(Color.LIGHT_GRAY))
 								return;
 
+							if (BaseFrame.user == null) {
+								var ans = JOptionPane.showConfirmDialog(null, "로그인이 필요한 작업입니다.\n로그인 하시겠습니까?", "질문",
+										JOptionPane.YES_NO_OPTION);
+								if (ans == JOptionPane.YES_OPTION) {
+									new LoginFrame().addWindowListener(new Before(BasePage.cf));
+									return;
+								} else {
+									return;
+								}
+							}
+							
 							new SeatFrame(lblTheater.getName(), m, d).addWindowListener(new Before(BasePage.cf));
 						}
 					});

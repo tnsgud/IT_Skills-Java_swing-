@@ -77,7 +77,7 @@ public class SeatFrame extends BaseFrame {
 				var lblSeat = seats[i - 'A'][j];
 
 				if (flag) {
-					lblSeat.setBackground(Color.white);
+					lblSeat.setBackground(Color.lightGray);
 				} else {
 					lblSeat.addMouseListener(new MouseAdapter() {
 						@Override
@@ -228,7 +228,7 @@ public class SeatFrame extends BaseFrame {
 									price();
 									return;
 								}
-
+								 
 								for (var p : tempC.getComponents()) {
 									p.setBackground(Color.gray);
 									p.setForeground(Color.LIGHT_GRAY);
@@ -236,6 +236,26 @@ public class SeatFrame extends BaseFrame {
 
 								me.setBackground(Color.LIGHT_GRAY);
 								me.setForeground(Color.gray);
+								
+
+								int sum = IntStream.of(cnt).sum();
+								var selCnt = Stream.of(seats).map(Arrays::asList).flatMap(x -> x.stream()).filter(x -> x.getName() != null)
+										.count();
+								if(sum < selCnt) {
+									eMsg("선택된 좌석이 예매 인원보다 많습니다.");
+									
+									for (var r : costs) {
+										for (var c : r) {
+											c.setBackground(Color.gray);
+											c.setForeground(Color.LIGHT_GRAY);
+										}
+									}
+
+									cnt[0] = cnt[1] = cnt[2] = 0;
+
+									price();
+									return;
+								}
 							}
 						}
 					});
@@ -299,7 +319,7 @@ public class SeatFrame extends BaseFrame {
 			var dc = 1 - (toInt(getOne("select gr_criteria from grade where gr_no = ?", user.get(6)))) * 0.01 - 0.05;
 			var cost = new int[] { 14000, 10000, 5000 };
 			var seat = Stream.of(seats).map(Arrays::asList).flatMap(x -> x.stream()).filter(x -> x.getName() != null)
-					.map(JLabel::getText).collect(Collectors.joining(","));
+					.map(JLabel::getText).collect(Collectors.joining("."));
 
 			sum = 0;
 			for (int i = 0; i < cost.length; i++) {
@@ -310,8 +330,8 @@ public class SeatFrame extends BaseFrame {
 			tmp.add(tmpC);
 			tmp.add(tmpS, "South");
 
-			txt1 += getOne("select gr_name from grade where g_no = ?", user.get(6));
-			txt2 += (1 - dc) * 100 + "% 할인";
+			txt1 += getOne("select gr_name from grade where gr_no = ?", user.get(6));
+			txt2 += (int)((1 - dc) * 100) + "% 할인";
 
 			tmpC.add(lbl(txt1, 2));
 			tmpC.add(lbl(txt2, 4));
@@ -324,7 +344,9 @@ public class SeatFrame extends BaseFrame {
 				execute("insert reservation values(0, ?, ?, ?, ?, ?, ?, ?)", user.get(0), movie.get(0), t_no,
 						date.toLocalDate(), date.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm")), seat, sum);
 				iMsg("예매가 완료되었습니다.");
-				dispose();
+				var before = (Before) getWindowListeners()[0];
+				before.b.dispose();
+				setVisible(false);
 			}
 		}));
 

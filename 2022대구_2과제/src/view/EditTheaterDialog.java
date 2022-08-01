@@ -83,7 +83,7 @@ public class EditTheaterDialog extends BaseDialog {
 			}
 
 			iMsg("수정이 완료되었습니다.");
-			execute("update theater set t_name=?, m_no = ? where t_no = ?", txt.getText(), movie, rs.get(0));
+			execute("update theater set t_name=?, m_no = ? where t_no = ?", txt.getText(), movie, this.rs.get(0));
 			dispose();
 			frame.ui();
 		}));

@@ -195,6 +195,7 @@ public class SignUpFrame extends BaseFrame {
 			execute("insert user values(0,?,?,?,?,?,1)", id, pw, txt[3].getText(), birth,
 					radio[0].isSelected() ? 1 : 2);
 			user = getRows("select * from user order by u_no desc").get(0);
+			System.out.println(user);
 			try {
 				Files.copy(new File(path).toPath(), new File("./지급자료/image/user/" + user.get(0) + ".jpg").toPath(),
 						StandardCopyOption.REPLACE_EXISTING);

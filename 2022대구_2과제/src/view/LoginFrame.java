@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
@@ -11,6 +12,10 @@ public class LoginFrame extends BaseFrame {
 	JTextField txt[] = new JTextField[2];
 	static boolean isMain = false;
 
+	public static void main(String[] args) {
+		new MainFrame();
+	}
+	
 	public LoginFrame() {
 		super("Login", 450, 350);
 
@@ -29,7 +34,7 @@ public class LoginFrame extends BaseFrame {
 		s.add(sz(btnRound("로그인", a -> {
 			for (var t : txt) {
 				if (t.getText().isEmpty()) {
-					eMsg((t instanceof JTextField ? "아이디" : "비밀번호") + "를 입력하세요.");
+					eMsg((t instanceof JPasswordField ? "비밀번호" : "아이디") + "를 입력하세요.");
 					t.requestFocus();
 					return;
 				}
@@ -37,7 +42,8 @@ public class LoginFrame extends BaseFrame {
 
 			if (txt[0].getText().equals("admin") && txt[1].getText().equals("1234")) {
 				iMsg("관리자닙 환영합니다.");
-				new AdminFrame().addWindowListener(new Before(this));
+				new AdminFrame().addWindowListener(new Before(((Before)getWindowListeners()[0]).b));
+				setVisible(false);
 				return;
 			}
 
@@ -58,13 +64,13 @@ public class LoginFrame extends BaseFrame {
 			} else {
 				CinemaFrame.lblState.setText("Logout");
 			}
-			
+
 			dispose();
 		}), 0, 35), "North");
 		s.add(sc = new JPanel());
 
 		sc.add(lbl("<html><font color='gray'>아직 계정이 없으신가요?", 0, 15));
-		sc.add(lbl("계정 만들기", 0, 15, e -> new SignUpFrame().addWindowListener(new Before(this))));
+		sc.add(lbl("계정 만들기 >", 0, 15, e -> new SignUpFrame().addWindowListener(new Before(this))));
 
 		n.setOpaque(false);
 		c.setOpaque(false);

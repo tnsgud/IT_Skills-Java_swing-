@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -26,7 +28,7 @@ public class CinemaFrame extends BaseFrame {
 	}
 
 	public CinemaFrame() {
-		super("Movie", 1200, 800);
+		super("Movie", 1250, 800);
 
 		add(n = sz(new JPanel(new BorderLayout()), 0, 80), "North");
 		add(scr = scroll(null));
@@ -34,19 +36,24 @@ public class CinemaFrame extends BaseFrame {
 		n.add(nw = new JPanel(new FlowLayout(0, 40, 10)), "West");
 		n.add(ne = new JPanel(new FlowLayout(2)), "East");
 
-		nw.add(lblB("cinema", 2, 30));
+		var l =lblB("cinema", 2, 30); 
+		
+		l.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				dispose();
+			}
+		});
+		
+		nw.add(l);
 
 		var cap = "Movie,Reservation,Mypage".split(",");
 		for (int i = 0; i < cap.length; i++) {
-			int idx = i;
-
-			nw.add(lbl[i] = lbl(cap[i], 2, 15, e -> {
-				LoginFrame.isMain = false;
-			}));
+			nw.add(lbl[i] = lbl(cap[i], 2, 15));
 		}
 
-		lblState = lbl(user != null ? "Logout" : "Login", 0, 15, e -> {
-		});
+		lblState = lbl(user != null ? "Logout" : "Login", 0, 15);
+		ne.add(lblState);
 
 		n.setBorder(new EmptyBorder(10, 40, 10, 40));
 		ne.setBorder(new EmptyBorder(10, 0, 0, 0));

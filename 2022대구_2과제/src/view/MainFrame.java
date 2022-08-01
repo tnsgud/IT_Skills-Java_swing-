@@ -20,6 +20,7 @@ import javax.swing.border.MatteBorder;
 
 public class MainFrame extends BaseFrame {
 	static JLabel nav[] = new JLabel[4];
+	
 
 	public MainFrame() {
 		super("Main", 800, 600);
@@ -38,7 +39,7 @@ public class MainFrame extends BaseFrame {
 		n.add(nc = sz(new JPanel(new BorderLayout(10, 10)), 400, 100));
 		c.add(cc = new JPanel(new GridLayout(1, 0, 20, 50)));
 
-		nc.add(lbl("<html><font color='white'>cinema", 0,  30), "North");
+		nc.add(lbl("<html><font color='white'>cinema", 0, 30), "North");
 		nc.add(navP);
 
 		var cap = "Movie,Reservation,Mypage,Login".split(",");
@@ -85,34 +86,10 @@ public class MainFrame extends BaseFrame {
 			nav[i].setForeground(Color.white);
 			navP.add(nav[i]);
 		}
-
+		
 		var rs = getRows(
 				"select r.m_no, m.m_title, count(*) from reservation r, movie m where r.m_no = m.m_no and r.r_date <= '2022-08-30' group by r.m_no order by count(*) desc limit 5");
-		for (var r : rs) {
-			var img = new JLabel(getIcon("./지급자료/image/movie/" + r.get(0) + ".jpg", 300, 450)) {
-				@Override
-				protected void paintComponent(Graphics g) {
-					super.paintComponent(g);
-					var g2 = (Graphics2D) g;
-					var paint = new GradientPaint(20, 0, new Color(0, 0, 0, 0), 20, getHeight(),
-							new Color(0, 0, 0, 150));
-
-					g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-					g2.setPaint(paint);
-					g2.fillRect(0, 0, getWidth(), getHeight());
-
-					g2.setColor(Color.white);
-					g2.setFont(new Font("맑은 고딕", 1, 60));
-					g2.drawString(rs.indexOf(r) + 1 + "", 20, getHeight() - 30);
-
-					g2.setFont(new Font("맑은 고딕", 1, 15));
-					g2.drawString(r.get(1).toString(), 60, getHeight() - 30);
-				}
-			};
-			cc.add(img);
-		}
-
+		
 		var ma = new MouseAdapter() {
 			int startX = 0;
 
@@ -138,6 +115,46 @@ public class MainFrame extends BaseFrame {
 			}
 		};
 
+		
+		for (var r : rs) {
+			var img = new JLabel(getIcon("./지급자료/image/movie/" + r.get(0) + ".jpg", 300, 450)) {
+				@Override
+				protected void paintComponent(Graphics g) {
+					super.paintComponent(g);
+					var g2 = (Graphics2D) g;
+					var paint = new GradientPaint(20, 0, new Color(0, 0, 0, 0), 20, getHeight(),
+							new Color(0, 0, 0, 150));
+
+					g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+					g2.setPaint(paint);
+					g2.fillRect(0, 0, getWidth(), getHeight());
+
+					g2.setColor(Color.white);
+					g2.setFont(new Font("맑은 고딕", 1, 60));
+					g2.drawString(rs.indexOf(r) + 1 + "", 20, getHeight() - 30);
+
+					g2.setFont(new Font("맑은 고딕", 1, 15));
+					g2.drawString(r.get(1).toString(), 60, getHeight() - 30);
+				}
+			};
+			img.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					var sub1 = "(select sum(char_length(r_seat) - char_length(replace(r_seat, '.',''))) from reservation r where r.m_no = m.m_no) sub1";
+					var sub2 = "(select ifnull(round(avg(c_rate), 1), 0) from comment c where c.m_no = m.m_no) `avg`";
+					var sql = String.format("select m.*, %s, %s from movie m where m.m_no = ?", sub1, sub2);
+
+					new MovieInfoDialog(getRows(sql, r.get(0)).get(0)).setVisible(true);
+				}
+			});
+			img.addMouseListener(ma);
+			img.addMouseMotionListener(ma);
+			cc.add(img);
+		}
+
+	
+
 		cc.addMouseListener(ma);
 		cc.addMouseMotionListener(ma);
 
@@ -149,15 +166,12 @@ public class MainFrame extends BaseFrame {
 		c.setOpaque(false);
 		cc.setOpaque(false);
 		cc.setBounds(0, 0, 1510, 450);
-		
-		user = getRows("select * from user where u_no = ?", 1).get(0);
-		login();
 	}
 
 	static void login() {
 		nav[3].setText("Logout");
 	}
-	
+
 	static void logout() {
 		user = null;
 		nav[3].setText("Login");
