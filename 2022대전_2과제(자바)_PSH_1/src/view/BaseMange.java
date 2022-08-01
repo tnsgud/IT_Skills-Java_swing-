@@ -6,4 +6,8 @@ public class BaseMange extends BaseFrame {
 		
 		setVisible(true);
 	}
+	
+	public BaseMange(int bNo, boolean isEdit) {
+		this();
+	}
 }

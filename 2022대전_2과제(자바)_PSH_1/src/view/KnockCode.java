@@ -28,7 +28,6 @@ public class KnockCode extends BaseFrame {
 				@Override
 				public void mousePressed(MouseEvent e) {
 					num += l.getName();
-					System.out.println(num);
 				}
 			});
 

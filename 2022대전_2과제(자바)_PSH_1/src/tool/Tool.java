@@ -1,6 +1,7 @@
 package tool;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
@@ -9,7 +10,10 @@ import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.TreeSet;
 
+import javax.print.DocFlavor.INPUT_STREAM;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -18,6 +22,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 
 import db.DB;
 
@@ -140,7 +145,42 @@ public interface Tool {
 	}
 
 	default JTable table(DefaultTableModel m) {
-		var t = new JTable(m);
+		var t = new JTable(m) {
+			@Override
+			public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+				var comp = super.prepareRenderer(renderer, row, column);
+				var data = m.getDataVector();
+
+				try {
+					var map = new HashMap<String, TreeSet<String>>();
+					data.stream().filter(a -> data.stream().filter(x -> x.get(1).equals(a.get(1))).count() > 1)
+							.forEach(a -> {
+								if (map.containsKey(a.get(1).toString())) {
+									map.get(a.get(1).toString()).add(format(toInt(a.get(4))));
+								} else {
+									map.put(a.get(1).toString(), new TreeSet<>());
+									map.get(a.get(1).toString()).add(format(toInt(a.get(4))));
+								}
+							});
+
+					if (map.get(getValueAt(row, 1).toString()).iterator().next()
+							.equals(format(toInt(getValueAt(row, 4))))) {
+						comp.setFont(new Font("맑은 고딕", 2, 12));
+						comp.setForeground(Color.blue);
+					} else {
+						comp.setFont(getFont());
+						comp.setForeground(Color.black);
+					}
+
+					return comp;
+				} catch (Exception e) {
+					comp.setFont(getFont());
+					comp.setForeground(Color.black);
+					return comp;
+				}
+
+			}
+		};
 		var d = new DefaultTableCellRenderer();
 
 		t.setSelectionMode(0);
