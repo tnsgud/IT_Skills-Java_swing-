@@ -71,7 +71,7 @@ public class Main extends BaseFrame {
 						new BaseMange().addWindowListener(new Before(Main.this));
 						break;
 					case "농산물검색":
-						new BaseSearch().addWindowListener(new Before(Main.this));
+						new Search().addWindowListener(new Before(Main.this));
 						break;
 					case "시도별분석":
 						new Map().addWindowListener(new Before(Main.this));
