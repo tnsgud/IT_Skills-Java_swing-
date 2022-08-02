@@ -30,8 +30,6 @@ public class Search extends BaseFrame {
 
 	public Search() {
 		super("농산물 검색", 800, 450);
-		user = getRows("select * from user where u_no = 1").get(0);
-
 		imgMap = getRows("select b_no, b_img from base").stream()
 				.collect(Collectors.toMap(a -> a.get(0), a -> getIcon(a.get(1), 200, 100)));
 

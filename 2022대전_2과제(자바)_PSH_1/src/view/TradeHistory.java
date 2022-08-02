@@ -115,7 +115,8 @@ public class TradeHistory extends BaseFrame {
 				+ (rad[0].isSelected() ? "purchase p where p.f_no = f.f_no" : "sale s where s.f_no = f.f_no")
 				+ " and b.b_no = f.b_no and "
 				+ (rad[0].isSelected() ? "p.u_no = ? and month(p_date)" + " like ? order by p_date"
-						: "s.u_no = ? and month(s_date) like ? order by s_date");
+						: "f.u_no = ? and month(s_date) like ? order by s_date");
+		System.out.println(sql);
 		var rs = getRows(sql, user.get(0), "%" + (com.getSelectedIndex() == 0 ? "" : com.getSelectedIndex()) + "%");
 		int tot = 0;
 

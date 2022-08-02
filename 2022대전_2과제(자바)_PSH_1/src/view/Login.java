@@ -67,6 +67,9 @@ public class Login extends BaseFrame {
 			((Main) ((Before) getWindowListeners()[0]).b).login();
 			dispose();
 		}));
+		
+		txt[0].setText("user001");
+		txt[1].setText("8157");
 
 		setVisible(true);
 	}

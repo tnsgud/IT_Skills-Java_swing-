@@ -17,6 +17,7 @@ public class BaseFrame extends JFrame implements Tool {
 	JPanel wn, ww, wc, we, ws;
 	JPanel cn, cw, cc, ce, cs;
 	JPanel en, ew, ec, ee, es;
+	JPanel sn, sw, sc, se, ss;
 
 	static ArrayList<Object> user;
 

@@ -89,7 +89,11 @@ public class Main extends BaseFrame {
 			s.add(tmp);
 		}
 
-		logout();
+		if (user == null) {
+			logout();
+		} else {
+			login();
+		}
 
 		((JPanel) getContentPane()).setBorder(new EmptyBorder(5, 5, 5, 5));
 

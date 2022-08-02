@@ -163,8 +163,10 @@ public interface Tool {
 								}
 							});
 
-					if (map.get(getValueAt(row, 1).toString()).iterator().next()
-							.equals(format(toInt(getValueAt(row, 4))))) {
+					var tree = map.get(getValueAt(row, 1).toString());
+					if (tree.iterator().hasNext() && getValueAt(row, 4)
+							.equals(format(tree.stream().mapToInt(a -> toInt(a)).min().getAsInt()))) {
+
 						comp.setFont(new Font("맑은 고딕", 2, 12));
 						comp.setForeground(Color.blue);
 					} else {

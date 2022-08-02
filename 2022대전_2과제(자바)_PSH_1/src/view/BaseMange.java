@@ -96,7 +96,7 @@ public class BaseMange extends BaseFrame {
 				} else {
 					execute("delete from farm where f_no = ?", f_no);
 				}
-				
+
 				dispose();
 			}));
 		}
@@ -113,6 +113,10 @@ public class BaseMange extends BaseFrame {
 	public BaseMange(int b_no, boolean isEdit) {
 		this();
 		this.b_no = b_no;
+		
+		System.out.println(b_no);
+
+		com.setSelectedItem(getOne("select b_name from base where b_no = ?", b_no));
 	}
 
 	public static void main(String[] args) {
