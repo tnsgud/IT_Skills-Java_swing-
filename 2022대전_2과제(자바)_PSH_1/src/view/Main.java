@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
@@ -103,7 +105,7 @@ public class Main extends BaseFrame {
 		}
 
 		var div = user == null ? "" : "and u.division = " + user.get(5);
-		var sql = "select b.b_no, b.b_name, b.b_note, sum(s.s_quantity) cnt, sum(f.f_amount * s.s_quantity) price from user u, base b, farm f, sale s where u.u_no = f.u_no and s.f_no = f.f_no "
+		var sql = "select b.b_no, b.b_name, b.b_note, b.b_img, sum(s.s_quantity) cnt, sum(f.f_amount * s.s_quantity) price from  base b, farm f, sale s, user u where s.f_no = f.f_no and f.b_no = b.b_no and f.u_no = u.u_no "
 				+ div + " group by b.b_no order by cnt desc, price desc, b.b_no limit 5";
 		var rs = getRows(sql);
 
@@ -113,25 +115,20 @@ public class Main extends BaseFrame {
 				protected void paintComponent(Graphics g) {
 					super.paintComponent(g);
 
-					try {
-						var g2 = (Graphics2D) g;
-						var grad = new GradientPaint(0, 0, new Color(0, 255, 255, 50), getWidth(), getHeight(),
-								new Color(0, 0, 255, 50));
-						var buf = ImageIO.read(new File("./datafiles/농산물/" + r.get(0) + ".jpg"));
+					var g2 = (Graphics2D) g;
+					var grad = new GradientPaint(0, 0, new Color(0, 255, 255, 50), getWidth(), getHeight(),
+							new Color(0, 0, 255, 50));
+					var img = new ImageIcon((byte[]) r.get(3));
 
-						g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+					g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-						g2.drawImage(buf, 0, 0, getWidth(), getHeight(), null);
-						g2.setPaint(grad);
-						g2.fillRect(0, 0, getWidth(), getHeight());
+					g2.drawImage(img.getImage(), 0, 0, getWidth(), getHeight(), null);
+					g2.setPaint(grad);
+					g2.fillRect(0, 0, getWidth(), getHeight());
 
-						g2.setColor(Color.white);
-						g2.setFont(new Font("HY헤드라인M", 0, 25));
-						g2.drawString(r.get(1) + "[" + (rs.indexOf(r) + 1) + "위]", 30, getHeight() - 60);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					g2.setColor(Color.white);
+					g2.setFont(new Font("HY헤드라인M", 0, 25));
+					g2.drawString(r.get(1) + "[" + (rs.indexOf(r) + 1) + "위]", 30, getHeight() - 60);
 				}
 			};
 
@@ -193,7 +190,7 @@ public class Main extends BaseFrame {
 
 		animation();
 	}
-	
+
 	public static void main(String[] args) {
 		new Main();
 	}
