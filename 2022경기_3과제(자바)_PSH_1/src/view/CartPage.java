@@ -65,14 +65,19 @@ public class CartPage extends BasePage {
 					}
 
 					items.stream().filter(p -> p.chk.isSelected())
-							.forEach(p -> execute("insert into library value(0,?,?,?,?)", p.rs.get(7), user.get(0),
-									p.dc ? p.dcPrice : p.price, LocalDate.now()));
+							.forEach(p -> {
+								execute("insert into library value(0,?,?,?,?)", user.get(0), p.rs.get(7),
+										p.dc ? p.dcPrice : p.price, LocalDate.now());
+								execute("delete from cart where c_no = ?", p.rs.get(0));
+							});
 					execute("update user set u_money = u_money-? where u_no = ?", price, user.get(0));
 					user = getRows("select * from user where u_no = ?", user.get(0)).get(0);
 
 					new InfoDialog(items.stream().filter(p -> p.chk.isSelected()).map(p -> p.rs.get(7))
 							.collect(Collectors.toList()));
 				}
+
+				addItem();
 			}));
 		}
 
@@ -100,10 +105,11 @@ public class CartPage extends BasePage {
 			items.add(i);
 		}
 
-		lblTot.setText("<html><font color='black'>총 금액 : 0원");
-
 		mf.repaint();
 		mf.revalidate();
+
+		lblTot.setText("<html><font color='black'>총 금액 : 0원");
+		s.setOpaque(true);
 	}
 
 	class Item extends JPanel {

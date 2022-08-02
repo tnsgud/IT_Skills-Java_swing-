@@ -20,20 +20,6 @@ public class GenreSelect extends BaseDialog {
 	GameInfo gameInfo;
 	ChartPage chartPage;
 	InfoEditPage infoEditPage;
-	MouseAdapter ma = new MouseAdapter() {
-		@Override
-		public void mousePressed(MouseEvent e) {
-			var me = (JLabel) e.getSource();
-
-			if (me.getForeground() == Color.white) {
-				list.add(me.getText());
-				me.setForeground(Color.gray);
-			} else {
-				list.remove(me.getText());
-				me.setForeground(Color.white);
-			}
-		}
-	};
 
 	@Override
 	public JLabel lbl(String c, int a, int st, int sz) {
@@ -54,20 +40,10 @@ public class GenreSelect extends BaseDialog {
 		for (int i = 1; i < g_genre.length; i++) {
 			var l = lbl(g_genre[i], 0);
 			lbl.put(i + "", l);
-			l.addMouseListener(ma);
 			c.add(l);
 		}
 
 		s.add(btn("닫기", a -> {
-			if (chartPage != null) {
-				chartPage.genre = list;
-				chartPage.repaint();
-			} else if (gameInfo != null) {
-				gameInfo.genreLbl.setText(String.join(",", list.toArray(String[]::new)));
-			} else {
-				infoEditPage.setFilter();
-			}
-
 			dispose();
 		}));
 		
@@ -78,6 +54,25 @@ public class GenreSelect extends BaseDialog {
 	public GenreSelect(GameInfo gameInfo) {
 		this();
 		this.gameInfo = gameInfo;
+		
+		for (var entry : lbl.entrySet()) {
+			entry.getValue().addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent e) {
+					var me = (JLabel) e.getSource();
+
+					if (me.getForeground() == Color.white) {
+						list.add(me.getText());
+						me.setForeground(Color.gray);
+					} else {
+						list.remove(me.getText());
+						me.setForeground(Color.white);
+					}
+					
+					gameInfo.genreLbl.setText(String.join(",", list.toArray(String[]::new)));
+				}
+			});
+		}
 	}
 
 	public GenreSelect(ChartPage chartPage) {
@@ -87,7 +82,6 @@ public class GenreSelect extends BaseDialog {
 		for (var key : lbl.keySet()) {
 			var l = lbl.get(key);
 			l.setForeground(Color.gray);
-			l.removeMouseListener(ma);
 			l.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mousePressed(MouseEvent e) {
@@ -100,6 +94,9 @@ public class GenreSelect extends BaseDialog {
 						list.add(key);
 						me.setForeground(Color.white);
 					}
+					
+					chartPage.genre = list;
+					chartPage.repaint();
 				}
 			});
 		}
@@ -114,7 +111,6 @@ public class GenreSelect extends BaseDialog {
 
 		for (var key : lbl.keySet()) {
 			var l = lbl.get(key);
-			l.removeMouseListener(ma);
 			l.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mousePressed(MouseEvent e) {
@@ -127,6 +123,8 @@ public class GenreSelect extends BaseDialog {
 						infoEditPage.filters.remove(Arrays.asList(g_genre).indexOf(me.getText()) + "");
 						me.setForeground(Color.white);
 					}
+					
+					infoEditPage.setFilter();
 				}
 			});
 		}

@@ -45,7 +45,8 @@ public class DB implements Tool {
 
 	void createT(String t, String c) {
 		execute("create table " + t + "(" + c + ")");
-		execute("load data local infile './datafiles/" + t + ".txt' into table " + t + " lines terminated by '\r\n' ignore 1 lines");
+		execute("load data local infile './datafiles/" + t + ".txt' into table " + t + " lines terminated by '\r\n' "
+				+ (t.equals("market") ? "" : " ignore 1 lines "));
 	}
 
 	public DB() {
@@ -104,7 +105,7 @@ public class DB implements Tool {
 		}
 
 		createV();
-		
+
 		iMsg("셋팅 성공");
 		System.exit(0);
 	}

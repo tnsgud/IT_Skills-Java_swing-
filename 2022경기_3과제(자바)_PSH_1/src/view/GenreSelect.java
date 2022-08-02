@@ -36,6 +36,16 @@ public class GenreSelect extends BaseDialog {
 					genre.remove(me.getName());
 
 				me.setEnabled(!me.isEnabled());
+				
+				var curPage = BasePage.mf.c.getComponent(BasePage.mf.c.getComponentCount() - 1);
+
+				if (curPage instanceof InfoEditPage) {
+					((InfoEditPage) curPage).setFilter();
+				} else if (curPage instanceof ChartPage) {
+					curPage.repaint();
+				} else if (curPage instanceof GameInfoPage) {
+					((GameInfoPage) curPage).lblGenre.setText(genre.stream().map(c->g_genre[toInt(c)]).collect(Collectors.joining(",")));
+				}
 			});
 
 			l.setName(i + "");
@@ -45,16 +55,6 @@ public class GenreSelect extends BaseDialog {
 		}
 
 		s.add(btn("닫기", a -> {
-			var curPage = BasePage.mf.c.getComponent(BasePage.mf.c.getComponentCount() - 1);
-
-			if (curPage instanceof InfoEditPage) {
-				((InfoEditPage) curPage).setFilter();
-			} else if (curPage instanceof ChartPage) {
-				curPage.repaint();
-			} else if (curPage instanceof GameInfoPage) {
-				((GameInfoPage) curPage).lblGenre.setText(genre.stream().map(c->g_genre[toInt(c)]).collect(Collectors.joining(",")));
-			}
-
 			dispose();
 		}));
 

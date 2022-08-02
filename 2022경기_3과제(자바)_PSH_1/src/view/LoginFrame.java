@@ -77,8 +77,8 @@ public class LoginFrame extends BaseFrame {
 
 		((JPasswordField) txt[1]).setEchoChar('●');
 
-		txt[0].setText("admin");
-		txt[1].setText("1234");
+		txt[0].setText("abc1");
+		txt[1].setText("Qq1!");
 
 		setVisible(true);
 	}

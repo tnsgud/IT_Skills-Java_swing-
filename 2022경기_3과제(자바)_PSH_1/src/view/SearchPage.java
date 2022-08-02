@@ -197,7 +197,7 @@ public class SearchPage extends BasePage {
 				} else if (i == 4 && txt.equals("0")) {
 					txt = "무료";
 				} else if (i == 4) {
-					txt += "원" + (r.get(7).toString().isEmpty() ? ""
+					txt += "원" + (toInt(r.get(7)) == 0 ? ""
 							: String.format(" -> %s(%s 할인중) 대상:%s↑", r.get(8).toString(), r.get(7) + "%",
 									g_gd[toInt(getOne("select g_gd from game where g_no = ?", r.get(0)))]));
 				}

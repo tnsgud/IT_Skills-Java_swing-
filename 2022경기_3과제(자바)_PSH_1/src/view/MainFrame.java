@@ -64,7 +64,7 @@ public class MainFrame extends BaseFrame {
 		});
 		storage.addActionListener(a -> {
 			history = new ArrayList<>(history.subList(0, 1));
-			new StoragePage();
+			new StorageAndMarketPage("보관함");
 		});
 
 		img.setComponentPopupMenu(pop);

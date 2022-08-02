@@ -5,6 +5,9 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 
+import javax.swing.BoxLayout;
+import javax.swing.GrayFilter;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -16,61 +19,73 @@ import javax.swing.JTextField;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
-public class MarketPage extends BasePage {
+public class StorageAndMarketPage extends BasePage {
 	DefaultTableModel m1 = model("아이템,게임명,아이템명,s_no,i_no".split(","));
 	JTable t = table(m1);
 	JTextField txt = new JTextField();
 	JLabel lblExp;
+	JPanel main = new JPanel(new GridLayout(1, 0, 40, 20));
+
+	@Override
+	public JLabel lbl(String c, int a, int st, int sz) {
+		var l = super.lbl(c, a, st, sz);
+		l.setForeground(Color.black);
+		return l;
+	}
 
 	public static void main(String[] args) {
 		new LoginFrame();
 	}
-	
-	public MarketPage() {
-		super("장터");
+
+	public StorageAndMarketPage(String tit) {
+		super(tit);
 
 		add(lblExp = lbl("", 4, 20), "North");
-		add(c = new JPanel(new GridLayout(1, 0, 40, 20)));
+		add(main);
 
-		c.add(cw = new JPanel(new BorderLayout()));
-		c.add(ce = new JPanel(new BorderLayout()));
-
-		c.setBorder(new EmptyBorder(30, 30, 30, 30));
+		main.add(w = new JPanel(new BorderLayout()));
+		main.add(c = new JPanel(new BorderLayout()));
 
 		storage();
-		search();
+		if (tit.equals("장터")) {
+			search();
+		} else {
+			itemSets();
+		}
 
 		mf.repaint();
-		
+
+		main.setBorder(new EmptyBorder(30, 30, 30, 30));
+		w.setBorder(new LineBorder(Color.black));
+		c.setBorder(new LineBorder(Color.black));
 		setBackground(Color.white);
 		setOpaque(true);
 	}
 
 	void storage() {
-		cw.removeAll();
-		
-		var cws = new JPanel(new FlowLayout(2));
-		var btn = btn("등록하기", a -> {
+		w.removeAll();
+
+		w.add(lbl("보관함", 0, 25), "North");
+		w.add(new JScrollPane(t));
+		w.add(ws = new JPanel(new FlowLayout(2)), "South");
+
+		ws.add(btn("등록하기", a -> {
 
 			var dia = new MarketDialog("장터등록", toInt(t.getValueAt(t.getSelectedRow(), 4)));
 			dia.s_no = toInt(t.getValueAt(t.getSelectedRow(), 3));
 			dia.setVisible(true);
-		});
+		}));
 
-		cw.setBorder(new LineBorder(Color.black));
-
-		cw.add(lbl("<html><font color='black'>보관함", 0, 25), "North");
-		cw.add(new JScrollPane(t));
-		cw.add(cws, "South");
-		cws.add(btn);
-
-		for (var col : "s_no,i_no".split(",")) {
-			t.getColumn(col).setMinWidth(0);
-			t.getColumn(col).setMaxWidth(0);
+		var col = "아이템,게임명,아이템명,s_no,i_no".split(",");
+		var wid = new int[] { 80, 150, 150, 0, 0 };
+		for (int i = 0; i < col.length; i++) {
+			t.getColumn(col[i]).setMinWidth(wid[i]);
+			t.getColumn(col[i]).setMaxWidth(wid[i]);
 		}
-		;
+		t.setRowHeight(80);
 
 		t.setRowHeight(50);
 
@@ -81,26 +96,62 @@ public class MarketPage extends BasePage {
 			rs.set(0, new JLabel(getIcon(rs.get(0), 50, 50)));
 			m1.addRow(rs.toArray());
 		}
+
+		lblExp.setText("경험치 : " + u_exp + "[등급 : " + g_gd[u_gd] + "]");
+
+		w.repaint();
+		w.revalidate();
+	}
+
+	void itemSets() {
+		c.removeAll();
+		c.setLayout(new BorderLayout());
+
+		c.add(lbl("아이템 세트", 0, 20), "North");
+		c.add(new JScrollPane(cc = new JPanel()));
+		cc.setLayout(new BoxLayout(cc, BoxLayout.PAGE_AXIS));
 		
-		lblExp.setText("<html><font color='black'>경험치 : "+u_exp+"[등급 : "+g_gd[u_gd]+"]");
-		
-		cw.repaint();
-		cw.revalidate();
+		for (var rs : getRows("select g_no from item group by g_no")) {
+			var g_no = toInt(rs.get(0));
+			var cnt = 0;
+
+			var tmp = new JPanel(new GridLayout(1, 0));
+
+			tmp.setBorder(new TitledBorder(getOne("select g_name from game where g_no = ?", g_no)));
+			for (var r : getRows("select i_no, i_img from item where g_no = ?", g_no)) {
+				var img = getIcon(r.get(1), 80, 80).getImage();
+
+				if (getOne("select * from storage s, v2 where s.s_no = v2.s_no and v2.u_no = ? and s.i_no = ?",
+						user.get(0), r.get(0)).isEmpty()) {
+					img = GrayFilter.createDisabledImage(img);
+				}
+
+				tmp.add(new JLabel(new ImageIcon(img)));
+
+				cnt = getOne("select * from v2, storage s where v2.s_no = s.s_no and v2.u_no = ? and i_no= ?",
+						user.get(0), r.get(0)).isEmpty() ? cnt : cnt + 1;
+			}
+
+			tmp.setBackground(cnt == 3 ? Color.yellow : Color.white);
+
+			cc.add(tmp);
+		}
+
+		c.repaint();
+		c.revalidate();
 	}
 
 	void search() {
-		ce.removeAll();
-		
-		var cen = new JPanel(new BorderLayout());
-		var cec = new JPanel(new GridLayout(0, 1));
+		c.removeAll();
 
-		ce.add(cen, "North");
-		ce.add(new JScrollPane(cec));
+		c.add(cn = new JPanel(new BorderLayout()), "North");
+		c.add(new JScrollPane(cc = new JPanel()));
+		cc.setLayout(new BoxLayout(cc, BoxLayout.Y_AXIS));
 
-		cen.add(lbl("<html><font color='black'>검색", 2), "West");
-		cen.add(txt);
-		cen.add(btn("검색", a -> {
-			cec.removeAll();
+		cn.add(lbl("검색", 2), "West");
+		cn.add(txt);
+		cn.add(btn("검색", a -> {
+			cc.removeAll();
 
 			for (var rs : getRows(
 					"select i_img, g_name, i_name, format(m_price, '#,##0'), m.u_no, m_no, i.i_no from market m, storage s, item i, game g where m.s_no = s.s_no and s.i_no = i.i_no and i.g_no = g.g_no and m.m_ox = 0 and (i_name like ? or g_name like ?)",
@@ -149,17 +200,17 @@ public class MarketPage extends BasePage {
 				tmp.setOpaque(false);
 				tmp_c.setOpaque(false);
 
-				tmp.add(new JLabel(getIcon(rs.get(0), 100, 100)), "West");
+				tmp.add(new JLabel(getIcon(rs.get(0), 90, 90)), "West");
 				tmp.add(tmp_c);
 
-				cec.add(tmp);
+				cc.add(sz(tmp, 300, 100));
 			}
 
 			repaint();
 			revalidate();
 		}), "East");
-		
-		ce.repaint();
-		ce.revalidate();
+
+		c.repaint();
+		c.revalidate();
 	}
 }

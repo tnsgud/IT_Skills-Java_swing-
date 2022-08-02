@@ -103,11 +103,11 @@ public class MarketDialog extends BaseDialog {
 				execute("insert into market values(0,?,?,?,?)", BasePage.user.get(0), s_no, txt.getText(), 0);
 				createV();
 
-				if (com instanceof StoragePage) {
-					((StoragePage) com).addRow();
+				if (com instanceof StorageAndMarketPage) {
+					((StorageAndMarketPage) com).itemSets();
 				} else {
-					((MarketPage) com).storage();
-					((MarketPage) com).search();
+					((StorageAndMarketPage) com).storage();
+					((StorageAndMarketPage) com).search();
 				}
 
 				dispose();

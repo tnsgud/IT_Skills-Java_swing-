@@ -41,8 +41,8 @@ public class GamePage extends BasePage {
 	}
 
 	public GamePage() {
-		super("게임");
-
+		super("게임페이지");
+ 
 		game = getRows(
 				"select *, format(if(g_sale <> 0, g_price*(g_sale*0.01), g_price), '#,##0') from game where g_no = ?",
 				g_no).get(0);

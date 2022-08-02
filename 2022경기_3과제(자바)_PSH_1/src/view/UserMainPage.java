@@ -136,7 +136,7 @@ public class UserMainPage extends BasePage {
 				if (text.contains("검색")) {
 					new SearchPage();
 				} else if (text.contains("장터")) {
-					new MarketPage();
+					new StorageAndMarketPage("장터");
 				} else {
 					System.exit(0);
 				}

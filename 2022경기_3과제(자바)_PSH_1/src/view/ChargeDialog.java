@@ -21,9 +21,9 @@ public class ChargeDialog extends BaseDialog {
 		add(s = new JPanel(new FlowLayout(2)), "South");
 
 		var bg = new ButtonGroup();
-		int cap = 0;
+		int pr[] = new int[] {5, 10, 20, 25, 50, 100};
 		for (int i = 0; i < 6; i++) {
-			radio[i] = new JRadioButton(format(cap += 5000));
+			radio[i] = new JRadioButton(format(pr[i] * 1000));
 
 			radio[i].setForeground(Color.white);
 
