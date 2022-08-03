@@ -110,12 +110,10 @@ public class BaseMange extends BaseFrame {
 		setVisible(true);
 	}
 
-	public BaseMange(int b_no, boolean isEdit) {
+	public BaseMange(int b_no) {
 		this();
 		this.b_no = b_no;
 		
-		System.out.println(b_no);
-
 		com.setSelectedItem(getOne("select b_name from base where b_no = ?", b_no));
 	}
 

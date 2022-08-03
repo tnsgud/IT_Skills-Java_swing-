@@ -10,7 +10,7 @@ import javax.swing.JPanel;
 
 public class AdminMain extends BaseFrame {
 	public AdminMain() {
-		super("관리자", 500, 500);
+		super("관리자", 500, 200);
 		setDefaultCloseOperation(3);
 
 		add(n = new JPanel(new BorderLayout()), "North");
@@ -22,7 +22,7 @@ public class AdminMain extends BaseFrame {
 		var cap = "로그아웃,농산물등록수정,날씨정보".split(",");
 		for (int i = 0; i < cap.length; i++) {
 			var tmp = new JPanel(new BorderLayout());
-			var img = new JLabel(getIcon("./datafiles/메인아이콘/" + cap[i] + ".jpg", 80, 80));
+			var img = new JLabel(getIcon("./datafiles/메인이미지/" + cap[i] + ".jpg", 80, 80));
 			var lbl = lbl(cap[i], 0);
 
 			tmp.add(img);
@@ -41,6 +41,8 @@ public class AdminMain extends BaseFrame {
 					}
 				}
 			});
+			
+			c.add(tmp);
 		}
 
 		setVisible(true);

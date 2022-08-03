@@ -59,7 +59,7 @@ public class DB implements Tool {
 		execute("use 2022전국_2");
 
 		createT("base",
-				"b_no int primary key not null auto_increment, division int, b_name varchar(15), b_temperrture int, b_note varchar(100), b_img longblob");
+				"b_no int primary key not null auto_increment, division int, b_name varchar(15), b_temperature int, b_note varchar(100), b_img longblob");
 		createT("city", "c_no int primary key not null auto_increment, c_x int, c_y int, c_name varchar(15)");
 		createT("town",
 				"t_no int primary key not null auto_increment, c_no int, t_x int, t_y int, t_name varchar(15),foreign key(c_no) references city(c_no)");

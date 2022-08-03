@@ -98,7 +98,7 @@ public class TradeHistory extends BaseFrame {
 
 					i1.addActionListener(a -> new Chart(toInt(t.getValueAt(t.getSelectedRow(), 5)))
 							.addWindowListener(new Before(TradeHistory.this)));
-					i2.addActionListener(a -> new BaseMange(toInt(t.getValueAt(t.getSelectedRow(), 5)), true)
+					i2.addActionListener(a -> new BaseMange(toInt(t.getValueAt(t.getSelectedRow(), 5)))
 							.addWindowListener(new Before(TradeHistory.this)));
 				}
 			}

@@ -49,7 +49,7 @@ public class Login extends BaseFrame {
 
 			if (txt[0].getText().equals("admin") && txt[1].getText().equals("1234")) {
 				iMsg("관리자로 로그인하였습니다.");
-				new AdminMain();
+				new AdminMain().addWindowListener(new Before(this));
 				return;
 			}
 
@@ -67,9 +67,9 @@ public class Login extends BaseFrame {
 			((Main) ((Before) getWindowListeners()[0]).b).login();
 			dispose();
 		}));
-		
-		txt[0].setText("user001");
-		txt[1].setText("8157");
+
+		txt[0].setText("admin");
+		txt[1].setText("1234");
 
 		setVisible(true);
 	}

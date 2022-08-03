@@ -55,7 +55,7 @@ public class Purchase extends BaseFrame {
 
 			execute("insert purchase values(0, ?, ?, ?, ?)", user.get(0), fNo, LocalDate.now(), txt[4].getText());
 			execute("insert sale values(0, ?, ?, ?, ?)", user.get(0), fNo, LocalDate.now(), txt[4].getText());
-			execute("update farm set f_quantity = f_quantity - ?", txt[4].getText());
+			execute("update farm set f_quantity = f_quantity - ? where f_no = ?", txt[4].getText(), fNo);
 
 			new Receipt(this).addWindowListener(new Before(this));
 		}));
