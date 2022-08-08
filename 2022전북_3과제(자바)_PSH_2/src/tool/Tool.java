@@ -3,10 +3,13 @@ package tool;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -75,6 +78,10 @@ public interface Tool {
 		return s.isEmpty() ? -1 : Integer.parseInt(s);
 	}
 
+	default String format(int n) {
+		return new DecimalFormat("#,##0").format(n);
+	}
+
 	default JLabel lbl(String c, int a, int st, int sz) {
 		var l = new JLabel(c, a);
 		l.setFont(new Font("맑은 고딕", st, sz));
@@ -87,6 +94,10 @@ public interface Tool {
 
 	default JLabel lbl(String c, int a) {
 		return lbl(c, a, 0, 12);
+	}
+
+	default ImageIcon getIcon(String p, int w, int h) {
+		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(p).getScaledInstance(w, h, 4));
 	}
 
 	default JButton btn(String c, ActionListener a) {

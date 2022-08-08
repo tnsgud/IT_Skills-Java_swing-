@@ -59,6 +59,9 @@ public class DB {
 		createT("mileage",
 				"mi_no int primary key not null auto_increment, m_no int, mi_income int, mi_expense int, foreign key(m_no) references member(m_no)");
 
+		execute("drop view if exists v1");
+		execute("create view v1 as select s.*, a1.a_code a1_code, a1.a_name a1_name, a2.a_code a2_code, a2.a_name a2_name from schedule s, airport a1, airport a2 where s.s_arrival = a1.a_no and s.s_depart = a2.a_no;");
+
 		System.exit(0);
 	}
 
