@@ -38,7 +38,7 @@ public class Reserve extends BasePage {
 			tmp.add(sz(lbl(cap[i], 2), 80, 20));
 
 			if (i < 2) {
-				tmp.add(com[i]);
+				tmp.add(sz(com[i], 200, 20));
 
 				com[i].setSelectedIndex(-1);
 			} else {
@@ -61,14 +61,14 @@ public class Reserve extends BasePage {
 				});
 
 				tmp.add(txt[i - 2] = new JTextField(20));
-				txt[i - 2].setEditable(false);
+				txt[i - 2].setFocusable(false);
 				tmp.add(icon);
 			}
 
 			cc.add(tmp);
 		}
 
-		s.add(btn("확인", a -> {
+		cs.add(btn("확인", a -> {
 			var rs = getRows("select * from schedule where s_depart=? and s_arrival = ?", com[0].getSelectedIndex() + 1,
 					com[1].getSelectedIndex() + 1);
 			if (rs.isEmpty()) {
@@ -81,7 +81,7 @@ public class Reserve extends BasePage {
 		}));
 
 		com[0].addActionListener(a -> {
-			com[1].removeAll();
+			com[1].removeAllItems();
 
 			for (var rs : getRows("select a_name from airport where a_name <> ?", com[0].getSelectedItem())) {
 				com[1].addItem(rs.get(0).toString());
