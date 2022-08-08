@@ -2,9 +2,12 @@ package view;
 
 import java.awt.BorderLayout;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
+import model.Bag;
+import model.People;
 import tool.Tool;
 
 public class BasePage extends JPanel implements Tool{
@@ -17,6 +20,8 @@ public class BasePage extends JPanel implements Tool{
 	
 	static MainFrame mf;
 	static LocalDate r_date;
+	static ArrayList<People> peoples = new ArrayList<>();
+	static ArrayList<Bag> bags = new ArrayList<>();
 	
 	public BasePage() {
 		super(new BorderLayout());

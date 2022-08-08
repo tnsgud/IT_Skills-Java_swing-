@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import model.Bag;
+import model.People;
 import tool.Tool;
 
 public class BaseFrame extends JFrame implements Tool {
@@ -27,15 +29,15 @@ public class BaseFrame extends JFrame implements Tool {
 		setResizable(false);
 		execute("use airline");
 	}
-	
+
 	class Before extends WindowAdapter {
 		BaseFrame b;
-		
+
 		public Before(BaseFrame b) {
-			this.b  = b;
+			this.b = b;
 			b.setVisible(false);
 		}
-		
+
 		@Override
 		public void windowClosed(WindowEvent e) {
 			b.setVisible(true);
