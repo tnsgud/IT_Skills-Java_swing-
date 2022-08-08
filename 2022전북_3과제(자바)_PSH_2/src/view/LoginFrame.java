@@ -139,6 +139,8 @@ public class LoginFrame extends BaseFrame {
 					var r = rs.get(0);
 
 					icon.displayMessage(r.get(0) + " → " + r.get(1), r.get(2) + " " + r.get(3), MessageType.INFO);
+					txt[0].setText("");
+					txt[1].setText("");
 				}
 			}));
 		}
