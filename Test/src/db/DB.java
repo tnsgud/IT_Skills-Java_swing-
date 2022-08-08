@@ -58,10 +58,14 @@ public class DB extends BaseFrame {
 		try {
 			var reader = new BufferedReader(new FileReader("./datafiles/" + t + ".txt"));
 			var str = reader.readLine();
+			var columeCount = str.split("\t").length;
+			var colume = "?,".repeat(columeCount).substring(0, 2 * columeCount-1);
 			while ((str = reader.readLine()) != null) {
-				System.out.println(str.split("\t").length);
-//				System.out.println("insert " + t + " values(0, "
-//						+ (Stream.generate(() -> "?").limit(c.split(",").length - 1).collect(Collectors.joining(",")))+")");
+				execute("insert " + t + " values(" + colume + ")", str.split("\t"));
+				if(t.equals("building")) {
+					System.out.println(str.split("\t").length);
+					return;
+				}
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -82,7 +86,7 @@ public class DB extends BaseFrame {
 		execute("set global local_infile = 1");
 		execute("use covid");
 
-		map.put("building",
+		map.put("building_test",
 				"no int primary key not null auto_increment, name text, open time, close time, info text, type int, x int, y int, img longblob");
 		map.put("connection", "node1 int, node2 int, name text");
 
