@@ -20,6 +20,7 @@ public class BaseFrame extends JFrame implements Tool {
 	JPanel sn, sw, sc, se, ss;
 
 	static ArrayList<Object> member;
+	static int sNo;
 
 	public BaseFrame(String t, int w, int h) {
 		super(t);

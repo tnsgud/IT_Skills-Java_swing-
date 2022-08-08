@@ -69,15 +69,16 @@ public class Reserve extends BasePage {
 		}
 
 		cs.add(btn("확인", a -> {
-			var rs = getRows("select * from schedule where s_depart=? and s_arrival = ?", com[0].getSelectedIndex() + 1,
-					com[1].getSelectedIndex() + 1);
+			var rs = getRows("select s_no from schedule where s_depart=? and s_arrival = ?",
+					com[0].getSelectedIndex() + 1,
+					getOne("select no from airport where a_name = ?", com[1].getSelectedItem()));
 			if (rs.isEmpty()) {
 				eMsg("선택하신 조건에 맞는 예약 가능 항공편이 없습니다.");
 				return;
 			}
 
 			var date = LocalDate.parse(txt[0].getText());
-			mf.swap(new AirlineTicket(date, rs.stream().map(e -> e.get(0)).toArray()));
+			mf.swap(new AirlineTicket(date, rs.stream().mapToInt(e -> toInt(e.get(0))).toArray()));
 		}));
 
 		com[0].addActionListener(a -> {

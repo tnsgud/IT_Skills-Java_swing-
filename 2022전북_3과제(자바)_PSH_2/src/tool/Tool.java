@@ -14,6 +14,10 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
 import db.DB;
 
@@ -105,5 +109,32 @@ public interface Tool {
 		b.addActionListener(a);
 		b.setCursor(new Cursor(12));
 		return b;
+	}
+
+	default DefaultTableModel model(String col[]) {
+		return new DefaultTableModel(null, col) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+	}
+
+	default JTable table(DefaultTableModel m) {
+		var t = new JTable(m);
+		var r = new DefaultTableCellRenderer();
+
+		t.setSelectionMode(0);
+		r.setHorizontalAlignment(0);
+
+		t.getTableHeader().setReorderingAllowed(false);
+		t.getTableHeader().setResizingAllowed(false);
+
+		for (int i = 0; i < t.getColumnCount(); i++) {
+			t.getColumnModel().getColumn(i).setCellRenderer(r);
+		}
+
+		return t;
+		
 	}
 }

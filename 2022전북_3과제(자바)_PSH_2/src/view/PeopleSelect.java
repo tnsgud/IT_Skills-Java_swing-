@@ -50,10 +50,11 @@ public class PeopleSelect extends BaseFrame {
 				return;
 			}
 
-			int ans = JOptionPane.showConfirmDialog(null,
-					String.format("성인 %d염, 소아 %d명, 유아 %d명을 선택하셨습니다.\n예약을 계속 하시겠습니까?",
-							Stream.of(spin).mapToInt(s -> toInt(s.getValue())).toArray()),
-					"안내", JOptionPane.YES_NO_OPTION);
+			int ans = JOptionPane
+					.showConfirmDialog(null,
+							String.format("성인 %d염, 소아 %d명, 유아 %d명을 선택하셨습니다.\n예약을 계속 하시겠습니까?", toInt(spin[0].getValue()),
+									toInt(spin[1].getValue()), toInt(spin[2].getValue())),
+							"안내", JOptionPane.YES_NO_OPTION);
 
 			if (ans == JOptionPane.YES_OPTION) {
 				txt.setText(
