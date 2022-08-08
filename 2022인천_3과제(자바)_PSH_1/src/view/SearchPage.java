@@ -76,7 +76,7 @@ public class SearchPage extends BasePage {
 
 	public SearchPage() {
 		user = getRows("select * from user where no = 1").get(0);
-		
+
 		data();
 
 		add(west = sz(new West(), 250, 0), "West");
@@ -151,7 +151,7 @@ public class SearchPage extends BasePage {
 		}
 
 		int tot = arr.stream().mapToInt(a -> toInt(a[1])).sum();
-		
+
 		var l = lbl("총 거리:" + tot + "m", 4, 15);
 		l.setMaximumSize(new Dimension(250, 50));
 		west.cc.add(l);
@@ -188,7 +188,6 @@ public class SearchPage extends BasePage {
 			eMsg("출발지와 도착지는 같을 수 없습니다.");
 			return;
 		}
-
 
 		me.setName(arr[0]);
 		me.setText(arr[1]);
@@ -258,7 +257,6 @@ public class SearchPage extends BasePage {
 			path.add(cn = new JPanel(new BorderLayout(5, 5)), "North");
 			path.add(cc = new JPanel());
 			cc.setLayout(new BoxLayout(cc, BoxLayout.PAGE_AXIS));
-			
 
 			{
 				var tmp1 = new JPanel(new GridLayout(0, 1, 5, 5));
@@ -271,7 +269,8 @@ public class SearchPage extends BasePage {
 				txtDe.setFocusable(false);
 
 				tmp2.add(btn("집을 출발지로", a -> {
-					var rs = getRows("select b.no, b.name from user u, building b where u.building = b.no and u.no = ?", user.get(0)).get(0);
+					var rs = getRows("select b.no, b.name from user u, building b where u.building = b.no and u.no = ?",
+							user.get(0)).get(0);
 					pop.setName(rs.get(0) + "," + rs.get(1));
 					setPath(0);
 				}));
@@ -281,11 +280,11 @@ public class SearchPage extends BasePage {
 					var tmp = txtAr.getName();
 					txtAr.setName(txtDe.getName());
 					txtDe.setName(tmp);
-					
+
 					tmp = txtAr.getText();
 					txtAr.setText(txtDe.getText());
 					txtDe.setText(tmp);
-					
+
 					dijkstra();
 				}), "East");
 				cn.add(tmp2, "South");
@@ -306,10 +305,10 @@ public class SearchPage extends BasePage {
 				eMsg("검색 키워드를 입력하세요.");
 				return;
 			}
-			
+
 			var rs = itemList.stream().map(e -> e.info).filter(a -> a.get(1).toString().contains(txtSearch.getText())
 					|| a.get(4).toString().contains(txtSearch.getText())).collect(Collectors.toList());
-			
+
 			if (rs.isEmpty()) {
 				iMsg("검색결과가 없습니다.");
 				return;
@@ -329,7 +328,7 @@ public class SearchPage extends BasePage {
 
 				tmp2.add(lbl(rs.indexOf(r) + 1 + ":" + r.get(1), 2, 1, 13, Color.black,
 						e -> new InfoDialog(r).setVisible(true)));
-				tmp2.add(lbl("<html>"+r.get(4).toString(), 2));
+				tmp2.add(lbl("<html>" + r.get(4).toString(), 2));
 				tmp2.add(lbl("평점:" + r.get(9), 2));
 
 				tmp1.addMouseListener(new MouseAdapter() {
@@ -356,7 +355,7 @@ public class SearchPage extends BasePage {
 
 			search.repaint();
 			search.revalidate();
-			
+
 			map.center(toInt(rs.get(0).get(6)), toInt(rs.get(0).get(7)));
 		}
 	}
@@ -577,8 +576,7 @@ public class SearchPage extends BasePage {
 			myAffine.scale(zoom, zoom);
 
 			fromPoint = new Point(0, 0);
-			toPoint = new Point((map.getWidth() - img.getWidth()) / 2 - (x - img.getWidth() / 2),
-					(map.getHeight() - img.getHeight()) / 2 - (y - img.getHeight() / 2));
+			toPoint = new Point(getWidth() / 2 - x, getHeight() / 2 - y);
 
 			try {
 				sAffPoint = myAffine.inverseTransform(fromPoint, null);

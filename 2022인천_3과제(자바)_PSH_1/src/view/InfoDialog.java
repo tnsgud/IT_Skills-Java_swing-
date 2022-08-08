@@ -108,8 +108,10 @@ public class InfoDialog extends BaseDialog {
 		var sTime = LocalTime.parse(arr.get(2).toString(), DateTimeFormatter.ofPattern("HH:mm:ss"));
 		var eTime = LocalTime.parse(arr.get(3).toString(), DateTimeFormatter.ofPattern("HH:mm:ss"));
 
-		for (var i = sTime; i.isBefore(eTime); i = i.plusMinutes(30)) {
-			comTime.addItem(i.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+		for (var t = sTime; t.isBefore(eTime); t = t.plusMinutes(30)) {
+			comTime.addItem(t.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+			if (!t.isBefore(LocalTime.of(23, 30)))
+				break;
 		}
 	}
 
