@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import db.DB;
+import view.GenreSelect;
 
 public interface Tool {
 	default ArrayList<ArrayList<Object>> getRows(String sql, Object... obj) {

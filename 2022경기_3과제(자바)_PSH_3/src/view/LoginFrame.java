@@ -49,6 +49,10 @@ public class LoginFrame extends BaseFrame {
 			BasePage.uExp = toInt(getOne("select count(*) from library where u_no = ?", rs.get(0).get(0))) * 3
 					+ getRows("select * from v2 where u_no = ? group by g_no having count(*) > 2", rs.get(0).get(0))
 							.size() * 10;
+			
+			BasePage.mf=  new MainFrame();
+			new UserMainPage();
+			BasePage.mf.setVisible(true);
 		}), "South");
 
 		var cap = "ID,PW".split(",");
