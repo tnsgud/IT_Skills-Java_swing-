@@ -23,6 +23,10 @@ public class UserMainPage extends BasePage {
 	SwingWorker<String, Object> worker;
 	int curidx, toidx = 0, runidx = 0, bu = -1;
 
+	public static void main(String[] args) {
+		new LoginFrame();
+	}
+	
 	public UserMainPage() {
 		super("사용자메인");
 

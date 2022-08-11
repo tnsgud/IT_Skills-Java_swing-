@@ -22,14 +22,12 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
@@ -52,13 +50,7 @@ public class SearchPage extends BasePage {
 	ArrayList<ArrayList<Node>> adjList = new ArrayList<>();
 	HashMap<Integer, String> select = new HashMap<>();
 
-	AffineTransform myAffine = new AffineTransform();
-	Point2D sAffPoint = new Point2D.Float(), eAffPoint = new Point2D.Float();
-	double affDx, affDy;
-	double zoom = 1;
-	Point fromPoint, toPoint;
 	String colorKey = "";
-
 	JPopupMenu pop = new JPopupMenu();
 	{
 		for (var cap : "출발지,도착지".split(",")) {
@@ -75,8 +67,6 @@ public class SearchPage extends BasePage {
 	}
 
 	public SearchPage() {
-		user = getRows("select * from user where no = 1").get(0);
-
 		data();
 
 		add(west = sz(new West(), 250, 0), "West");
@@ -141,8 +131,8 @@ public class SearchPage extends BasePage {
 
 			var node = adjList.get(n1).stream().filter(a -> a.no == n2).findFirst().get();
 
-			if (!arr.stream().filter(a -> a[0].equals(arr.size() + ". " + node.name)).findFirst().isPresent()) {
-				arr.add(new String[] { arr.size() + 1 + ". " + node.name, node.cost + "" });
+			if (!arr.stream().filter(a -> a[0].equals(arr.size() + ":" + node.name)).findFirst().isPresent()) {
+				arr.add(new String[] { arr.size() + 1 + ":" + node.name, node.cost + "" });
 			} else {
 				var str = arr.get(arr.size() - 1);
 				int cost = toInt(str[1]) + node.cost;
@@ -200,7 +190,7 @@ public class SearchPage extends BasePage {
 		}
 
 		for (var rs : getRows(
-				"select node1, node2, b1.x, b1.y, b2.x, b2.y, c.name from connection c, building b1, building b2 where c.node1=b1.no and c.node2 = b2.no")) {
+				"select node1, node2, b1.x, b1.y, b2.x, b2.y, c.name from connection c, building b1, building b2 where c.node1= b1.no and c.node2 = b2.no")) {
 			int no1 = toInt(rs.get(0)), no2 = toInt(rs.get(1));
 			int x1 = toInt(rs.get(2)), y1 = toInt(rs.get(3)), x2 = toInt(rs.get(4)), y2 = toInt(rs.get(5));
 			int cost = (int) Point.distance(x1, y1, x2, y2);
@@ -213,7 +203,7 @@ public class SearchPage extends BasePage {
 		for (var rs : getRows(
 				"select b.*, ifnull(round(avg(rate), 0), 0) from building b left join rate r on b.no = r.building where type <> 3 group by b.no")) {
 			int x = toInt(rs.get(6)), y = toInt(rs.get(7));
-			itemList.add(new MapItem(rs, x - 20, y - 20));
+			itemList.add(new MapItem(rs, x, y));
 		}
 	}
 
@@ -226,8 +216,8 @@ public class SearchPage extends BasePage {
 		public West() {
 			add(n = new JPanel(new BorderLayout(5, 5)), "North");
 			add(scr = new JScrollPane(search = new JPanel()));
-			add(lbl("메인으로", 2, 0, 20, Color.orange, e -> mf.swap(new MainPage())), "South");
-			search.setLayout(new BoxLayout(search, BoxLayout.PAGE_AXIS));
+			add(lbl("메인으로", 2, 0, 15, Color.orange, e -> mf.swap(new MainPage())), "South");
+			search.setLayout(new BoxLayout(search, BoxLayout.Y_AXIS));
 
 			n.add(nn = new JPanel(new BorderLayout(5, 5)), "North");
 			n.add(nc = new JPanel(new GridLayout(1, 0, 5, 5)));
@@ -306,17 +296,17 @@ public class SearchPage extends BasePage {
 				return;
 			}
 
-			var rs = itemList.stream().map(e -> e.info).filter(a -> a.get(1).toString().contains(txtSearch.getText())
+			var rs = itemList.stream().map(a -> a.info).filter(a -> a.get(1).toString().contains(txtSearch.getText())
 					|| a.get(4).toString().contains(txtSearch.getText())).collect(Collectors.toList());
 
 			if (rs.isEmpty()) {
-				iMsg("검색결과가 없습니다.");
+				iMsg("검색결과가 업습니다.");
 				return;
 			}
 
 			search.removeAll();
 
-			search.add(lbl("<html>장소명 <font color=rgb(0,123,255)>" + txtSearch.getText() + "</font> 의 검색 결과", 2, 13),
+			search.add(lbl("<html>장소명 <font color=rgb(0, 123, 255)> " + txtSearch.getText() + "</font> 의 검색 결과", 2, 13),
 					"North");
 
 			for (var r : rs) {
@@ -326,14 +316,16 @@ public class SearchPage extends BasePage {
 				tmp1.add(tmp2);
 				tmp1.add(new JLabel(getIcon(r.get(8), 80, 80)), "East");
 
-				tmp2.add(lbl(rs.indexOf(r) + 1 + ":" + r.get(1), 2, 1, 13, Color.black,
-						e -> new InfoDialog(r).setVisible(true)));
-				tmp2.add(lbl("<html>" + r.get(4).toString(), 2));
+				tmp2.add(lbl(rs.indexOf(r) + 1 + ":" + r.get(1), 2, 1, 13, Color.black, e -> {
+				}));
+				tmp2.add(lbl("<html>" + r.get(4), 2));
 				tmp2.add(lbl("평점:" + r.get(9), 2));
 
 				tmp1.addMouseListener(new MouseAdapter() {
-					@Override
-					public void mousePressed(MouseEvent e) {
+					public void mousePressed(java.awt.event.MouseEvent e) {
+						if (e.getButton() != 1)
+							return;
+
 						if (e.getButton() == 1 && e.getClickCount() == 2) {
 							map.center(toInt(r.get(6)), toInt(r.get(7)));
 						} else if (e.getButton() == 3) {
@@ -351,8 +343,6 @@ public class SearchPage extends BasePage {
 				search.add(sz(tmp1, 0, 120));
 			}
 
-			search.add(Box.createVerticalGlue());
-
 			search.repaint();
 			search.revalidate();
 
@@ -361,10 +351,13 @@ public class SearchPage extends BasePage {
 	}
 
 	class Map extends BasePage {
-
 		BufferedImage img;
 
+		AffineTransform myAffine = new AffineTransform();
+		Point2D sAffPoint = new Point2D.Float(), eAffPoint = new Point2D.Float();
+		double affDx, affDy;
 		double zoom = 1;
+		Point fromPoint, toPoint;
 
 		@Override
 		protected void paintComponent(Graphics g) {
@@ -377,7 +370,7 @@ public class SearchPage extends BasePage {
 			add(w = new JPanel(new GridBagLayout()), "West");
 
 			var lbl = sz(new JLabel() {
-				String tagetXt = "◀";
+				String text = "◀";
 
 				@Override
 				protected void paintComponent(Graphics g) {
@@ -387,21 +380,24 @@ public class SearchPage extends BasePage {
 					g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
 					g2.setColor(Color.white);
-					g2.fillRoundRect(0, 0, 20, 30, 5, 5);
+					g2.fillRoundRect(0, 0, 20, 20, 5, 5);
 
 					g2.setColor(blue);
-					g2.drawString(tagetXt, 5, 20);
+					g2.drawString(text, 5, 20);
 				}
 			}, 40, 40);
 			lbl.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mousePressed(MouseEvent e) {
-					if (lbl.tagetXt.equals("◀")) {
-						lbl.tagetXt = "▶";
-						sz(west, 0, 0);
-					} else {
-						lbl.tagetXt = "◀";
+					if (e.getButton() != 1)
+						return;
+
+					if (lbl.text.equals("▶")) {
+						lbl.text = "◀";
 						sz(west, 250, 0);
+					} else {
+						lbl.text = "▶";
+						sz(west, 0, 0);
 					}
 
 					repaint();
@@ -431,7 +427,6 @@ public class SearchPage extends BasePage {
 
 					var item = itemList.stream().filter(i -> (i.x <= x && x <= i.x + 40) && (i.y <= y && y <= i.y + 40))
 							.findFirst();
-
 					item.ifPresent(i -> {
 						if (e.getButton() == 1 && toInt(i.info.get(5)) != 2) {
 							new InfoDialog(i.info).setVisible(true);
@@ -485,10 +480,11 @@ public class SearchPage extends BasePage {
 							zoom = Math.min(2, zoom + 0.1);
 						}
 					} else {
-						if (zoom == 0.1)
+						if (zoom == 0.1) {
 							flag = true;
-						else
+						} else {
 							zoom = Math.max(0.1, zoom - 0.1);
+						}
 					}
 
 					if (!flag) {
@@ -508,18 +504,18 @@ public class SearchPage extends BasePage {
 
 			drawMap();
 
-			setBackground(new Color(154, 217, 234));
 			w.setOpaque(false);
+			setBackground(new Color(154, 217, 234));
 		}
 
-		void drawMap() {
+		private void drawMap() {
 			try {
 				img = ImageIO.read(new File("./datafiles/map.jpg"));
 
 				var g2 = (Graphics2D) img.getGraphics();
 
 				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-				g2.setStroke(new BasicStroke(8, 1, 1));
+				g2.setStroke(new BasicStroke(3));
 
 				if (!pathList.isEmpty()) {
 					var tmp = new ArrayList<String>();
@@ -529,8 +525,8 @@ public class SearchPage extends BasePage {
 						int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 						var node = adjList.get(n1).stream().filter(x -> x.no == n2).findFirst().get();
 
-						if (!tmp.contains(tmp.size() + ". " + node.name)) {
-							tmp.add(tmp.size() + 1 + ". " + node.name);
+						if (!tmp.contains(tmp.size() + ":" + node.name)) {
+							tmp.add(tmp.size()+1 + ":" + node.name);
 						}
 
 						var rs = getRows("select x, y from building where no = ?", n1).get(0);
@@ -547,6 +543,10 @@ public class SearchPage extends BasePage {
 						}
 
 						g2.drawLine(x1, y1, x2, y2);
+
+						if (img != null) {
+							repaint();
+						}
 					}
 				}
 
@@ -565,11 +565,12 @@ public class SearchPage extends BasePage {
 					repaint();
 				}
 			} catch (IOException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 
-		void center(int x, int y) {
+		public void center(int x, int y) {
 			zoom = 1;
 			myAffine.setToIdentity();
 			myAffine.scale(zoom, zoom);
@@ -620,11 +621,5 @@ public class SearchPage extends BasePage {
 			this.cost = cost;
 			this.name = name;
 		}
-	}
-
-	public static void main(String[] args) {
-		mf = new MainFrame();
-		mf.swap(new SearchPage());
-		mf.setVisible(true);
 	}
 }

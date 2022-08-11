@@ -1,32 +1,37 @@
 package tool;
 
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import db.DB;
 
 public interface Tool {
+	String[] division = ",성인,소아,유아".split(",");
+
+	default void createV() {
+		execute("drop view if exists v1");
+		execute("create view v1 as select s.*, a1.a_code a1_code, a1.a_name a1_name, a1.a_latitude a1_latitude, a1.a_longitude a1_longitude, a2.a_code a2_code, a2.a_name a2_name, a2.a_latitude a2_latitude, a2.a_longitude a2_longitude from schedule s, airport a1, airport a2 where s.s_depart = a1.a_no and s.s_arrival = a2.a_no");
+	}
+
 	default ArrayList<ArrayList<Object>> getRows(String sql, Object... obj) {
 		var list = new ArrayList<ArrayList<Object>>();
-
 		try {
 			DB.ps = DB.con.prepareStatement(sql);
 			for (int i = 0; i < obj.length; i++) {
@@ -44,17 +49,20 @@ public interface Tool {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 		return list;
 	}
 
-	default void execute(String sql, Object... obj) throws SQLException {
-		DB.ps = DB.con.prepareStatement(sql);
-		for (int i = 0; i < obj.length; i++) {
-			DB.ps.setObject(i + 1, obj[i]);
+	default void execute(String sql, Object... obj) {
+		try {
+			DB.ps = DB.con.prepareStatement(sql);
+			for (int i = 0; i < obj.length; i++) {
+				DB.ps.setObject(i + 1, obj[i]);
+			}
+			DB.ps.execute();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		System.out.println(DB.ps);
-		DB.ps.execute();
 	}
 
 	default String getOne(String sql, Object... obj) {
@@ -63,21 +71,21 @@ public interface Tool {
 	}
 
 	default void eMsg(String msg) {
-		JOptionPane.showMessageDialog(null, msg, "경고", 0);
+		JOptionPane.showMessageDialog(null, msg, "경공", 0);
 	}
 
 	default void iMsg(String msg) {
 		JOptionPane.showMessageDialog(null, msg, "정보", 1);
 	}
 
-	default int toInt(Object o) {
-		var s = o.toString().replaceAll("[^0-9|^-]", "");
-		return s.isEmpty() ? -1 : Integer.parseInt(s);
-	}
-
 	default <T extends JComponent> T sz(T c, int w, int h) {
 		c.setPreferredSize(new Dimension(w, h));
 		return c;
+	}
+
+	default int toInt(Object o) {
+		var s = o.toString().replaceAll("[^0-9|^-]", "");
+		return s.isEmpty() ? -1 : Integer.parseInt(s);
 	}
 
 	default JLabel lbl(String c, int a, int st, int sz) {
@@ -94,38 +102,10 @@ public interface Tool {
 		return lbl(c, a, 0, 12);
 	}
 
-	interface Invoker {
-		void run(MouseEvent e);
-	}
-
-	default JLabel lbl(String c, int a, int sz, Color col, Invoker i) {
-		var l = lbl(c, a, 0, sz);
-		l.setForeground(col);
-		l.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				i.run(e);
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				l.setText("<html><u>" + c);
-				l.setCursor(new Cursor(12));
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				l.setText(c);
-			}
-		});
-		return l;
-	}
-
 	default JButton btn(String c, ActionListener a) {
 		var b = new JButton(c);
-		b.setForeground(Color.white);
-		b.setBackground(Color.orange);
 		b.addActionListener(a);
+		b.setCursor(new Cursor(12));
 		return b;
 	}
 
@@ -133,11 +113,7 @@ public interface Tool {
 		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(p).getScaledInstance(w, h, 4));
 	}
 
-	default ImageIcon getIcon(Object o, int w, int h) {
-		return new ImageIcon(Toolkit.getDefaultToolkit().createImage((byte[]) o).getScaledInstance(w, h, 4));
-	}
-
-	default DefaultTableModel model(String[] col) {
+	default DefaultTableModel model(String col[]) {
 		return new DefaultTableModel(null, col) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
@@ -156,7 +132,7 @@ public interface Tool {
 		t.getTableHeader().setReorderingAllowed(false);
 		t.getTableHeader().setResizingAllowed(false);
 
-		for (int i = 0; i < t.getColumnCount()-1; i++) {
+		for (int i = 0; i < t.getColumnCount(); i++) {
 			t.getColumnModel().getColumn(i).setCellRenderer(r);
 		}
 
