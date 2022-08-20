@@ -26,9 +26,8 @@ public class Main extends BaseFrame {
 	static JLabel lbl[] = new JLabel[4];
 	ArrayList<JLabel> back = new ArrayList<>();
 	ArrayList<JPanel> items = new ArrayList<>();
-	Worker worker = new Worker();
-	int bu = 1, left = 0, right = 4, curIdx = 0;
-	boolean run;
+	Worker worker;
+	int bu = 1, left = 0, right = 4;
 	JLabel prev, next;
 
 	public Main() {
@@ -140,39 +139,19 @@ public class Main extends BaseFrame {
 		}
 
 		s.add(prev = lbl("〈", 0, 1, 35, e -> {
-			for (int i = 0; i < items.size(); i++) {
-				items.get((curIdx + i) % items.size()).setLocation(170 * i, 0);
-			}
-			items.get((curIdx + items.size() - 1) % items.size()).setLocation(-170, 0);
+			if (!prev.isEnabled())
+				return;
 
-			bu = -1;
-			run = true;
-
-			if (worker != null && worker.isDone()) {
-				worker.cancel(true);
-				worker = null;
-			}
-			worker = new Worker();
-			worker.execute();
+			run(-1);
 		}), "West");
 
 		s.add(sc = sz(new JPanel(null), 850, 270));
 
 		s.add(next = lbl("〉", 0, 0, 35, e -> {
-			for (int i = 0; i < items.size(); i++) {
-				items.get((curIdx + i) % items.size()).setLocation(170 * i, 0);
-			}
+			if (!next.isEnabled())
+				return;
 
-			bu = 1;
-			run = true;
-
-			if (worker != null && worker.isDone()) {
-				worker.cancel(true);
-				worker = null;
-			}
-
-			worker = new Worker();
-			worker.execute();
+			run(1);
 		}), "East");
 
 		for (var rs : getRows(
@@ -206,11 +185,24 @@ public class Main extends BaseFrame {
 			items.add(tmp);
 		}
 
+		prev.setEnabled(false);
+
 		setVisible(true);
 
 		nc.setBorder(new EmptyBorder(0, 200, 0, 0));
 
 		CenterAnimation();
+	}
+
+	private void run(int bu) {
+		if (worker != null && !worker.isDone()) {
+			return;
+		}
+
+		this.bu = bu;
+		
+		worker = new Worker();
+		worker.execute();
 	}
 
 	private void CenterAnimation() {
@@ -238,42 +230,36 @@ public class Main extends BaseFrame {
 	}
 
 	class Worker extends SwingWorker {
+		void check() {
+			left += bu;
+			right += bu;
+			prev.setEnabled(left != 0);
+			next.setEnabled(right != 24);
+		}
+		
 		@Override
 		protected Object doInBackground() throws Exception {
 			while (true) {
 				for (int i = 0; i < items.size(); i++) {
-					int x = items.get((curIdx + i) % items.size()).getX();
-					items.get((curIdx + i) % items.size()).setLocation(x -= 10 * bu, 0);
+					int x = items.get(i).getX();
+					items.get(i).setLocation(x -= 10 * bu, 0);
 				}
 
 				Thread.sleep(20);
 
-				// ">" 처리
-				if (bu == 1 && items.get(curIdx).getX() <= -170) {
-					items.get(curIdx).setLocation(170 * (items.size() - 1), 0);
-					curIdx = (curIdx + 1) % items.size();
+				// < 처리
+				if (bu == -1 && items.get(left).getX() == 170) {
+					check();
 					return null;
 				}
-
-				// "<" 처리
-				if (bu == -1 && items.get(curIdx).getX() >= 170) {
-					curIdx = curIdx - 1 < 0 ? items.size() - 1 : curIdx - 1;
-					items.get((curIdx + items.size() - 1) % items.size()).setLocation(-170, 0);
+				
+				// > 처리
+				if(bu == 1 && items.get(right).getX() == 510) {
+					check();
 					return null;
 				}
 			}
 		}
-
-		@Override
-		protected void done() {
-			left += -bu;
-			right += -bu;
-			prev.setEnabled(curIdx != 0);
-			next.setEnabled(curIdx != 20);
-		}
 	}
 
-	public static void main(String[] args) {
-		new Main();
-	}
 }

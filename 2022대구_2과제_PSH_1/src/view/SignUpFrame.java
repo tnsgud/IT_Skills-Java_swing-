@@ -47,7 +47,7 @@ public class SignUpFrame extends BaseFrame {
 		event();
 
 		setVisible(true);
-	}
+	} 
 
 	private void event() {
 		var ma = new MouseAdapter() {

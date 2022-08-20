@@ -12,6 +12,10 @@ import javax.swing.JTextField;
 public class LoginFrame extends BaseFrame {
 	JTextField txt[] = new JTextField[2];
 
+	public static void main(String[] args) {
+		new LoginFrame();
+	}
+	
 	public LoginFrame() {
 		super("Login", 400, 350);
 

@@ -5,8 +5,10 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,29 +24,31 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 public class Capcha extends BaseDialog {
-	HashMap<String, HashSet<File>> map = new HashMap<>();
-	HashSet<File> answer = new HashSet<>();
-	HashSet<File> select = new HashSet<>();
-	ArrayList<File> img = new ArrayList<>();
 	JComboBox<String> com;
-	String key = "";
-	LoginPage loginPage = (LoginPage) BasePage.mf.getContentPane().getComponent(0);
+
+	HashMap<String, HashSet<File>> map = new HashMap<>();
+	HashSet<File> answers = new HashSet<>();
+	HashSet<File> selects = new HashSet<>();
+	ArrayList<File> img = new ArrayList<>();
+	LoginPage login = (LoginPage) BasePage.mf.getContentPane().getComponent(0);
 
 	public Capcha() {
 		super(400, 400);
 
 		try {
 			data();
-		} catch (Exception e) {
+		} catch (IOException | SAXException | ParserConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		setLayout(new BorderLayout());
+		setLayout(new BorderLayout(5, 5));
 
 		add(n = new JPanel(new FlowLayout(0)), "North");
 		add(c = new JPanel(new GridLayout(0, 3, 5, 5)));
@@ -57,78 +61,74 @@ public class Capcha extends BaseDialog {
 
 		for (var cap : "확인,새로고침".split(",")) {
 			s.add(btn(cap, a -> {
-				if (cap.equals("확인")) {
-					if (select.isEmpty()) {
-						eMsg("이미즐ㄹ 선택하세요.");
-						return;
-					}
-
-					if (!(select.containsAll(answer) && answer.containsAll(select))) {
-						eMsg("틀렸습니다.");
-						shuffle();
-						return;
-					}
-
-					loginPage.flag = true;
-					dispose();
-				} else {
+				if (cap.equals("새로고침")) {
 					shuffle();
+					return;
 				}
+
+				if (!(selects.containsAll(answers) && answers.containsAll(selects))) {
+					eMsg("틀렸습니다.");
+					shuffle();
+					return;
+				}
+
+				login.flag = true;
+				dispose();
 			}));
 		}
 
 		com.addActionListener(a -> shuffle());
 
-		n.setBackground(blue);
+		n.setOpaque(true);
+		n.setBackground(new Color(0, 123, 255));
 
 		((JPanel) getContentPane())
 				.setBorder(new CompoundBorder(new LineBorder(Color.black), new EmptyBorder(5, 5, 5, 5)));
 	}
 
 	private void shuffle() {
-		c.removeAll();
+		var key = com.getSelectedItem().toString();
 
-		answer.clear();
+		answers.clear();
+		selects.clear();
 		img.clear();
-		select.clear();
 
-		key = com.getSelectedItem().toString();
-
-		var list = map.entrySet().stream().filter(a -> !a.getKey().equals(key)).map(a -> a.getValue())
-				.flatMap(a -> a.stream()).distinct().sorted().collect(Collectors.toList());
+		var other = map.entrySet().stream().filter(e -> !e.getKey().equals(key)).map(e -> e.getValue())
+				.flatMap(e -> e.stream()).distinct().sorted().collect(Collectors.toList());
 		var answerList = new ArrayList<>(map.get(key));
 
-		answer.addAll(answerList.subList(0, Math.min(new Random().nextInt(5) + 1, answerList.size())));
-		img.addAll(answer);
+		answers.addAll(answerList.subList(0, Math.min(new Random().nextInt(5) + 1, answerList.size())));
+		img.addAll(answers);
 
-		list.stream().filter(a -> !answerList.contains(a)).limit(9 - answer.size()).forEach(img::add);
+		other.stream().limit(9 - answers.size()).forEach(img::add);
 
 		Collections.shuffle(img);
 
-		for (var img : img) {
-			var lbl = new JLabel(getIcon(img.getPath(), 150, 150));
+		c.removeAll();
+		for (var i : img) {
+			var lbl = new JLabel(getIcon(i.getPath(), 150, 150));
 			lbl.addMouseListener(new MouseAdapter() {
-				public void mousePressed(java.awt.event.MouseEvent e) {
+				@Override
+				public void mousePressed(MouseEvent e) {
 					if (e.getButton() != 1)
 						return;
 
 					if (lbl.getBorder() == null) {
 						lbl.setBorder(new LineBorder(Color.green));
-						select.add(img);
+						selects.add(i);
 					} else {
 						lbl.setBorder(null);
-						select.remove(img);
+						selects.remove(i);
 					}
 				}
 			});
-
 			c.add(lbl);
 		}
 		c.repaint();
 		c.revalidate();
 	}
 
-	private void data() throws Exception {
+	private void data() throws IOException, SAXException, ParserConfigurationException {
 		for (var file : new File("./datafiles/리캡차").listFiles()) {
 			var data = Files.readAllBytes(file.toPath());
 			var txt = new String(data, "utf-8");
@@ -139,13 +139,13 @@ public class Capcha extends BaseDialog {
 			var nodeList = ((Element) doc.getElementsByTagName("dc:subject").item(0)).getElementsByTagName("rdf:li");
 
 			for (int i = 0; i < nodeList.getLength(); i++) {
-				var tag = nodeList.item(i).getTextContent();
+				var content = nodeList.item(i).getTextContent();
 
-				if (!map.containsKey(tag)) {
-					map.put(tag, new HashSet<>());
+				if (!map.containsKey(content)) {
+					map.put(content, new HashSet<>());
 				}
 
-				map.get(tag).add(file);
+				map.get(content).add(file);
 			}
 		}
 
