@@ -24,25 +24,23 @@ public class Main extends BaseFrame {
 	Worker worker;
 
 	public Main() {
-		super("GGV", 900, 700);
-		setLayout(new BorderLayout(10, 10));
-		setDefaultCloseOperation(3);
+		super("GGV", 900, 750);
 
 		add(n = new JPanel(new BorderLayout()), "North");
-		add(c = new JPanel(null));
-		add(s = new JPanel(new BorderLayout(10, 10)), "South");
+		add(c = sz(new JPanel(null), 900, 350));
+		add(s = new JPanel(new BorderLayout()), "South");
 
 		n.add(nc = new JPanel());
 		n.add(ne = new JPanel(new FlowLayout(2)), "East");
 		n.add(ns = new JPanel(), "South");
 
 		nc.add(lblHY("GGV", 0, 1, 20));
-		nc.add(lbl("MOVIE", 0, 0, 20));
+		nc.add(lblSerif("MOVIE", 0, 0, 20));
 
 		var cap = "로그인,회원가입,마이페이지,통계".split(",");
-		var path = "Lock,Join,People,Analytics".split(",");
+		var icon = "Lock,Join,People,Analytics".split(",");
 		for (int i = 0; i < cap.length; i++) {
-			var l = event(lblIcon(cap[i], 0, "./datafile/아이콘/" + path[i] + ".png", 15, 15), e -> {
+			ne.add(lbl[i] = event(lblIcon(cap[i], 0, "./datafile/아이콘/" + icon[i] + ".png", 15, 15), e -> {
 				var me = (JLabel) e.getSource();
 
 				switch (me.getText()) {
@@ -68,8 +66,7 @@ public class Main extends BaseFrame {
 					new Chart().addWindowListener(new Before(this));
 					break;
 				}
-			});
-			ne.add(lbl[i] = l);
+			}));
 		}
 
 		cap = "예매,영화,영화관,스토어".split(",");
@@ -97,14 +94,16 @@ public class Main extends BaseFrame {
 				public void mouseEntered(MouseEvent e) {
 					var me = (JLabel) e.getSource();
 
-					me.setBorder(new CompoundBorder(new MatteBorder(0, 0, 1, 0, red), me.getBorder()));
+					me.setBorder(new CompoundBorder(me.getBorder(), new MatteBorder(0, 0, 1, 0, red)));
 				}
 
 				@Override
 				public void mouseExited(MouseEvent e) {
-					((JLabel) e.getSource()).setBorder(null);
-					for (int i = 1; i < ns.getComponentCount(); i++) {
-						((JComponent) ns.getComponent(i)).setBorder(new MatteBorder(0, 1, 0, 0, Color.LIGHT_GRAY));
+					var me = (JLabel) e.getSource();
+					me.setBorder(null);
+
+					for (int j = 1; j < ns.getComponentCount(); j++) {
+						((JComponent) ns.getComponent(j)).setBorder(new MatteBorder(0, 1, 0, 0, Color.LIGHT_GRAY));
 					}
 				}
 			});
@@ -118,94 +117,54 @@ public class Main extends BaseFrame {
 
 		for (var f : new File("./datafile/배경").listFiles()) {
 			c.add(new JLabel(getIcon(f.getAbsolutePath(), 900, 350))).setBounds((c.getComponentCount() - 1) * 900, 0,
-					900, 350);
+					900, 300);
 		}
 
-		s.add(prev = event(lbl("<", 0, 20), e -> {
+		s.add(prev = event(new JLabel(getIcon("./datafile/아이콘/Left.png", 20, 30)), e -> {
 			if (!prev.isEnabled())
 				return;
 
 			run(-1);
 		}), "West");
-		s.add(sc = sz(new JPanel(null), 850, 270));
-		s.add(next = event(lbl(">", 0, 20), e -> {
+		s.add(sc = sz(new JPanel(null), 900, 300));
+		s.add(next = event(new JLabel(getIcon("./datafile/아이콘/Right.png", 20, 30)), e -> {
 			if (!next.isEnabled())
 				return;
 
 			run(1);
 		}), "East");
 
-		var rs = getRows(
-				"select m.m_no, m_name from movie m, reservation r, schedule sc where r.sc_no = sc.sc_no and sc.m_no = m.m_no group by m.m_no order by count(*) desc limit 25");
-		for (var r : rs) {
+		for (var rs : getRows(
+				"select m.m_no, m_name from reservation r, schedule sc, movie m where r.sc_no = sc.sc_no and sc.m_no = m.m_no group by m.m_no order by count(*) desc limit 25")) {
 			var tmp = new JPanel(new BorderLayout());
-			var img = event(new JLabel(getIcon("./datafile/영화/" + r.get(1) + ".jpg", 150, 250)), e -> {
-				if (e.getClickCount() != 2)
-					return;
-
-				int ans = JOptionPane.showConfirmDialog(null, "예매하시겠습니까?", "정보", JOptionPane.YES_NO_OPTION,
+			var img = event(new JLabel(getIcon("./datafile/영화/" + rs.get(1) + ".jpg", 150, 250)), e -> {
+				if(e.getClickCount() != 2) return;
+				
+				var ans = JOptionPane.showConfirmDialog(null, "예매하시겠습니까?", "정보", JOptionPane.YES_NO_OPTION,
 						JOptionPane.INFORMATION_MESSAGE);
+
 				if (ans == JOptionPane.YES_OPTION) {
 					new Reserve().addWindowListener(new Before(this));
 				} else {
+					m_no = toInt(rs.get(0));
 					new MovieDetail().addWindowListener(new Before(this));
 				}
 			});
-			tmp.add(img);
-			tmp.add(lbl(r.get(1).toString(), 0), "South");
 
-			sc.add(tmp).setBounds((sc.getComponentCount() - 1) * 170, 0, 150, 270);
+			tmp.add(img);
+			tmp.add(lbl(rs.get(1).toString(), 0), "South");
+
+			sc.add(tmp).setBounds((sc.getComponentCount() - 1) * 170, 0, 170, 270);
 		}
 
 		prev.setEnabled(false);
 
-		logout();
-
 		setVisible(true);
+
 		animation();
 	}
 
-	private void animation() {
-		new SwingWorker() {
-			@Override
-			protected Object doInBackground() throws Exception {
-				Thread.sleep(3000);
-				while (true) {
-					for (var com : c.getComponents()) {
-						int x = com.getX();
-						com.setLocation(x -= 20, 0);
-					}
-
-					Thread.sleep(20);
-
-					if (c.getComponent(idx).getX() <= -900) {
-						c.getComponent(idx).setLocation(1800, 0);
-						idx = idx == 2 ? 0 : idx + 1;
-						Thread.sleep(3000);
-					}
-				}
-			}
-		}.execute();
-	}
-
-	static void login() {
-		lbl[0].setText("로그아웃");
-		lbl[0].setIcon(new ImageIcon(
-				Toolkit.getDefaultToolkit().getImage("./datafile/아이콘/UnLock.png").getScaledInstance(15, 15, 4)));
-		lbl[1].setVisible(false);
-	}
-
-	void logout() {
-		user = null;
-		lbl[0].setText("로그인");
-		lbl[0].setIcon(getIcon("./datafile/아이콘/Lock.png", 15, 15));
-		lbl[1].setVisible(true);
-
-		ne.repaint();
-		ne.revalidate();
-	}
-
-	void run(int bu) {
+	private void run(int bu) {
 		if (worker != null && !worker.isDone()) {
 			return;
 		}
@@ -216,10 +175,48 @@ public class Main extends BaseFrame {
 		worker.execute();
 	}
 
+	private void animation() {
+		new SwingWorker() {
+			@Override
+			protected Object doInBackground() throws Exception {
+				Thread.sleep(3000);
+				while (true) {
+					for (var com : c.getComponents()) {
+						int x = com.getX();
+						com.setLocation(x - 10, 0);
+					}
+
+					Thread.sleep(20);
+
+					if (c.getComponent(idx).getX() == -900) {
+						c.getComponent(idx).setLocation(1800, 0);
+						idx = idx == 2 ? 0 : idx + 1;
+						Thread.sleep(3000);
+					}
+				}
+			}
+		}.execute();
+	}
+
+	static void login() {
+		lbl[0].setText("로그인");
+		lbl[0].setIcon(new ImageIcon(
+				Toolkit.getDefaultToolkit().getImage("./datafile/아이콘/Lock.png").getScaledInstance(15, 15, 4)));
+		lbl[1].setVisible(false);
+	}
+
+	void logout() {
+		user = null;
+		lbl[0].setText("로그인");
+		lbl[0].setIcon(getIcon("./datafile/아이콘/Lock.png", 15, 15));
+		lbl[1].setVisible(true);
+	}
+
 	class Worker extends SwingWorker {
 		void check() {
 			left += bu;
 			right += bu;
+
 			prev.setEnabled(left != 0);
 			next.setEnabled(right != 24);
 		}
@@ -229,10 +226,10 @@ public class Main extends BaseFrame {
 			while (true) {
 				for (var com : sc.getComponents()) {
 					int x = com.getX();
-					com.setLocation(x -= 10 * bu, 0);
+					com.setLocation(x - 10 * bu, 0);
 				}
 
-				Thread.sleep(5);
+				Thread.sleep(20);
 
 				if (bu == -1 && sc.getComponent(left).getX() == 170) {
 					check();

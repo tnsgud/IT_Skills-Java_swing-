@@ -39,11 +39,12 @@ public class Payment extends BaseFrame {
 		}
 		s.add(btn("결제하기", a -> {
 			int ans = JOptionPane.showConfirmDialog(null, "결제 하시겠습니까?", "결제", JOptionPane.YES_NO_OPTION);
-			
-			if(ans == JOptionPane.YES_OPTION) {
+
+			if (ans == JOptionPane.YES_OPTION) {
+				iMsg("결제가 완료되었습니다.");
 				execute("insert orderlist values(0, ?,?,?,?)", user.get(0), rs.get(0), cnt, LocalDate.now().toString());
 			}
-			
+
 			dispose();
 		}));
 

@@ -38,6 +38,7 @@ public class Login extends BaseFrame {
 				iMsg("관리자님 환영합니다.");
 				new AdminMain().addWindowListener(new Before(this));
 				Stream.of(txt).forEach(t -> t.setText(""));
+				return;
 			}
 
 			var rs = getRows("select * from user where (u_email = ? and u_pw = ?) or (u_id = ? and u_pw = ?)",

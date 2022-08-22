@@ -4,17 +4,24 @@ import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import javax.swing.JComponent;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -67,7 +74,8 @@ public class DB extends BaseFrame {
 	}
 
 	void createT(String t, String c) {
-		c = Stream.of(c.split(",")).map(a-> a += a.contains("fore") ? " on delete cascade on update cascade":"").collect(Collectors.joining(","));
+		c = Stream.of(c.split(",")).map(a -> a += a.contains("fore") ? " on delete cascade on update cascade" : "")
+				.collect(Collectors.joining(","));
 		System.out.println(c);
 		execute("create table " + t + "(" + c + ")");
 //		map.put(t, c);
@@ -75,7 +83,8 @@ public class DB extends BaseFrame {
 
 	public DB() {
 		super("DB", 500, 500);
-
+		setDefaultCloseOperation(3);
+		
 		add(new JScrollPane(t));
 
 		t.getColumn("진행상황").setCellRenderer(r);
@@ -91,9 +100,11 @@ public class DB extends BaseFrame {
 		map.put("building_test",
 				"no int primary key not null auto_increment, name text, open time, close time, info text, type int, x int, y int, img longblob");
 		map.put("connection", "node1 int, node2 int, name text");
-		map.put("user", "no int primary key not null auto_increment, name varchar(20), id varchar(20), pw varchar(20), phone varchar(30), birth date, building int");
+		map.put("user",
+				"no int primary key not null auto_increment, name varchar(20), id varchar(20), pw varchar(20), phone varchar(30), birth date, building int");
 		map.put("vaccine", "no int primary key not null auto_increment, name varchar(20), price int");
-		map.put("purchase", "no int primary key not null auto_increment, user int, date datetime, building int, vaccine int, shot int");
+		map.put("purchase",
+				"no int primary key not null auto_increment, user int, date datetime, building int, vaccine int, shot int");
 		map.put("rate", "no int primary key not null auto_increment, building int, rate int, user int, review text");
 //		createT("building",
 //				"no int primary key not null auto_increment, name text, open time, close time, info text, type int, x int, y int, img longblob");
@@ -114,11 +125,11 @@ public class DB extends BaseFrame {
 				var str = reader.readLine();
 				var columeCount = str.split("\t").length;
 				var colume = "?,".repeat(columeCount).substring(0, 2 * columeCount - 1);
-				var rowCount = (int) Files.lines(new File("./datafiles/" + a.getKey() + ".txt").toPath()).count()-1;
+				var rowCount = (int) Files.lines(new File("./datafiles/" + a.getKey() + ".txt").toPath()).count() - 1;
 				var bar = new JProgressBar(0, 0, rowCount);
 
-				execute("create table "+a.getKey()+"("+a.getValue()+")");
-				
+				execute("create table " + a.getKey() + "(" + a.getValue() + ")");
+
 				bar.setStringPainted(true);
 				m.addRow(new Object[] { a.getKey() + " Table", bar });
 
@@ -143,14 +154,13 @@ public class DB extends BaseFrame {
 		}).exceptionally(e -> {
 			return "error";
 		})).collect(Collectors.toList());
+		
 
-		var results = futures.stream().map(CompletableFuture::join).collect(Collectors.toUnmodifiableList());
-
-		System.out.println(results);
-		setVisible(true);
+//		var results = futures.stream().map(CompletableFuture::join).collect(Collectors.toUnmodifiableList());
+//		System.out.println(results);
 	}
 
-	public static void main(String[] args) {
-		new DB();
+	public static void main(String[] args) throws Exception {
+		 new DB();
 	}
 }

@@ -20,7 +20,6 @@ public class Purchase extends BaseFrame {
 
 	public Purchase(int sNo) {
 		super("구매", 600, 300);
-		user = getRows("select * from user where u_no = 1").get(0);
 		rs = getRows("select s_no, s_name, s_explanation,  format(s_price, '#,##0') from store where s_no = ?", sNo)
 				.get(0);
 

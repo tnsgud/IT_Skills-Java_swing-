@@ -1,10 +1,9 @@
 package tool;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -12,35 +11,30 @@ import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.TreeSet;
 import java.util.function.Consumer;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JRadioButton;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 
 import db.DB;
 
 public interface Tool {
-	Color red = new Color(255, 0, 50);
-	String[] div = ",성인,청소년,시니어,장애인".split(",");
-
-	default ArrayList<ArrayList<Object>> getRows(String sql, Object... obj) {
+	default ArrayList<ArrayList<Object>> getRows(String sql, Object... objects) {
 		var list = new ArrayList<ArrayList<Object>>();
 		try {
 			DB.ps = DB.con.prepareStatement(sql);
-			for (int i = 0; i < obj.length; i++) {
-				DB.ps.setObject(i + 1, obj[i]);
+			for (int i = 0; i < objects.length; i++) {
+				DB.ps.setObject(i + 1, objects[i]);
 			}
 			var rs = DB.ps.executeQuery();
 			while (rs.next()) {
@@ -57,11 +51,11 @@ public interface Tool {
 		return list;
 	}
 
-	default void execute(String sql, Object... obj) {
+	default void execute(String sql, Object... objects) {
 		try {
 			DB.ps = DB.con.prepareStatement(sql);
-			for (int i = 0; i < obj.length; i++) {
-				DB.ps.setObject(i + 1, obj[i]);
+			for (int i = 0; i < objects.length; i++) {
+				DB.ps.setObject(i + 1, objects[i]);
 			}
 			DB.ps.execute();
 		} catch (SQLException e) {
@@ -70,8 +64,8 @@ public interface Tool {
 		}
 	}
 
-	default String getOne(String sql, Object... obj) {
-		var rs = getRows(sql, obj);
+	default String getOne(String sql, Object... objects) {
+		var rs = getRows(sql, objects);
 		return rs.isEmpty() ? "" : rs.get(0).get(0).toString();
 	}
 
@@ -94,38 +88,26 @@ public interface Tool {
 			public void mousePressed(MouseEvent e) {
 				if (e.getButton() != 1)
 					return;
+
 				i.accept(e);
 			}
 		});
 		return c;
 	}
 
-	default int toInt(Object o) {
-		var s = o.toString().replaceAll("[^0-9|^-]", "");
+	default int toInt(Object object) {
+		var s = object.toString().replaceAll("[^0-9|^-]", "");
 		return s.isEmpty() ? -1 : Integer.parseInt(s);
 	}
 
-	default void op(JComponent jcom) {
-		for (var com : jcom.getComponents()) {
-			if (com instanceof JPanel || com instanceof JCheckBox || com instanceof JRadioButton) {
-				((JComponent) com).setOpaque(false);
-				op(((JComponent) com));
-			}
-		}
-	}
-	
 	default String format(int n) {
 		return new DecimalFormat("#,##0").format(n);
 	}
 
-	default JLabel lbl(String c, int a, String f, int st, int sz) {
-		var l = new JLabel(c, a);
-		l.setFont(new Font(f, st, sz));
-		return l;
-	}
-
 	default JLabel lbl(String c, int a, int st, int sz) {
-		return lbl(c, a, "맑은 고딕", st, sz);
+		var l = new JLabel(c, a);
+		l.setFont(new Font("맑은 고딕", st, sz));
+		return l;
 	}
 
 	default JLabel lbl(String c, int a, int sz) {
@@ -136,86 +118,20 @@ public interface Tool {
 		return lbl(c, a, 0, 12);
 	}
 
-	default JLabel lblHY(String c, int a, int st, int sz) {
-		return lbl(c, a, "HY헤드라인M", st, sz);
-	}
-
-	default JLabel lblSerif(String c, int a, int st, int sz) {
-		return lbl(c, a, "SanSerif", st, sz);
-	}
-
-	default JLabel lblIcon(String c, int a, String p, int w, int h) {
-		var l = new JLabel(c, a);
-		l.setIcon(getIcon(p, w, h));
-		l.setVerticalTextPosition(3);
-		l.setHorizontalTextPosition(0);
-		return l;
-	}
-
 	default JButton btn(String c, ActionListener a) {
 		var b = new JButton(c);
 		b.setForeground(Color.white);
-		b.setBackground(red);
+		b.setBackground(Color.green.darker());
 		b.addActionListener(a);
 		return b;
 	}
 
-	default JButton btnBlack(String c, ActionListener a) {
-		var b = btn(c, a);
-		b.setBackground(Color.black);
-		return b;
-	}
-
-	default JTextField txt(String s, int c) {
-		return new JTextField(c) {
-			@Override
-			public void paint(Graphics g) {
-				super.paint(g);
-				var g2 = (Graphics2D) g;
-
-				if (!getText().isEmpty())
-					return;
-
-				g2.setColor(Color.LIGHT_GRAY);
-				g2.drawString(s, getInsets().left, g2.getFontMetrics().getMaxAscent() + getInsets().top);
-			}
-		};
-	}
-
-	default JPasswordField pw(String s, int c) {
-		return new JPasswordField(c) {
-			@Override
-			public void paint(Graphics g) {
-				super.paint(g);
-				var g2 = (Graphics2D) g;
-
-				if (!getText().isEmpty())
-					return;
-
-				g2.setColor(Color.LIGHT_GRAY);
-				g2.drawString(s, getInsets().left, g2.getFontMetrics().getMaxAscent() + getInsets().top);
-			}
-		};
-	}
-
-	default JTextArea area(String s) {
-		return new JTextArea() {
-			@Override
-			public void paint(Graphics g) {
-				super.paint(g);
-				var g2 = (Graphics2D) g;
-
-				if (!getText().isEmpty())
-					return;
-
-				g2.setColor(Color.LIGHT_GRAY);
-				g2.drawString(s, getInsets().left, g2.getFontMetrics().getMaxAscent() + getInsets().top);
-			}
-		};
-	}
-
 	default ImageIcon getIcon(String p, int w, int h) {
 		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(p).getScaledInstance(w, h, 4));
+	}
+
+	default ImageIcon getIcon(Object o, int w, int h) {
+		return new ImageIcon(Toolkit.getDefaultToolkit().createImage((byte[]) o).getScaledInstance(w, h, 4));
 	}
 
 	default DefaultTableModel model(String col[]) {
@@ -226,21 +142,53 @@ public interface Tool {
 			}
 		};
 	}
-	
+
 	default JTable table(DefaultTableModel m) {
-		var t = new JTable(m);
+		var t = new JTable(m) {
+			@Override
+			public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+				var comp = super.prepareRenderer(renderer, row, column);
+				var data = m.getDataVector();
+
+				try {
+					var map = new HashMap<String, TreeSet<String>>();
+					data.stream().filter(a -> data.stream().filter(x -> x.get(1).equals(a.get(1))).count() > 1)
+							.forEach(e -> {
+								if (!map.containsKey(e.get(1).toString())) {
+									map.put(e.get(1).toString(), new TreeSet<>());
+								}
+
+								map.get(e.get(1).toString()).add(format(toInt(e.get(4))));
+							});
+
+					var tree = map.get(getValueAt(row, 1).toString());
+					if (tree.iterator().hasNext() && getValueAt(row, 4)
+							.equals(format(tree.stream().mapToInt(e -> toInt(e)).min().getAsInt()))) {
+						comp.setFont(new Font("맑은 고딕", 2, 12));
+						comp.setForeground(Color.blue);
+					} else {
+						comp.setFont(getFont());
+						comp.setForeground(Color.black);
+					}
+				} catch (Exception e) {
+					comp.setFont(getFont());
+					comp.setForeground(Color.black);
+				}
+
+				return comp;
+			}
+		};
 		var r = new DefaultTableCellRenderer();
-		
+
 		t.setSelectionMode(0);
 		r.setHorizontalAlignment(0);
-		
+
 		t.getTableHeader().setReorderingAllowed(false);
 		t.getTableHeader().setResizingAllowed(false);
-		
+
 		for (int i = 0; i < t.getColumnCount(); i++) {
 			t.getColumnModel().getColumn(i).setCellRenderer(r);
 		}
-		
 		return t;
 	}
 }
