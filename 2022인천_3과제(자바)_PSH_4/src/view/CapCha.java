@@ -115,6 +115,7 @@ public class CapCha extends BaseDialog {
 		Collections.shuffle(list);
 
 		c.removeAll();
+		
 		for (var f : list) {
 			c.add(event(new JLabel(getIcon(f.getAbsolutePath(), 150, 150)), e -> {
 				var me = (JLabel) e.getSource();
