@@ -69,7 +69,7 @@ public class SearchPage extends BasePage {
 		}
 
 		for (var rs : getRows(
-				"select node1, node2, b1.x, b1.y, b2.x, b2.y, c.name from connection c, building b1, building b2 where c.node1 = b1.no, c.node2 = b2.no and c.node2 = b2.no")) {
+				"select node1, node2, b1.x, b1.y, b2.x, b2.y, c.name from connection c, building b1, building b2 where c.node1 = b1.no and c.node2 = b2.no")) {
 			int n1 = toInt(rs.get(0)), n2 = toInt(rs.get(1));
 			int x1 = toInt(rs.get(2)), y1 = toInt(rs.get(3)), x2 = toInt(rs.get(4)), y2 = toInt(rs.get(5));
 			int cost = (int) Point.distance(x1, y1, x2, y2);
