@@ -15,7 +15,7 @@ public class LoginFrame extends BaseFrame {
 	public static void main(String[] args) {
 		new MainFrame();
 	}
-	
+
 	public LoginFrame() {
 		super("Login", 450, 350);
 
@@ -28,7 +28,7 @@ public class LoginFrame extends BaseFrame {
 
 		var hint = "User ID,User Password".split(",");
 		for (int i = 0; i < hint.length; i++) {
-			c.add(txt[i] = i == 0 ? hintField(hint[i], 0) : hintPassField(hint[i], 0));
+			c.add(txt[i] = i == 0 ? new HintField(hint[i], 0) : new HintPassword(hint[i], 0));
 		}
 
 		s.add(sz(btnRound("로그인", a -> {
@@ -42,7 +42,7 @@ public class LoginFrame extends BaseFrame {
 
 			if (txt[0].getText().equals("admin") && txt[1].getText().equals("1234")) {
 				iMsg("관리자닙 환영합니다.");
-				new AdminFrame().addWindowListener(new Before(((Before)getWindowListeners()[0]).b));
+				new AdminFrame().addWindowListener(new Before(((Before) getWindowListeners()[0]).b));
 				setVisible(false);
 				return;
 			}
@@ -50,8 +50,8 @@ public class LoginFrame extends BaseFrame {
 			var rs = getRows("select * from user where u_id=? and u_pw=?", txt[0].getText(), txt[1].getText());
 			if (rs.isEmpty()) {
 				eMsg("아이디 또는 비밀번호가 일치하지 않습니다.");
-				txt[0].setText("");
-				txt[1].setText("");
+				((HintField) txt[0]).init();
+				((HintPassword) txt[1]).init();
 				txt[0].requestFocus();
 				return;
 			}
@@ -80,6 +80,9 @@ public class LoginFrame extends BaseFrame {
 		c.setBorder(new EmptyBorder(20, 0, 20, 0));
 
 		((JPanel) getContentPane()).setBorder(new EmptyBorder(20, 40, 20, 40));
+
+		txt[1].requestFocus();
+		s.getComponent(0).requestFocus();
 
 		setVisible(true);
 	}

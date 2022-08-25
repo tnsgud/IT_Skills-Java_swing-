@@ -26,7 +26,7 @@ public class MoviePage extends BasePage {
 	JCheckBox chkGenre[] = getRows("select g_name from genre").stream().map(a -> new JCheckBox(a.get(0).toString()))
 			.toArray(JCheckBox[]::new), chkScreen[] = { new JCheckBox("상영중"), new JCheckBox("미상영") };
 	JRadioButton radOrder[] = { new JRadioButton("예매순"), new JRadioButton("별점순") };
-	JTextField txt = hintField("Movie Title", 70);
+	HintField txt = new HintField("Movie Title", 70);
 
 	public MoviePage() {
 		ui();
@@ -86,7 +86,7 @@ public class MoviePage extends BasePage {
 
 		n.setBorder(new MatteBorder(0, 0, 2, 0, Color.black));
 
-		opaque(main, false);
+		opaque(main);
 		setBackground(Color.white);
 		main.setBackground(Color.white);
 	}
@@ -114,14 +114,14 @@ public class MoviePage extends BasePage {
 
 		if (radOrder[0].isSelected()) {
 			order = " order by count(*) desc, rate desc, m.m_no";
-		}else {
+		} else {
 			order = " order by rate desc, count(*) desc, m.m_no";
 		}
 
 		var sql = String.format(
 				"SELECT m.*, count(*), (select ifnull(round(avg(c_rate), 1), 0) from comment c where c.m_no=m.m_no) rate FROM movie m left outer join reservation r on m.m_no=r.m_no where m.m_title like ? %s %s group by m.m_no %s",
 				screening, genre, order);
-		var rs = getRows(sql, "%" + txt.getText() + "%");
+		var rs = getRows(sql, "%" + (txt.isEmpty() ? "" : txt.getText()) + "%");
 
 		if (rs.isEmpty()) {
 			eMsg("검색결과가 없습니다.");
@@ -176,7 +176,7 @@ public class MoviePage extends BasePage {
 			cc.add(tmp);
 		}
 
-		opaque(cc, false);
+		opaque(cc);
 
 		cc.repaint();
 		cc.revalidate();

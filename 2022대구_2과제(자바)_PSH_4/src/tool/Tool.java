@@ -11,6 +11,8 @@ import java.awt.Shape;
 import java.awt.TexturePaint;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
@@ -18,6 +20,7 @@ import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -68,6 +71,7 @@ public interface Tool {
 			for (int i = 0; i < obj.length; i++) {
 				DB.ps.setObject(i + 1, obj[i]);
 			}
+			System.out.println(DB.ps);
 			var rs = DB.ps.executeQuery();
 			while (rs.next()) {
 				var row = new ArrayList<>();
@@ -101,6 +105,18 @@ public interface Tool {
 		c.setPreferredSize(new Dimension(w, h));
 		return c;
 	}
+	
+	default <T extends JComponent> T event(T c, Consumer<MouseEvent> i) {
+		c.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				if(e.getButton() != 1) return;
+				
+				i.accept(e);
+			}
+		});
+		return c;
+	}
 
 	default int toInt(Object o) {
 		var s = o.toString().replaceAll("[^0-9|^-]", "");
@@ -117,11 +133,11 @@ public interface Tool {
 		return "";
 	}
 
-	default void opaque(JComponent c, boolean op) {
+	default void opaque(JComponent c) {
 		for (var com : c.getComponents()) {
 			if (com instanceof JComponent) {
-				((JComponent) com).setOpaque(op);
-				opaque((JComponent) com, op);
+				((JComponent) com).setOpaque(false);
+				opaque((JComponent) com);
 			}
 		}
 	}
@@ -237,22 +253,7 @@ public interface Tool {
 		return lbl(c, a, 0, 12);
 	}
 
-	interface Invoker {
-		void run(MouseEvent e);
-	}
-
-	default JLabel lbl(String c, int a, int sz, Invoker i) {
-		var l = lbl(c, a, 0, sz);
-		l.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				i.run(e);
-			}
-		});
-		return l;
-	}
-
-	default JLabel hyplbl(String c, int a, int sz, Invoker i) {
+	default JLabel hyplbl(String c, int a, int sz) {
 		var l = lbl(c, a, 0, sz);
 		l.addMouseListener(new MouseAdapter() {
 			@Override
@@ -263,11 +264,6 @@ public interface Tool {
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				l.setBorder(new MatteBorder(0, 0, 1, 0, red));
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				i.run(e);
 			}
 		});
 		return l;
@@ -316,65 +312,113 @@ public interface Tool {
 		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(p).getScaledInstance(w, h, 4));
 	}
 
-	default JTextField hintField(String c, int col) {
-		var txt = new JTextField(col) {
-			@Override
-			public void paint(Graphics g) {
-				super.paint(g);
-				var g2 = (Graphics2D) g;
+	class HintField extends JTextField {
+		String text;
 
-				g2.setColor(Color.LIGHT_GRAY);
-
-				var ins = getInsets();
-				var h = getHeight();
-				var fm = g2.getFontMetrics();
-
-				if (getText().isEmpty()) {
-					g2.drawString(c, ins.left, h / 2 + fm.getAscent() / 2 - 2);
+		public HintField(String text, int col) {
+			super(col);
+			this.text = text;
+			setFont(new Font("맑은 고딕", 0, 13));
+			init();
+			addFocusListener(new FocusListener() {
+				@Override
+				public void focusLost(FocusEvent e) {
+					if (getText().isEmpty()) {
+						init();
+					}
 				}
-			}
-		};
-		return txt;
+
+				@Override
+				public void focusGained(FocusEvent e) {
+					if (isEmpty()) {
+						setText("");
+						setForeground(Color.black);
+					}
+				}
+			});
+		}
+
+		public void init() {
+			setText(text);
+			setForeground(Color.LIGHT_GRAY);
+		}
+
+		public boolean isEmpty() {
+			return getText().equals(text);
+		}
 	}
 
-	default JPasswordField hintPassField(String c, int col) {
-		var txt = new JPasswordField(col) {
-			@Override
-			public void paint(Graphics g) {
-				super.paint(g);
-				var g2 = (Graphics2D) g;
+	class HintPassword extends JPasswordField {
+		String text;
 
-				g2.setColor(Color.LIGHT_GRAY);
-
-				var ins = getInsets();
-				var h = getHeight();
-				var fm = g2.getFontMetrics();
-
-				if (getText().isEmpty()) {
-					g2.drawString(c, ins.left, h / 2 + fm.getAscent() / 2 - 2);
+		public HintPassword(String text, int col) {
+			super(col);
+			this.text = text;
+			setFont(new Font("맑은 고딕", 0, 13));
+			init();
+			addFocusListener(new FocusListener() {
+				@Override
+				public void focusLost(FocusEvent e) {
+					if (getText().isEmpty()) {
+						init();
+					}
 				}
-			}
-		};
-		txt.setEchoChar('●');
-		return txt;
+
+				@Override
+				public void focusGained(FocusEvent e) {
+					if (isEmpty()) {
+						setEchoChar('●');
+						setText("");
+						setForeground(Color.black);
+					}
+				}
+			});
+		}
+		
+		public void init() {
+			setEchoChar('\0');
+			setText(text);
+			setForeground(Color.LIGHT_GRAY);
+		}
+
+		public boolean isEmpty() {
+			return getText().equals(text);
+		}
 	}
 
-	default JTextArea hintArea(String c) {
-		var area = new JTextArea() {
-			@Override
-			public void paint(Graphics g) {
-				super.paint(g);
-				var g2 = (Graphics2D) g;
+	class HintArea extends JTextArea {
+		String text;
 
-				g2.setColor(Color.lightGray);
-
-				var ins = getInsets();
-				if (getText().isEmpty()) {
-					g2.drawString(c, ins.left, 10);
+		public HintArea(String text) {
+			this.text = text;
+			setFont(new Font("맑은 고딕", 0, 13));
+			init();
+			addFocusListener(new FocusListener() {
+				@Override
+				public void focusLost(FocusEvent e) {
+					if(getText().isEmpty()) {
+						init();
+					}
 				}
-			}
-		};
-		return area;
+
+				@Override
+				public void focusGained(FocusEvent e) {
+					if(isEmpty()) {
+						setText("");
+						setForeground(Color.black);
+					}
+				}
+			});
+		}
+		
+		public void init() {
+			setText(text);
+			setForeground(Color.LIGHT_GRAY);
+		}
+
+		public boolean isEmpty() {
+			return getText().equals(text);
+		}
 	}
 
 	default DefaultTableModel model(String col[]) {

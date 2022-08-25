@@ -13,7 +13,7 @@ import javax.swing.JTextField;
 
 public class CommentDialog extends BaseDialog {
 	JLabel stars[] = new JLabel[5];
-	JTextField txt = hintField("감상평을 등록해주세요.", 0);
+	JTextField txt = new HintField("감상평을 등록해주세요.", 0);
 	JButton btn;
 	int c_rate = 0;
 

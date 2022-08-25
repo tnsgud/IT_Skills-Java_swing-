@@ -248,7 +248,7 @@ public class SignUpFrame extends BaseFrame {
 				tmp.add(tmpE, "East");
 			} else {
 				tmp.add(lbl(cap[i], 2, 13), "North");
-				tmp.add(txt[i] = i == 1 || i == 2 ? hintPassField(hint[i], 0) : hintField(hint[i], 0));
+				tmp.add(txt[i] = i == 1 || i == 2 ? new HintPassword(hint[i], 0) : new HintField(hint[i], 0));
 			}
 
 			cc.add(tmp);

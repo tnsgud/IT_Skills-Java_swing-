@@ -31,7 +31,7 @@ public class EditMovieDialog extends BaseDialog {
 	JRadioButton radio[] = new JRadioButton[3];
 	JCheckBox chk[] = getRows("select g_name from genre").stream().map(x -> new JCheckBox(x.get(0).toString()))
 			.toArray(JCheckBox[]::new);
-	JTextArea area;
+	HintArea sy;
 	JButton btn1, btn2;
 	String path = "", oldPath = "", genre = "", m_open = "";
 	ArrayList<Object> rs;
@@ -61,7 +61,8 @@ public class EditMovieDialog extends BaseDialog {
 		txt[1].setText(rs.get(4).toString());
 		txt[2].setText(rs.get(6).toString());
 
-		area.setText(rs.get(2).toString());
+		sy.setText(rs.get(2).toString());
+		sy.setForeground(Color.black);
 
 		radio[toInt(rs.get(5)) - 1].setSelected(true);
 
@@ -108,7 +109,7 @@ public class EditMovieDialog extends BaseDialog {
 			var tmp = new JPanel(new BorderLayout());
 
 			tmp.add(lbl(cap[i], 2), "North");
-			tmp.add(txt[i] = hintField(hint[i], 0));
+			tmp.add(txt[i] = new HintField(hint[i], 0));
 
 			ws.add(tmp);
 		}
@@ -148,7 +149,7 @@ public class EditMovieDialog extends BaseDialog {
 
 		s.add(btn2 = btn("등록", a -> {
 			for (var t : txt) {
-				if (t.getText().isEmpty() || area.getText().isEmpty()) {
+				if (t.getText().isEmpty() || sy.getText().isEmpty()) {
 					eMsg("빈칸이 존재합니다.");
 					t.requestFocus();
 					return;
@@ -180,7 +181,7 @@ public class EditMovieDialog extends BaseDialog {
 			if (a.getActionCommand().equals("등록")) {
 				iMsg("등록이 완료되었습니다.");
 
-				execute("insert movie values(0, ?,?,?,?,?,?)", txt[0].getText(), area.getText(), genre,
+				execute("insert movie values(0, ?,?,?,?,?,?)", txt[0].getText(), sy.getText(), genre,
 						txt[1].getText(), m_open, txt[0].getText());
 				try {
 					Files.copy(
@@ -194,7 +195,7 @@ public class EditMovieDialog extends BaseDialog {
 			} else {
 				iMsg("수정이 완료되었습니다.");
 				execute("update movie set m_title = ?, m_synopsis=?, g_no = ?, m_time=?, m_open=?, m_director=? where m_no =?",
-						txt[0].getText(), area.getText(), genre, txt[1].getText(), m_open, txt[2].getText(), rs.get(0));
+						txt[0].getText(), sy.getText(), genre, txt[1].getText(), m_open, txt[2].getText(), rs.get(0));
 				
 				try {
 					Files.copy(new File(path).toPath(), new File(oldPath).toPath(),
@@ -210,9 +211,9 @@ public class EditMovieDialog extends BaseDialog {
 		}));
 
 		cc.add(lblB("시놉시스", 2, 15), "North");
-		cc.add(area = hintArea("Synopsis"));
+		cc.add(sy = new HintArea("Synopis"));
 
-		area.setLineWrap(true);
+		sy.setLineWrap(true);
 
 		lblImg.setBorder(new LineBorder(Color.lightGray));
 
