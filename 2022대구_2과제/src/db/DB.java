@@ -102,6 +102,8 @@ public class DB extends JFrame implements Tool {
 
 		setVisible(true);
 
+		getContentPane().setBackground(Color.white);
+		
 		add(c = new JPanel() {
 			@Override
 			protected void paintComponent(Graphics g) {

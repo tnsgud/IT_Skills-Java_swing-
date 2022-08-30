@@ -64,7 +64,7 @@ public class MovieInfoDialog extends BaseDialog {
 		var lblTitle = lbl("리뷰", 2, 15);
 
 		var rs = getRows(
-				"select u.u_no, u_name, c_rate, c_text from comment c, user u where c.u_no = u.u_no and m_no=?",
+				"select u.u_no, u_id, c_rate, c_text from comment c, user u where c.u_no = u.u_no and m_no=?",
 				movie.get(0));
 
 		c.add(lblTitle, "North");

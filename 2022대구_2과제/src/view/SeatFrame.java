@@ -228,7 +228,7 @@ public class SeatFrame extends BaseFrame {
 									price();
 									return;
 								}
-								 
+
 								for (var p : tempC.getComponents()) {
 									p.setBackground(Color.gray);
 									p.setForeground(Color.LIGHT_GRAY);
@@ -236,18 +236,24 @@ public class SeatFrame extends BaseFrame {
 
 								me.setBackground(Color.LIGHT_GRAY);
 								me.setForeground(Color.gray);
-								
 
 								int sum = IntStream.of(cnt).sum();
-								var selCnt = Stream.of(seats).map(Arrays::asList).flatMap(x -> x.stream()).filter(x -> x.getName() != null)
-										.count();
-								if(sum < selCnt) {
+								var selCnt = Stream.of(seats).map(Arrays::asList).flatMap(x -> x.stream())
+										.filter(x -> x.getName() != null).count();
+								if (sum < selCnt) {
 									eMsg("선택된 좌석이 예매 인원보다 많습니다.");
-									
+
 									for (var r : costs) {
 										for (var c : r) {
 											c.setBackground(Color.gray);
 											c.setForeground(Color.LIGHT_GRAY);
+										}
+									}
+
+									for (var seat : seats) {
+										for (var s : seat) {
+											s.setBackground(Color.gray);
+											s.setName(null);
 										}
 									}
 
@@ -331,7 +337,7 @@ public class SeatFrame extends BaseFrame {
 			tmp.add(tmpS, "South");
 
 			txt1 += getOne("select gr_name from grade where gr_no = ?", user.get(6));
-			txt2 += (int)((1 - dc) * 100) + "% 할인";
+			txt2 += (int) ((1 - dc) * 100) + "% 할인";
 
 			tmpC.add(lbl(txt1, 2));
 			tmpC.add(lbl(txt2, 4));
@@ -378,7 +384,7 @@ public class SeatFrame extends BaseFrame {
 			txt1 += cap[i] + "<br>";
 			txt2 += new DecimalFormat("#,##0").format(cost[i]) + "원 * " + cnt[i] + "<br>";
 
-			tot += cost[i];
+			tot += cost[i] * cnt[i];
 		}
 
 		this.txt1 = txt1;

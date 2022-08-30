@@ -68,7 +68,6 @@ public interface Tool {
 			for (int i = 0; i < obj.length; i++) {
 				DB.ps.setObject(i + 1, obj[i]);
 			}
-			System.out.println(DB.ps);
 			var rs = DB.ps.executeQuery();
 			while (rs.next()) {
 				var row = new ArrayList<>();
@@ -356,6 +355,7 @@ public interface Tool {
 				}
 			}
 		};
+		txt.setEchoChar('●');
 		return txt;
 	}
 
@@ -383,30 +383,28 @@ public interface Tool {
 			public boolean isCellEditable(int row, int column) {
 				return false;
 			}
+
+			@Override
+			public Class<?> getColumnClass(int columnIndex) {
+				return columnIndex == 0 ? ImageIcon.class:String.class;
+			}
 		};
 	}
 
 	default JTable table(DefaultTableModel m) {
 		var t = new JTable(m);
-		var r = new DefaultTableCellRenderer() {
-			@Override
-			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-					boolean hasFocus, int row, int column) {
-				return value instanceof JLabel ? (JLabel) value
-						:(JComponent) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-			}
-		};
+		var r = new DefaultTableCellRenderer();
 
 		t.getTableHeader().setReorderingAllowed(false);
 		t.getTableHeader().setResizingAllowed(false);
 
 		t.getTableHeader().setBackground(red);
 		t.getTableHeader().setForeground(Color.white);
-		
+
 		t.setSelectionMode(0);
 		r.setHorizontalAlignment(0);
 
-		for (int i = 0; i < t.getColumnCount(); i++) {
+		for (int i = 1; i < t.getColumnCount(); i++) {
 			t.getColumnModel().getColumn(i).setCellRenderer(r);
 		}
 

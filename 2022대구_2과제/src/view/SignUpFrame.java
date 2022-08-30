@@ -102,7 +102,7 @@ public class SignUpFrame extends BaseFrame {
 	}
 
 	private void data() {
-		for (int i = 1900; i < 2023; i++) {
+		for (int i = 2022; i >=1900; i--) {
 			com[0].addItem(i);
 		}
 
@@ -114,7 +114,8 @@ public class SignUpFrame extends BaseFrame {
 			com[2].addItem(String.format("%02d", i + 1));
 		}
 
-		for (int i = 0; i < 3; i++) {
+		com[0].setSelectedIndex(0);
+		for (int i = 1; i < 3; i++) {
 			com[i].setSelectedIndex(com[i].getItemCount() - 1);
 		}
 	}

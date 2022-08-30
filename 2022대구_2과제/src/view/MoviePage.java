@@ -80,6 +80,8 @@ public class MoviePage extends BasePage {
 		n.setAlignmentX(CENTER_ALIGNMENT);
 		c.setAlignmentX(CENTER_ALIGNMENT);
 
+		Stream.of(chkScreen).forEach(c -> c.setSelected(true));
+
 		search();
 
 		n.setBorder(new MatteBorder(0, 0, 2, 0, Color.black));
@@ -105,29 +107,29 @@ public class MoviePage extends BasePage {
 		if (chkScreen[0].isSelected() && chkScreen[1].isSelected()) {
 			screening = "";
 		} else if (chkScreen[0].isSelected()) {
-			screening = "and m.m_no in (select scr.m_no from screening scr)";
+			screening = "and m.m_no in (select sc.m_no from screening sc)";
 		} else if (chkScreen[1].isSelected()) {
-			screening = "and m.m_no not in (select scr.m_no from screening scr)";
+			screening = "and m.m_no not in (select sc.m_no from screening sc)";
 		}
-
-		var sub1 = "(select sum(char_length(r_seat) - char_length(replace(r_seat, '.',''))) from reservation r where r.m_no = m.m_no) sub1";
-		var sub2 = "(select ifnull(round(avg(c_rate), 1), 0) from comment c where c.m_no = m.m_no) `avg`";
 
 		if (radOrder[0].isSelected()) {
-			order = "order by sub1 desc, avg desc, m.m_no desc";
+			order = " order by count(*) desc, rate desc, m.m_no";
+		}else {
+			order = " order by rate desc, count(*) desc, m.m_no";
 		}
 
-		var sql = String.format("select m.*, %s, %s from movie m where m.m_title like ? %s %s %s", sub1, sub2,
+		var sql = String.format(
+				"SELECT m.*, count(*), (select ifnull(round(avg(c_rate), 1), 0) from comment c where c.m_no=m.m_no) rate FROM movie m left outer join reservation r on m.m_no=r.m_no where m.m_title like ? %s %s group by m.m_no %s",
 				screening, genre, order);
 		var rs = getRows(sql, "%" + txt.getText() + "%");
-		
-		if(rs.isEmpty()) {
+
+		if (rs.isEmpty()) {
 			eMsg("검색결과가 없습니다.");
 			txt.setText("");
 			search();
 			return;
 		}
-		
+
 		for (var r : rs) {
 			var tmp = new JPanel(new BorderLayout(10, 10));
 			var tmpS = new JPanel(new BorderLayout(5, 5));
@@ -173,9 +175,9 @@ public class MoviePage extends BasePage {
 
 			cc.add(tmp);
 		}
-		
+
 		opaque(cc, false);
-		
+
 		cc.repaint();
 		cc.revalidate();
 	}

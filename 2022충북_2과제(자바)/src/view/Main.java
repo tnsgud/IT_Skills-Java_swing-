@@ -26,7 +26,7 @@ public class Main extends BaseFrame {
 	static JLabel lbl[] = new JLabel[4];
 	ArrayList<JLabel> back = new ArrayList<>();
 	ArrayList<JPanel> items = new ArrayList<>();
-	Worker worker;
+	Worker worker = new Worker();
 	int bu = 1, left = 0, right = 4, curIdx = 0;
 	boolean run;
 	JLabel prev, next;
@@ -166,7 +166,7 @@ public class Main extends BaseFrame {
 			bu = 1;
 			run = true;
 
-			if (worker != null) {
+			if (worker != null && worker.isDone()) {
 				worker.cancel(true);
 				worker = null;
 			}

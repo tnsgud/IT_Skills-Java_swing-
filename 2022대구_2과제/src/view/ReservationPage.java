@@ -36,8 +36,6 @@ public class ReservationPage extends BasePage {
 	public ReservationPage() {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		
-		System.out.println(LocalDate.now());
-
 		ui();
 	}
 

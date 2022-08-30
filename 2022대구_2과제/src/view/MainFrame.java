@@ -170,11 +170,19 @@ public class MainFrame extends BaseFrame {
 
 	static void login() {
 		nav[3].setText("Logout");
+		
+		if(BasePage.cf != null) {
+			CinemaFrame.lblState.setText("Logout");
+		}
 	}
 
 	static void logout() {
 		user = null;
 		nav[3].setText("Login");
+		
+		if(BasePage.cf != null) {
+			CinemaFrame.lblState.setText("Login");
+		}
 	}
 
 	public static void main(String[] args) {
