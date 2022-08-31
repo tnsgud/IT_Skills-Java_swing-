@@ -1,5 +1,10 @@
 package db;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -9,6 +14,7 @@ import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.JFileChooser;
 import javax.swing.JTable;
@@ -48,7 +54,21 @@ public class DB extends BaseFrame {
 
 	void createT(String t, String c) {
 		execute("create table " + t + "(" + c + ")");
-		execute("load data local infile './datafiles/" + t + ".txt' into table " + t + " ignore 1 lines");
+
+		try {
+			var reader = new BufferedReader(new FileReader("./datafiles/" + t + ".txt"));
+			var str = reader.readLine();
+			while ((str = reader.readLine()) != null) {
+				System.out.println(str.split("\t").length);
+//				System.out.println("insert " + t + " values(0, "
+//						+ (Stream.generate(() -> "?").limit(c.split(",").length - 1).collect(Collectors.joining(",")))+")");
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+//		execute("load data local infile './datafiles/" + t + ".txt' into table " + t + " ignore 1 lines");
 	}
 
 	public DB() {
@@ -71,7 +91,7 @@ public class DB extends BaseFrame {
 		var futures = map.entrySet().stream().map(a -> CompletableFuture.supplyAsync(() -> {
 			createT(a.getKey(), a.getValue());
 			return "done";
-		}).orTimeout(1L, TimeUnit.SECONDS).exceptionally(e -> {
+		}).exceptionally(e -> {
 			e.printStackTrace();
 			return "error";
 		})).collect(Collectors.toList());
