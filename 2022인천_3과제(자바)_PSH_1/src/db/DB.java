@@ -81,8 +81,6 @@ public class DB implements Tool{
 			}
 		}
 		
-		System.out.println(getOne("select open from building"));
-		
 		icon.displayMessage("DB 셋팅", "DB 셋팅 성공", MessageType.INFO	);
 		System.exit(0);
 	}

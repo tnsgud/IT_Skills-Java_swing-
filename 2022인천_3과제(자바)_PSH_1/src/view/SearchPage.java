@@ -3,6 +3,8 @@ package view;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -20,18 +22,25 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Map.Entry;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.PriorityQueue;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
 import javax.swing.plaf.metal.MetalToggleButtonUI;
 
 public class SearchPage extends BasePage {
@@ -41,7 +50,7 @@ public class SearchPage extends BasePage {
 	ArrayList<Integer> pathList = new ArrayList<>();
 	ArrayList<MapItem> itemList = new ArrayList<>();
 	ArrayList<ArrayList<Node>> adjList = new ArrayList<>();
-	Entry<String, String> select;
+	HashMap<Integer, String> select = new HashMap<>();
 
 	AffineTransform myAffine = new AffineTransform();
 	Point2D sAffPoint = new Point2D.Float(), eAffPoint = new Point2D.Float();
@@ -49,13 +58,140 @@ public class SearchPage extends BasePage {
 	double zoom = 1;
 	Point fromPoint, toPoint;
 	String colorKey = "";
-	int uno = 1;
+
+	JPopupMenu pop = new JPopupMenu();
+	{
+		for (var cap : "출발지,도착지".split(",")) {
+			var i = new JMenuItem(cap);
+			i.addActionListener(a -> {
+				int idx = cap.equals("출발지") ? 0 : 1;
+				select.put(idx, pop.getName());
+				setPath(idx);
+				west.tog[1].doClick();
+				dijkstra();
+			});
+			pop.add(i);
+		}
+	}
 
 	public SearchPage() {
+		user = getRows("select * from user where no = 1").get(0);
+		
 		data();
 
 		add(west = sz(new West(), 250, 0), "West");
 		add(map = new Map());
+	}
+
+	private void dijkstra() {
+		colorKey = "";
+		if (west.txtAr.getText().isEmpty() || west.txtDe.getText().isEmpty()) {
+			return;
+		}
+
+		int start = toInt(west.txtAr.getName());
+		int end = toInt(west.txtDe.getName());
+
+		int[][] dist = new int[2][adjList.size() + 1]; // [0][] = 코스트 [1][] = 이전 위치
+		for (int i = 0; i < dist[0].length; i++) {
+			dist[0][i] = Integer.MAX_VALUE;
+			dist[1][i] = -1;
+		}
+
+		pathList.clear();
+
+		var pq = new PriorityQueue<int[]>((i1, i2) -> Integer.compare(i1[1], i2[1])); // {이전 위치, 코스트}
+		pq.offer(new int[] { start, 0 });
+		dist[0][start] = 0;
+
+		while (!pq.isEmpty()) {
+			var cur = pq.poll();
+			int from = cur[0];
+			int cost = cur[1];
+
+			if (dist[0][from] < cost)
+				continue;
+
+			for (int i = 0; i < adjList.get(from).size(); i++) {
+				var next = adjList.get(from).get(i);
+
+				if (dist[0][next.no] > cost + next.cost) {
+					dist[0][next.no] = cost + next.cost;
+					dist[1][next.no] = from;
+					pq.offer(new int[] { next.no, dist[0][next.no] });
+				}
+			}
+		}
+
+		west.cc.removeAll();
+
+		while (start != end) {
+			pathList.add(end);
+			end = dist[1][end];
+		}
+
+		pathList.add(start);
+
+		Collections.reverse(pathList);
+
+		var arr = new ArrayList<String[]>();
+		for (int i = 1; i < pathList.size(); i++) {
+			int n1 = pathList.get(i - 1);
+			int n2 = pathList.get(i);
+
+			var node = adjList.get(n1).stream().filter(a -> a.no == n2).findFirst().get();
+
+			if (!arr.stream().filter(a -> a[0].equals(arr.size() + ". " + node.name)).findFirst().isPresent()) {
+				arr.add(new String[] { arr.size() + 1 + ". " + node.name, node.cost + "" });
+			} else {
+				var str = arr.get(arr.size() - 1);
+				int cost = toInt(str[1]) + node.cost;
+				arr.set(arr.size() - 1, new String[] { str[0], cost + "" });
+			}
+		}
+
+		int tot = arr.stream().mapToInt(a -> toInt(a[1])).sum();
+		
+		var l = lbl("총 거리:" + tot + "m", 4, 15);
+		l.setMaximumSize(new Dimension(250, 50));
+		west.cc.add(l);
+
+		for (int i = 0; i < arr.size(); i++) {
+			var text = "<html><font color='black'>";
+
+			if (i == 0) {
+				text = "<html><font color='red'>출발 </font>" + text;
+			} else if (i == arr.size() - 1) {
+				text = "<html><font color='blue'>도착 </font>" + text;
+			}
+
+			final int j = i;
+			var lbl = lbl(text + "" + arr.get(i)[0] + " 총 " + arr.get(i)[1] + "m", 0, 1, 12, Color.black, e -> {
+				colorKey = arr.get(j)[0];
+				map.drawMap();
+			});
+			lbl.setBorder(new MatteBorder(1, 0, 0, 0, Color.LIGHT_GRAY));
+			west.cc.add(lbl);
+		}
+
+		map.drawMap();
+		repaint();
+		revalidate();
+	}
+
+	private void setPath(int i) {
+		var arr = pop.getName().split(",");
+		var me = i == 0 ? west.txtAr : west.txtDe;
+		var comp = i == 0 ? west.txtDe : west.txtAr;
+
+		if (comp.getName() != null && comp.getName().equals(select.get(i))) {
+			eMsg("출발지와 도착지는 같을 수 없습니다.");
+			return;
+		}
+
+
+		me.setName(arr[0]);
+		me.setText(arr[1]);
 	}
 
 	private void data() {
@@ -76,14 +212,14 @@ public class SearchPage extends BasePage {
 		}
 
 		for (var rs : getRows(
-				"select b.*, ifnull(round(avg(rate), 0), 0) from building b left join rate r on b.no = r.building where type <> 3")) {
+				"select b.*, ifnull(round(avg(rate), 0), 0) from building b left join rate r on b.no = r.building where type <> 3 group by b.no")) {
 			int x = toInt(rs.get(6)), y = toInt(rs.get(7));
 			itemList.add(new MapItem(rs, x - 20, y - 20));
 		}
 	}
 
 	class West extends BasePage {
-		JTextField tagetXtSearch, tagetXtAr, tagetXtDe;
+		JTextField txtSearch, txtAr, txtDe;
 		JToggleButton tog[] = new JToggleButton[2];
 		JPanel search, path;
 		JScrollPane scr;
@@ -91,15 +227,14 @@ public class SearchPage extends BasePage {
 		public West() {
 			add(n = new JPanel(new BorderLayout(5, 5)), "North");
 			add(scr = new JScrollPane(search = new JPanel()));
-			add(lbl("메인으로", 2, 20, Color.orange, e -> mf.swap(new MainPage())), "South");
-			search.setLayout(new BoxLayout(search, BoxLayout.Y_AXIS));
+			add(lbl("메인으로", 2, 0, 20, Color.orange, e -> mf.swap(new MainPage())), "South");
+			search.setLayout(new BoxLayout(search, BoxLayout.PAGE_AXIS));
 
 			n.add(nn = new JPanel(new BorderLayout(5, 5)), "North");
 			n.add(nc = new JPanel(new GridLayout(1, 0, 5, 5)));
 
-			nn.add(tagetXtSearch = new JTextField());
-			nn.add(btn("검색", a -> {
-			}), "East");
+			nn.add(txtSearch = new JTextField());
+			nn.add(btn("검색", a -> search()), "East");
 
 			var bg = new ButtonGroup();
 			for (int i = 0; i < tog.length; i++) {
@@ -122,20 +257,36 @@ public class SearchPage extends BasePage {
 
 			path.add(cn = new JPanel(new BorderLayout(5, 5)), "North");
 			path.add(cc = new JPanel());
-			cc.setLayout(new BoxLayout(cc, BoxLayout.Y_AXIS));
+			cc.setLayout(new BoxLayout(cc, BoxLayout.PAGE_AXIS));
+			
 
 			{
 				var tmp1 = new JPanel(new GridLayout(0, 1, 5, 5));
 				var tmp2 = new JPanel(new FlowLayout(2, 0, 0));
 
-				tmp1.add(tagetXtAr = new JTextField());
-				tmp1.add(tagetXtDe = new JTextField());
+				tmp1.add(txtAr = new JTextField());
+				tmp1.add(txtDe = new JTextField());
+
+				txtAr.setFocusable(false);
+				txtDe.setFocusable(false);
 
 				tmp2.add(btn("집을 출발지로", a -> {
+					var rs = getRows("select b.no, b.name from user u, building b where u.building = b.no and u.no = ?", user.get(0)).get(0);
+					pop.setName(rs.get(0) + "," + rs.get(1));
+					setPath(0);
 				}));
 
 				cn.add(tmp1);
 				cn.add(btn("↑↓", a -> {
+					var tmp = txtAr.getName();
+					txtAr.setName(txtDe.getName());
+					txtDe.setName(tmp);
+					
+					tmp = txtAr.getText();
+					txtAr.setText(txtDe.getText());
+					txtDe.setText(tmp);
+					
+					dijkstra();
 				}), "East");
 				cn.add(tmp2, "South");
 			}
@@ -147,13 +298,72 @@ public class SearchPage extends BasePage {
 			nc.setOpaque(false);
 
 			n.setBorder(new EmptyBorder(5, 5, 5, 5));
-			path.setBorder(new EmptyBorder(5, 5, 5, 5));
+			cn.setBorder(new EmptyBorder(5, 5, 5, 5));
+		}
+
+		void search() {
+			if (txtSearch.getText().isEmpty()) {
+				eMsg("검색 키워드를 입력하세요.");
+				return;
+			}
+			
+			var rs = itemList.stream().map(e -> e.info).filter(a -> a.get(1).toString().contains(txtSearch.getText())
+					|| a.get(4).toString().contains(txtSearch.getText())).collect(Collectors.toList());
+			
+			if (rs.isEmpty()) {
+				iMsg("검색결과가 없습니다.");
+				return;
+			}
+
+			search.removeAll();
+
+			search.add(lbl("<html>장소명 <font color=rgb(0,123,255)>" + txtSearch.getText() + "</font> 의 검색 결과", 2, 13),
+					"North");
+
+			for (var r : rs) {
+				var tmp1 = new JPanel(new BorderLayout());
+				var tmp2 = new JPanel(new GridLayout(0, 1));
+
+				tmp1.add(tmp2);
+				tmp1.add(new JLabel(getIcon(r.get(8), 80, 80)), "East");
+
+				tmp2.add(lbl(rs.indexOf(r) + 1 + ":" + r.get(1), 2, 1, 13, Color.black,
+						e -> new InfoDialog(r).setVisible(true)));
+				tmp2.add(lbl("<html>"+r.get(4).toString(), 2));
+				tmp2.add(lbl("평점:" + r.get(9), 2));
+
+				tmp1.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mousePressed(MouseEvent e) {
+						if (e.getButton() == 1 && e.getClickCount() == 2) {
+							map.center(toInt(r.get(6)), toInt(r.get(7)));
+						} else if (e.getButton() == 3) {
+							pop.setName(r.get(0) + "," + r.get(1));
+							pop.show(tmp1, e.getX(), e.getY());
+						}
+					}
+				});
+
+				tmp1.setBorder(new MatteBorder(1, 0, 1, 0, Color.LIGHT_GRAY));
+				tmp1.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+				tmp1.setMaximumSize(new Dimension(240, 120));
+
+				search.add(sz(tmp1, 0, 120));
+			}
+
+			search.add(Box.createVerticalGlue());
+
+			search.repaint();
+			search.revalidate();
+			
+			map.center(toInt(rs.get(0).get(6)), toInt(rs.get(0).get(7)));
 		}
 	}
 
 	class Map extends BasePage {
+
 		BufferedImage img;
-		JPopupMenu pop;
 
 		double zoom = 1;
 		Point2D p;
@@ -228,7 +438,7 @@ public class SearchPage extends BasePage {
 						if (e.getButton() == 1 && toInt(i.info.get(5)) != 2) {
 							new InfoDialog(i.info).setVisible(true);
 						} else if (e.getButton() == 3) {
-							select = java.util.Map.entry(i.info.get(0).toString(), i.info.get(1).toString());
+							pop.setName(i.info.get(0) + "," + i.info.get(1));
 							pop.show(map, e.getX(), e.getY());
 						}
 					});
@@ -342,16 +552,50 @@ public class SearchPage extends BasePage {
 					}
 				}
 
-				var cap = "진료소,병원,거주지".split(",");
+				var cap = "진료소,병원,주거지".split(",");
 				for (var item : itemList) {
 					var img = ImageIO.read(new File("./datafiles/맵아이콘/" + cap[toInt(item.info.get(5))] + ".png"));
-					
+
 					g2.setColor(Color.red);
 					g2.drawImage(img, item.x, item.y, 40, 40, null);
+					g2.drawString(item.info.get(1).toString(),
+							(item.x + 20) - g2.getFontMetrics().stringWidth(item.info.get(1).toString()) / 2,
+							item.y - 5);
+				}
+
+				if (img != null) {
+					repaint();
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
+
+		void center(int x, int y) {
+			zoom = 1;
+			myAffine.setToIdentity();
+			myAffine.scale(zoom, zoom);
+
+			fromPoint = new Point(0, 0);
+			toPoint = new Point((map.getWidth() - img.getWidth()) / 2 - (x - img.getWidth() / 2),
+					(map.getHeight() - img.getHeight()) / 2 - (y - img.getHeight() / 2));
+
+			try {
+				sAffPoint = myAffine.inverseTransform(fromPoint, null);
+				eAffPoint = myAffine.inverseTransform(toPoint, null);
+
+				affDx = eAffPoint.getX() - sAffPoint.getX();
+				affDy = eAffPoint.getY() - sAffPoint.getY();
+
+				myAffine.translate(affDx, affDy);
+			} catch (NoninvertibleTransformException e) {
+				e.printStackTrace();
+			}
+
+			repaint();
+
+			fromPoint = toPoint;
+			toPoint = fromPoint;
 		}
 	}
 

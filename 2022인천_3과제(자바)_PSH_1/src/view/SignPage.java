@@ -42,7 +42,7 @@ public class SignPage extends BasePage {
 			}
 		}
 
-		c.add(lbl("이미 계정이 있으십니까?", 2, 15, Color.orange, e -> mf.swap(new LoginPage())));
+		c.add(lbl("이미 계정이 있으십니까?", 2, 0, 15, Color.orange, e -> mf.swap(new LoginPage())));
 		c.add(btn("회원가입", a -> {
 			for (var t : txt) {
 				if (t.getText().isEmpty()) {

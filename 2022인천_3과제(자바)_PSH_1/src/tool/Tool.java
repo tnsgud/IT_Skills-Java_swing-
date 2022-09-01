@@ -102,8 +102,8 @@ public interface Tool {
 		void run(MouseEvent e);
 	}
 
-	default JLabel lbl(String c, int a, int sz, Color col, Invoker i) {
-		var l = lbl(c, a, 0, sz);
+	default JLabel lbl(String c, int a, int st, int sz, Color col, Invoker i) {
+		var l = lbl(c, a, st, sz);
 		l.setForeground(col);
 		l.addMouseListener(new MouseAdapter() {
 			@Override

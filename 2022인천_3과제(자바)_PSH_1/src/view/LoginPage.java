@@ -29,7 +29,7 @@ public class LoginPage extends BasePage {
 			c.add(txt[i] = i == 0 ? new JTextField() : new JPasswordField());
 		}
 		c.add(chk);
-		c.add(lbl("처음이십니까?", 2, 15, Color.orange, e -> mf.swap(new SignPage())));
+		c.add(lbl("처음이십니까?", 2, 0, 15, Color.orange, e -> mf.swap(new SignPage())));
 		c.add(btn("로그인", a -> {
 			for (var t : txt) {
 				if (t.getText().isEmpty()) {
