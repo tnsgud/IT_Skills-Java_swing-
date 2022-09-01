@@ -251,9 +251,4 @@ public class InfoDialog extends BaseDialog {
 		repaint();
 		revalidate();
 	}
-
-	public static void main(String[] args) {
-		BasePage.mf.swapPage(new SearchPage());
-		BasePage.mf.setVisible(true);
-	}
 }

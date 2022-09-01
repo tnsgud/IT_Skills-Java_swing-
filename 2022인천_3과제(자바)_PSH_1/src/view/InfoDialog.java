@@ -222,10 +222,4 @@ public class InfoDialog extends BaseDialog {
 		info.repaint();
 		info.revalidate();
 	}
-
-	public static void main(String[] args) {
-		BasePage.mf = new MainFrame();
-		BasePage.mf.swap(new SearchPage());
-		BasePage.mf.setVisible(true);
-	}
 }

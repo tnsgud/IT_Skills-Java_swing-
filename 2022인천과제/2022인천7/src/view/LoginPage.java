@@ -77,9 +77,4 @@ public class LoginPage extends BasePage {
 			}
 		});
 	}
-
-	public static void main(String[] args) {
-		mf.swapPage(new LoginPage());
-		mf.setVisible(true);
-	}
 }

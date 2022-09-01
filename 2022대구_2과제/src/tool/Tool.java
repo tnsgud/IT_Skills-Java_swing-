@@ -386,7 +386,7 @@ public interface Tool {
 
 			@Override
 			public Class<?> getColumnClass(int columnIndex) {
-				return columnIndex == 0 ? ImageIcon.class:String.class;
+				return columnIndex == 0 ? ImageIcon.class : String.class;
 			}
 		};
 	}
