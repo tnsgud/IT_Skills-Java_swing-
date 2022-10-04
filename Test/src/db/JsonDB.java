@@ -16,7 +16,7 @@ public class JsonDB {
 		var json = Files.readString(Paths.get("./datafiles/test.json"), Charset.forName("UTF-8"));
 
 		for (var map : (List<Map<String, Object>>) engine.eval("Java.asJSONCompatible(" + json + ")")) {
-			System.out.println(map.keySet());
+			System.out.println(map.entrySet());
 		}
 	}
 

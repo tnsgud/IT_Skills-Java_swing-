@@ -104,9 +104,7 @@ public class MoviePage extends BasePage {
 					.collect(Collectors.joining(" or ")) + ")";
 		}
 
-		if (chkScreen[0].isSelected() && chkScreen[1].isSelected()) {
-			screening = "";
-		} else if (chkScreen[0].isSelected()) {
+		if (chkScreen[0].isSelected()) {
 			screening = "and m.m_no in (select sc.m_no from screening sc)";
 		} else if (chkScreen[1].isSelected()) {
 			screening = "and m.m_no not in (select sc.m_no from screening sc)";

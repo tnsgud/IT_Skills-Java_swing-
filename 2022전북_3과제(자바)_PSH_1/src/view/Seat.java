@@ -157,12 +157,12 @@ public class Seat extends BaseFrame {
 
 	class Item extends JLabel {
 		People p;
-		int i;
+//		int i;
 
 		public Item(People p, int i) {
 			super(p.getFname() + " " + p.getLname() + " - ", 2);
 			this.p = p;
-			this.i = i;
+//			this.i = i;
 
 			setMaximumSize(new Dimension(200, 35));
 
@@ -178,9 +178,9 @@ public class Seat extends BaseFrame {
 			});
 		}
 
-		public void setSelect() {
-			idx = i;
-
+		private void setSelect() {
+			idx = items.indexOf(this);
+			
 			for (var it : items) {
 				it.setBorder(new LineBorder(Color.gray));
 			}
